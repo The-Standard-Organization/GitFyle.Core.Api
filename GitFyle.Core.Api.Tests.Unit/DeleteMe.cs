@@ -4,7 +4,7 @@
 
 namespace GitFyle.Core.Api.Tests.Unit
 {
-    public class DeletMe
+    public class DeleteMe
     {
         [Fact]
         public void ShouldBeTrue() =>
