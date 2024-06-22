@@ -1,4 +1,4 @@
-![GitFyle.Core](https://raw.githubusercontent.com/The-Standard-Organization/GitFyle.Core.Api/main/GitFyle.Core.Api/Resources/Images/gitfyle-gitlogo.png)
+![GitFyle.Core](https://raw.githubusercontent.com/The-Standard-Organization/GitFyle.Core.Api/main/Resources/Images/gitfyle-gitlogo.png)
 
 # GitFyle.Core.Api
 
