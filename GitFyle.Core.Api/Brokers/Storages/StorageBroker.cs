@@ -27,5 +27,10 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
             optionsBuilder.UseSqlServer(connectionString);
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            SetContributionReferences(modelBuilder);
+        }
     }
 }
