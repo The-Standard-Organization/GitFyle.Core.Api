@@ -7,12 +7,24 @@ namespace GitFyle.Core.Api.Brokers.Storages
     {
         void SetContributionReferences(ModelBuilder modelBuilder)
         {
+            int maxStringLength = 255;
+
             modelBuilder.Entity<Contribution>()
                 .HasIndex(contribution => new
                 {
                     contribution.RepositoryId,
                     contribution.ExternalId
                 }).IsUnique();
+
+            modelBuilder.Entity<Contribution>()
+                .Property(contribution => contribution.ExternalId)
+                .HasMaxLength(maxStringLength)
+                .IsRequired();
+
+            modelBuilder.Entity<Contribution>()
+                .Property(contribution => contribution.Title)
+                .HasMaxLength(maxStringLength)
+                .IsRequired();   
         }
     }
 }
