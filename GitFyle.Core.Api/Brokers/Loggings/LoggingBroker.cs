@@ -9,7 +9,7 @@ namespace GitFyle.Core.Api.Brokers.Loggings
         public LoggingBroker(ILogger logger) =>
             this.logger = logger;   
 
-        public void LogInInformation(string message) =>
+        public void LogInformation(string message) =>
             this.logger.LogInformation(message);
 
     }
