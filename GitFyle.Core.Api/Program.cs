@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,10 @@ namespace GitFyle.Core.Api
             builder.Services.AddTransient<
                 IStorageBroker,
                 StorageBroker>();
+
+            builder.Services.AddTransient<
+                ILoggingBroker,
+                LoggingBroker>();
 
             WebApplication webApplication =
                 builder.Build();
