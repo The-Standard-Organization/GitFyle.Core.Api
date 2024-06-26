@@ -19,6 +19,8 @@ public class Repository
     public string Token { get; set; }
     public DateTimeOffset TokenExpireAt { get; set; }
     public string Description { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
     public Source Source { get; set; }
 }
