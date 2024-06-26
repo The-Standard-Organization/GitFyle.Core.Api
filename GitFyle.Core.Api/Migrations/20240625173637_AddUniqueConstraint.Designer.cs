@@ -4,6 +4,7 @@ using GitFyle.Core.Api.Brokers.Storages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GitFyle.Core.Api.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    partial class StorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20240625173637_AddUniqueConstraint")]
+    partial class AddUniqueConstraint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,10 +66,7 @@ namespace GitFyle.Core.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SourceId")
-                        .IsUnique();
-
-                    b.HasIndex("Name", "Owner", "ExternalId", "SourceId");
+                    b.HasIndex("SourceId");
 
                     b.ToTable("Repositories");
                 });
@@ -91,17 +91,12 @@ namespace GitFyle.Core.Api.Migrations
             modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Repositories.Repository", b =>
                 {
                     b.HasOne("GitFyle.Core.Api.Models.Foundations.Sources.Source", "Source")
-                        .WithOne("Repository")
-                        .HasForeignKey("GitFyle.Core.Api.Models.Foundations.Repositories.Repository", "SourceId")
+                        .WithMany()
+                        .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Source");
-                });
-
-            modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Sources.Source", b =>
-                {
-                    b.Navigation("Repository");
                 });
 #pragma warning restore 612, 618
         }

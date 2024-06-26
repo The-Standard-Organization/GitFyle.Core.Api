@@ -20,7 +20,7 @@ namespace GitFyle.Core.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<StorageBroker>();
-            
+
             builder.Services.AddTransient<
                 IStorageBroker,
                 StorageBroker>();
