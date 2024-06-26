@@ -15,6 +15,5 @@ namespace GitFyle.Core.Api.Brokers.Loggings
 
         public void LogInformation(string message) =>
             this.logger.LogInformation(message);
-
     }
 }
