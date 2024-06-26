@@ -32,6 +32,7 @@ namespace GitFyle.Core.Api
                 ILoggingBroker,
                 LoggingBroker>();
 
+            builder.Services.AddTransient<
                 IDateTimeBroker, 
                 DateTimeBroker>();
 
