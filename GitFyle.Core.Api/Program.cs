@@ -2,8 +2,10 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Storages;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -20,10 +22,14 @@ namespace GitFyle.Core.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<StorageBroker>();
-            
+
             builder.Services.AddTransient<
                 IStorageBroker,
                 StorageBroker>();
+
+            builder.Services.AddTransient<
+                IDateTimeBroker, 
+                DateTimeBroker>();
 
             WebApplication webApplication =
                 builder.Build();
