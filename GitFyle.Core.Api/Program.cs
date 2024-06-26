@@ -3,8 +3,10 @@
 // ----------------------------------------------------------------------------------
 
 using GitFyle.Core.Api.Brokers.Loggings;
+using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Storages;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -21,7 +23,7 @@ namespace GitFyle.Core.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<StorageBroker>();
-            
+
             builder.Services.AddTransient<
                 IStorageBroker,
                 StorageBroker>();
@@ -29,6 +31,9 @@ namespace GitFyle.Core.Api
             builder.Services.AddTransient<
                 ILoggingBroker,
                 LoggingBroker>();
+
+                IDateTimeBroker, 
+                DateTimeBroker>();
 
             WebApplication webApplication =
                 builder.Build();
