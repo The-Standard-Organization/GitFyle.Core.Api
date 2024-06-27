@@ -17,6 +17,10 @@ namespace GitFyle.Core.Api.Brokers.Storages
                 .IsRequired();
 
             modelBuilder.Entity<ContributionType>()
+                .HasIndex(contributionType => contributionType.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<ContributionType>()
                 .Property(contributionType => contributionType.Value)
                 .IsRequired();
         }
