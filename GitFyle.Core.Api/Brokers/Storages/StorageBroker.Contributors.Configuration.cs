@@ -21,8 +21,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
                 .IsRequired();
 
             builder.Property(contributor => contributor.Username)
-                .HasMaxLength(255).
-                IsRequired();
+                .HasMaxLength(255)
+                .IsRequired();
 
             builder.Property(contributor => contributor.Name)
                 .HasMaxLength(255);
