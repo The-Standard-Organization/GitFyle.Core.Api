@@ -15,5 +15,7 @@ namespace GitFyle.Core.Api.Models.Foundations.Contributor
         public string Name { get; set; }
         public string Email {  get; set; }
         public string AvatarUrl { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
     }
 }
