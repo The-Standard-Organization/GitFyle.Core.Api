@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using GitFyle.Core.Api.Models.Foundations.Contributions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GitFyle.Core.Api.Brokers.Storages
@@ -33,7 +34,12 @@ namespace GitFyle.Core.Api.Brokers.Storages
                 .IsRequired();
 
             builder.Property(contribution => contribution.ContributionTypeId)
-                .IsRequired();
+            .IsRequired();
+
+            builder.HasOne(contribution => contribution.ContributionType)
+                .WithMany(contributionType => contributionType.Contributions)
+                .HasForeignKey(contribution => contribution.ContributionTypeId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
