@@ -24,7 +24,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
             modelBuilder.Entity<Contribution>()
                 .Property(contribution => contribution.Title)
-                .HasMaxLength(maxStringLength)
+                .HasMaxLength(255)
                 .IsRequired();   
         }
     }
