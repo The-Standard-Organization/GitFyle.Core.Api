@@ -11,21 +11,18 @@ namespace GitFyle.Core.Api.Brokers.Storages
     {
         void AddContributionConfigurations(EntityTypeBuilder<Contribution> builder)
         {
-            modelBuilder.Entity<Contribution>()
-                .HasIndex(contribution => new
+            builder.HasIndex(contribution => new
                 {
                     contribution.RepositoryId,
                     contribution.ExternalId
                 })
                 .IsUnique();
 
-            modelBuilder.Entity<Contribution>()
-                .Property(contribution => contribution.ExternalId)
+            builder.Property(contribution => contribution.ExternalId)
                 .HasMaxLength(255)
                 .IsRequired();
 
-            modelBuilder.Entity<Contribution>()
-                .Property(contribution => contribution.Title)
+            builder.Property(contribution => contribution.Title)
                 .HasMaxLength(255)
                 .IsRequired();   
         }
