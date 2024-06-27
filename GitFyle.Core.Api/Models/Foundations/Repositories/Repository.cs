@@ -20,6 +20,8 @@ namespace GitFyle.Core.Api.Models.Foundations.Repositories
         public DateTimeOffset TokenExpireAt { get; set; }
         public string Description { get; set; }
         public Source Source { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
     }
 
 }
