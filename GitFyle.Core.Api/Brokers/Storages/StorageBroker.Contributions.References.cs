@@ -24,7 +24,16 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
             builder.Property(contribution => contribution.Title)
                 .HasMaxLength(255)
-                .IsRequired();   
+                .IsRequired();
+
+            builder.Property(contribution => contribution.RepositoryId)
+                .IsRequired();
+
+            builder.Property(contribution => contribution.ContributorId)
+                .IsRequired();
+
+            builder.Property(contribution => contribution.ContributionTypeId)
+                .IsRequired();
         }
     }
 }
