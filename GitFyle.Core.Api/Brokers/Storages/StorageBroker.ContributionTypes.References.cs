@@ -11,11 +11,9 @@ namespace GitFyle.Core.Api.Brokers.Storages
     {
         void SetContributionTypeReferences(ModelBuilder modelBuilder)
         {
-            int maxStringLength = 255;
-
             modelBuilder.Entity<ContributionType>()
                 .Property(contributionType => contributionType.Name)
-                .HasMaxLength(maxStringLength)
+                .HasMaxLength(255)
                 .IsRequired();
 
             modelBuilder.Entity<ContributionType>()
