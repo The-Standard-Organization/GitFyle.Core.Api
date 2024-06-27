@@ -14,7 +14,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
                 {
                     contribution.RepositoryId,
                     contribution.ExternalId
-                }).IsUnique();
+                })
+                .IsUnique();
 
             modelBuilder.Entity<Contribution>()
                 .Property(contribution => contribution.ExternalId)
