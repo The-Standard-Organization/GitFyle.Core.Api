@@ -30,7 +30,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            AddContributionConfigurations(modelBuilder);
+            AddContributionConfigurations(modelBuilder.Entity<Contribution>());
         }
     }
 }
