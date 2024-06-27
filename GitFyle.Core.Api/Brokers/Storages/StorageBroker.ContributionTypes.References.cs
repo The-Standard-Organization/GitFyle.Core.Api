@@ -9,7 +9,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
 {
     internal partial class StorageBroker
     {
-        void SetContributionTypeReferences(ModelBuilder modelBuilder)
+        void AddContributionTypeConfigurations(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ContributionType>()
                 .Property(contributionType => contributionType.Name)
