@@ -3,25 +3,22 @@
 // ----------------------------------------------------------------------------------
 
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
     internal partial class StorageBroker
     {
-        void AddContributionTypeConfigurations(ModelBuilder modelBuilder)
+        void AddContributionTypeConfigurations(EntityTypeBuilder<ContributionType> builder)
         {
-            modelBuilder.Entity<ContributionType>()
-                .Property(contributionType => contributionType.Name)
+            builder.Property(contributionType => contributionType.Name)
                 .HasMaxLength(255)
                 .IsRequired();
 
-            modelBuilder.Entity<ContributionType>()
-                .HasIndex(contributionType => contributionType.Name)
+            builder.HasIndex(contributionType => contributionType.Name)
                 .IsUnique();
 
-            modelBuilder.Entity<ContributionType>()
-                .Property(contributionType => contributionType.Value)
+            builder.Property(contributionType => contributionType.Value)
                 .IsRequired();
         }
     }
