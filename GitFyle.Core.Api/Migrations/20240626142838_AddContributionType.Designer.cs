@@ -4,6 +4,7 @@ using GitFyle.Core.Api.Brokers.Storages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GitFyle.Core.Api.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    partial class StorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20240626142838_AddContributionType")]
+    partial class AddContributionType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,45 +40,6 @@ namespace GitFyle.Core.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ContributionTypes");
-                });
-
-            modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Contributions.Contribution", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ContributionTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ContributorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("ExternalId")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTimeOffset>("MergedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RepositoryId", "ExternalId")
-                        .IsUnique();
-
-                    b.ToTable("Contributions");
                 });
 
             modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Sources.Source", b =>
