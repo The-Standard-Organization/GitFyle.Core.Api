@@ -5,7 +5,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
 {
     internal partial class StorageBroker
     {
-        void SetContributionReferences(ModelBuilder modelBuilder)
+        void AddContributionConfigurations(ModelBuilder modelBuilder)
         {
             int maxStringLength = 255;
 
