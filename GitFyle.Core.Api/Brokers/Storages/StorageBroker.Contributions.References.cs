@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using GitFyle.Core.Api.Models.Foundations.Contributions;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {

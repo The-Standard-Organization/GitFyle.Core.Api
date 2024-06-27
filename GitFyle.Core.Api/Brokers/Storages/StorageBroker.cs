@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using EFxceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
