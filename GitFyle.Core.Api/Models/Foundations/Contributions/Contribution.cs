@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 
 namespace GitFyle.Core.Api.Models.Foundations.Contributions
 {
@@ -17,5 +18,6 @@ namespace GitFyle.Core.Api.Models.Foundations.Contributions
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public DateTimeOffset MergedAt { get; set; }
+        public ContributionType ContributionType { get; set; }
     }
 }
