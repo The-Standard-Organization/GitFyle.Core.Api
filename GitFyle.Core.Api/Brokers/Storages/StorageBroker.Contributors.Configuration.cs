@@ -42,8 +42,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
                 .WithMany(x => x.Contributors)
                 .HasForeignKey(x => x.SourceId)
                 .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.NoAction);
-
         }
-
     }
 }
