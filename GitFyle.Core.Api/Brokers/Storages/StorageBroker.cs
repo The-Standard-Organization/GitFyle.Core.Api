@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using EFxceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -26,6 +27,11 @@ namespace GitFyle.Core.Api.Brokers.Storages
                     name: "DefaultConnection");
 
             optionsBuilder.UseSqlServer(connectionString);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            AddContributorConfigurations(modelBuilder.Entity<Contributor>());
         }
     }
 }

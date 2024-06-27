@@ -3,8 +3,9 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using GitFyle.Core.Api.Models.Foundations.Sources;
 
-namespace GitFyle.Core.Api.Models.Foundations.Contributor
+namespace GitFyle.Core.Api.Models.Foundations.Contributors
 {
     public class Contributor 
     { 
@@ -15,6 +16,7 @@ namespace GitFyle.Core.Api.Models.Foundations.Contributor
         public string Name { get; set; }
         public string Email {  get; set; }
         public string AvatarUrl { get; set; }
+        public Source Source { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
     }

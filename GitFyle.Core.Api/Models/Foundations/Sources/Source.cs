@@ -3,6 +3,8 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using GitFyle.Core.Api.Models.Foundations.Contributors;
 
 namespace GitFyle.Core.Api.Models.Foundations.Sources
 {
@@ -11,5 +13,6 @@ namespace GitFyle.Core.Api.Models.Foundations.Sources
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Url { get; set; }
+        public IEnumerable<Contributor> Contributors { get; set; }
     }
 }
