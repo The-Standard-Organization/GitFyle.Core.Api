@@ -9,7 +9,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
 {
     internal partial class StorageBroker
     {
-        void AddContributionConfigurations(ModelBuilder modelBuilder)
+        void AddContributionConfigurations(EntityTypeBuilder<Contribution> builder)
         {
             modelBuilder.Entity<Contribution>()
                 .HasIndex(contribution => new
