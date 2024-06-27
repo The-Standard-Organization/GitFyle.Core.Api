@@ -5,33 +5,38 @@
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace GitFyle.Core.Api.Brokers.Storages;
-
-internal partial class StorageBroker
+namespace GitFyle.Core.Api.Brokers.Storages
 {
-    void AddRepositoryConfigurations(EntityTypeBuilder<Repository> builder)
+    internal partial class StorageBroker
     {
-        builder.Property(repository => repository.Name)
-            .HasMaxLength(255)
-            .IsRequired();
-
-        builder.Property(repository => repository.Owner)
-            .HasMaxLength(255)
-            .IsRequired();
-
-        builder.Property(repository => repository.ExternalId)
-            .HasMaxLength(255)
-            .IsRequired();
-
-        builder.HasIndex(contribution => new
+        void AddRepositoryConfigurations(EntityTypeBuilder<Repository> builder)
         {
-            contribution.Name,
-            contribution.Owner,
-            contribution.ExternalId,
-            contribution.SourceId
-        });
+            builder.Property(repository => repository.Name)
+                .HasMaxLength(255)
+                .IsRequired();
 
-        builder.HasOne(x => x.Source)
-            .WithOne(x => x.Repository);
+            builder.Property(repository => repository.Owner)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            builder.Property(repository => repository.ExternalId)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            builder.HasIndex(repository => new
+            {
+                repository.Name,
+                repository.Owner,
+                repository.ExternalId,
+                repository.SourceId
+            });
+
+            builder.HasOne(x => x.Source)
+                .WithMany(x => x.Repositories)
+                .HasForeignKey(x => x.SourceId)
+                .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.NoAction);
+        }
     }
 }
+
+

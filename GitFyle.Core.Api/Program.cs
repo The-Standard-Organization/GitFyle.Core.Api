@@ -28,7 +28,7 @@ namespace GitFyle.Core.Api
                 StorageBroker>();
 
             builder.Services.AddTransient<
-                IDateTimeBroker, 
+                IDateTimeBroker,
                 DateTimeBroker>();
 
             WebApplication webApplication =
