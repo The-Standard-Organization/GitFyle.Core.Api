@@ -11,6 +11,13 @@ namespace GitFyle.Core.Api.Controllers
     [Route("api/[controller]")]
     public class HomeController : ControllerBase
     {
+        public HomeController(IStorageBroker storageBroker)
+        {
+            StorageBroker = storageBroker;
+        }
+
+        public IStorageBroker StorageBroker { get; }
+
         [HttpGet]
         public ActionResult<string> Get() =>
             Ok("Hello, Mario. The princess is in another castle.");
