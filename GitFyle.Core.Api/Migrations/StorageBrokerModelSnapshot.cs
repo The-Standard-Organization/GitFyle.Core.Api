@@ -23,11 +23,7 @@ namespace GitFyle.Core.Api.Migrations
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Repositories.Repository", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
+              {
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -68,6 +64,23 @@ namespace GitFyle.Core.Api.Migrations
                     b.HasIndex("Name", "Owner", "ExternalId", "SourceId");
 
                     b.ToTable("Repositories");
+                });
+
+            modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.ContributionTypes.ContributionType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContributionTypes");
                 });
 
             modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Sources.Source", b =>
