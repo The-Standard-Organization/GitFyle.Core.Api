@@ -13,7 +13,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         void AddContributorConfigurations(EntityTypeBuilder<Contributor> builder) 
         {
-  
+
             builder.Property(contributor => contributor.ExternalId)
                 .HasMaxLength(255)
                 .IsRequired();
@@ -39,7 +39,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
             });
 
             builder.HasOne(contributor => contributor.Source)
-                .WithMany(contributor => contributor.Contributors)
+                .WithMany(source => source.Contributors)
                 .HasForeignKey(contributor => contributor.SourceId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
