@@ -12,7 +12,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         void AddContributorConfigurations(EntityTypeBuilder<Contributor> builder) 
         {
-            
+  
             builder.Property(contributor => contributor.ExternalId)
                 .HasMaxLength(255)
                 .IsRequired();
@@ -35,7 +35,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
                     contributor.ExternalId,
                     contributor.SourceId,
                     contributor.Username,
-
             });
 
             builder.HasOne(x => x.Source)
