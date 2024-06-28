@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using GitFyle.Core.Api.Models.Foundations.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GitFyle.Core.Api.Brokers.Storages
@@ -31,10 +32,10 @@ namespace GitFyle.Core.Api.Brokers.Storages
                 repository.SourceId
             });
 
-            builder.HasOne(x => x.Source)
-                .WithMany(x => x.Repositories)
-                .HasForeignKey(x => x.SourceId)
-                .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.NoAction);
+            builder.HasOne(repository => repository.Source)
+                .WithMany(source => source.Repositories)
+                .HasForeignKey(repository => repository.SourceId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
