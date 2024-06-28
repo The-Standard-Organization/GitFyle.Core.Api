@@ -7,5 +7,6 @@ namespace GitFyle.Core.Api.Brokers.Loggings
     public interface ILoggingBroker
     {
         void LogTrace(string message);
+        void LogDebug(string message);
     }
 }
