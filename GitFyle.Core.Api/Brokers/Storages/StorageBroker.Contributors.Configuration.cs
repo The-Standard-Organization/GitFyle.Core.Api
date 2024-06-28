@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using GitFyle.Core.Api.Models.Foundations.Contributors;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GitFyle.Core.Api.Brokers.Storages
@@ -37,10 +38,10 @@ namespace GitFyle.Core.Api.Brokers.Storages
                     contributor.Username,
             });
 
-            builder.HasOne(x => x.Source)
-                .WithMany(x => x.Contributors)
-                .HasForeignKey(x => x.SourceId)
-                .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.NoAction);
+            builder.HasOne(contributor => contributor.Source)
+                .WithMany(contributor => contributor.Contributors)
+                .HasForeignKey(contributor => contributor.SourceId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
