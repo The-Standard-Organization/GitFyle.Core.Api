@@ -4,10 +4,10 @@
 
 namespace GitFyle.Core.Api.Migrations
 {
-    /// <inheritdoc />
+
     public partial class AddForeignKeyToContributor : Migration
     {
-        /// <inheritdoc />
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
@@ -70,7 +70,6 @@ namespace GitFyle.Core.Api.Migrations
                 principalColumn: "Id");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(

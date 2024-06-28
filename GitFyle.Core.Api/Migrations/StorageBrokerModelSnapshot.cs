@@ -61,8 +61,6 @@ namespace GitFyle.Core.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SourceId");
-
                     b.HasIndex("ExternalId", "SourceId", "Username");
 
                     b.ToTable("Contributors");
