@@ -4,14 +4,12 @@
 
 using System;
 
-namespace GitFyle.Core.Api.Brokers.Loggings
+namespace GitFyle.Core.Api.Models.Foundations.ContributionTypes
 {
-    public interface ILoggingBroker
+    public class ContributionType
     {
-        void LogInformation(string message);
-        void LogTrace(string message);
-        void LogDebug(string message);
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public int Value { get; set; }
     }
 }
-
-

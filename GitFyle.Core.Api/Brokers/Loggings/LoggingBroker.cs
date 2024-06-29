@@ -13,6 +13,9 @@ namespace GitFyle.Core.Api.Brokers.Loggings
         public LoggingBroker(ILogger<LoggingBroker> logger) =>
             this.logger = logger;
 
+        public void LogInformation(string message) => 
+            this.logger.LogInformation(message);
+
         public void LogTrace(string message) =>
             this.logger.LogTrace(message);
 
