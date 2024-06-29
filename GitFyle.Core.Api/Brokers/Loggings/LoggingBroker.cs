@@ -24,3 +24,4 @@ namespace GitFyle.Core.Api.Brokers.Loggings
             this.logger.LogDebug(message);
     }
 }
+
