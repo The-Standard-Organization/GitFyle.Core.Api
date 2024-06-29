@@ -13,5 +13,3 @@ namespace GitFyle.Core.Api.Brokers.Loggings
         void LogDebug(string message);
     }
 }
-
-
