@@ -22,9 +22,52 @@ namespace GitFyle.Core.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Repositories.Repository", b =>
+              {
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsOrganization")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Owner")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("TokenExpireAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceId");
+
+                    b.HasIndex("Name", "Owner", "ExternalId", "SourceId");
+
+                    b.ToTable("Repositories");
+                });
 
             modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Contributors.Contributor", b =>
-                {
+            {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
@@ -112,6 +155,7 @@ namespace GitFyle.Core.Api.Migrations
                     b.ToTable("Sources");
                 });
 
+
             modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Contributors.Contributor", b =>
                 {
                     b.HasOne("GitFyle.Core.Api.Models.Foundations.Sources.Source", "Source")
@@ -123,10 +167,22 @@ namespace GitFyle.Core.Api.Migrations
                     b.Navigation("Source");
                 });
 
+            modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Repositories.Repository", b =>
+                {
+                    b.HasOne("GitFyle.Core.Api.Models.Foundations.Sources.Source", "Source")
+                        .WithMany("Repositories")
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Source");
+                });
+
             modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Sources.Source", b =>
                 {
                     b.Navigation("Contributors");
-                });
+                    b.Navigation("Repositories");
+                 });
 #pragma warning restore 612, 618
         }
     }
