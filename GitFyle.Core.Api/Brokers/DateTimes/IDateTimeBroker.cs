@@ -1,13 +1,12 @@
 ﻿// ----------------------------------------------------------------------------------
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
-
 using System;
-namespace GitFyle.Core.Api.Brokers.Loggings
+
+namespace GitFyle.Core.Api.Brokers.DateTimes
 {
-    public interface ILoggingBroker
+    public interface IDateTimeBroker
     {
-        void LogInformation(string message);
-        void LogTrace(string message);
+        DateTimeOffset GetCurrentDateTimeOffset();
     }
 }

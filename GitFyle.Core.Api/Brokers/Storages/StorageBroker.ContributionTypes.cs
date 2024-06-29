@@ -2,12 +2,13 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
-namespace GitFyle.Core.Api.Brokers.Loggings
+using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
+using Microsoft.EntityFrameworkCore;
+
+namespace GitFyle.Core.Api.Brokers.Storages
 {
-    public interface ILoggingBroker
+    internal partial class StorageBroker
     {
-        void LogInformation(string message);
-        void LogTrace(string message);
+        public DbSet<ContributionType> ContributionTypes { get; set; }
     }
 }
