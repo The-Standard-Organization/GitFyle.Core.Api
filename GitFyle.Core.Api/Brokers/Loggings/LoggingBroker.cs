@@ -27,6 +27,6 @@ namespace GitFyle.Core.Api.Brokers.Loggings
             this.logger.LogWarning(message);
             
         public void LogError(Exception exception) =>
-           this.logger.LogError(exception, exception.Message);
+           this.logger.LogError(exception, message: exception.Message);
     }
 }
