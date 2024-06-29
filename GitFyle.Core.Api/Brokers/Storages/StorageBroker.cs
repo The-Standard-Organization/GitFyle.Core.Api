@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using EFxceptions;
+using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using Microsoft.EntityFrameworkCore;
@@ -32,8 +33,9 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            AddSourceConfigurations(modelBuilder.Entity<Source>());
             AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());
+            AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
+            AddSourceConfigurations(modelBuilder.Entity<Source>());
         }
     }
 }
