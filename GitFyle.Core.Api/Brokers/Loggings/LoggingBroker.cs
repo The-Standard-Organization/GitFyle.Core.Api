@@ -2,8 +2,8 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Extensions.Logging;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace GitFyle.Core.Api.Brokers.Loggings
 {
@@ -27,7 +27,8 @@ namespace GitFyle.Core.Api.Brokers.Loggings
             this.logger.LogWarning(message);
 
         public void LogCritical(Exception exception) =>
-            this.logger.LogCritical(exception, exception.Message);
+             this.logger.LogCritical(exception, exception.Message);
     }
 }
 
+>>>>>>>>> Temporary merge branch 2
