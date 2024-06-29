@@ -30,3 +30,5 @@ namespace GitFyle.Core.Api.Brokers.Loggings
              this.logger.LogCritical(exception, exception.Message);
     }
 }
+
+>>>>>>>>> Temporary merge branch 2
