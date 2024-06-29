@@ -3,11 +3,11 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-
 namespace GitFyle.Core.Api.Brokers.Loggings
 {
-    public interface ILoggingBroker 
+    public interface ILoggingBroker
     {
         void LogInformation(string message);
+        void LogTrace(string message);
     }
 }
