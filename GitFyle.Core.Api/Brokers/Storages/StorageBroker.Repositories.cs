@@ -2,13 +2,14 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
+using GitFyle.Core.Api.Models.Foundations.Repositories;
+using Microsoft.EntityFrameworkCore;
 
-namespace GitFyle.Core.Api.Brokers.DateTimes
+namespace GitFyle.Core.Api.Brokers.Storages
 {
-    public class DateTimeBroker : IDateTimeBroker
+    internal partial class StorageBroker
     {
-        public DateTimeOffset GetCurrentDateTimeOffset() =>
-            DateTimeOffset.UtcNow;
+        public DbSet<Repository> Repositories { get; set; }
     }
 }
+

@@ -25,10 +25,5 @@ namespace GitFyle.Core.Api.Brokers.Loggings
 
         public void LogWarning(string message) =>
             this.logger.LogWarning(message);
-
-        public void LogCritical(Exception exception) =>
-             this.logger.LogCritical(exception, exception.Message);
     }
 }
-
->>>>>>>>> Temporary merge branch 2
