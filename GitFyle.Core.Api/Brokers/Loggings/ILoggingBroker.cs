@@ -12,7 +12,6 @@ namespace GitFyle.Core.Api.Brokers.Loggings
         void LogTrace(string message);
         void LogDebug(string message);
         void LogWarning(string message);
-        void LogCritical(Exception exception);
         void LogError(Exception exception);
     }
 }
