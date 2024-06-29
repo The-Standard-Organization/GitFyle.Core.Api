@@ -31,6 +31,5 @@ namespace GitFyle.Core.Api.Brokers.Loggings
 
         public void LogCritical(Exception exception) =>
            this.logger.LogCritical(exception, message: exception.Message);
-
     }
 }
