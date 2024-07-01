@@ -22,7 +22,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Source> AddSourceAsync(Source source) =>
-            this.storageBroker.InsertSourceAsync(source);
+        public async ValueTask<Source> AddSourceAsync(Source source) =>
+            await this.storageBroker.InsertSourceAsync(source);
     }
 }
