@@ -4,15 +4,11 @@
 
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
-using Microsoft.EntityFrameworkCore;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
-    internal partial class StorageBroker
+    internal partial interface IStorageBroker
     {
-        public DbSet<Source> Sources { get; set; }
-
-        public ValueTask<Source> InsertSourceAsync(Source source) =>
-            InsertAsync(source);
+        ValueTask<Source> InsertSourceAsync(Source source);
     }
 }
