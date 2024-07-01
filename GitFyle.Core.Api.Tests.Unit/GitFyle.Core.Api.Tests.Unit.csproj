@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GitFyle.Core.Api\GitFyle.Core.Api.csproj" />
+    <ProjectReference Include="..\GitFyle.Core.Infrastructure\GitFyle.Core.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
