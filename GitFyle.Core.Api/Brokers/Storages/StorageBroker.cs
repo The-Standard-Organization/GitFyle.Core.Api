@@ -44,7 +44,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());            
             AddContributorConfigurations(modelBuilder.Entity<Contributor>());
             AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
