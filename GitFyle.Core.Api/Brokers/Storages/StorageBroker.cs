@@ -10,6 +10,7 @@ using GitFyle.Core.Api.Models.Foundations.Sources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
@@ -41,6 +42,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
             return entity;
         }
+
+        private IQueryable<T> SelectAll<T>() where T : class => this.Set<T>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
