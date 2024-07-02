@@ -4,6 +4,8 @@
 
 using System;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
+using GitFyle.Core.Api.Models.Foundations.Contributors;
+using GitFyle.Core.Api.Models.Foundations.Repositories;
 
 namespace GitFyle.Core.Api.Models.Foundations.Contributions
 {
@@ -19,5 +21,7 @@ namespace GitFyle.Core.Api.Models.Foundations.Contributions
         public DateTimeOffset UpdatedAt { get; set; }
         public DateTimeOffset MergedAt { get; set; }
         public ContributionType ContributionType { get; set; }
+        public Repository Repository { get; set; }
+        public Contributor Contributor { get; set; }
     }
 }

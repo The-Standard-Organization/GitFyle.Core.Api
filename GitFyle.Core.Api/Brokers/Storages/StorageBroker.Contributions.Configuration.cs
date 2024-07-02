@@ -13,10 +13,10 @@ namespace GitFyle.Core.Api.Brokers.Storages
         void AddContributionConfigurations(EntityTypeBuilder<Contribution> builder)
         {
             builder.HasIndex(contribution => new
-                {
-                    contribution.RepositoryId,
-                    contribution.ExternalId
-                })
+            {
+                contribution.RepositoryId,
+                contribution.ExternalId
+            })
                 .IsUnique();
 
             builder.Property(contribution => contribution.ExternalId)
@@ -39,6 +39,16 @@ namespace GitFyle.Core.Api.Brokers.Storages
             builder.HasOne(contribution => contribution.ContributionType)
                 .WithMany(contributionType => contributionType.Contributions)
                 .HasForeignKey(contribution => contribution.ContributionTypeId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(contribution => contribution.Repository)
+                .WithMany(repository => repository.Contributions)
+                .HasForeignKey(contribution => contribution.RepositoryId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(contribution => contribution.Contributor)
+                .WithMany(contributor => contributor.Contributions)
+                .HasForeignKey(contribution => contribution.ContributorId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

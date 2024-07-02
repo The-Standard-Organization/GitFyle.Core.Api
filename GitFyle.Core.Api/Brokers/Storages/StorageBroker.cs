@@ -49,7 +49,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
             AddContributorConfigurations(modelBuilder.Entity<Contributor>());
             AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
             AddSourceConfigurations(modelBuilder.Entity<Source>());
-            AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());
+            AddContributionConfigurations(modelBuilder.Entity<Contribution>());
         }
     }
 }
