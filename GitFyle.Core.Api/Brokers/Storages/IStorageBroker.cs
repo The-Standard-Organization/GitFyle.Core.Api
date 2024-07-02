@@ -4,7 +4,7 @@
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
-    public interface IStorageBroker
+    internal partial interface IStorageBroker
     {
     }
 }

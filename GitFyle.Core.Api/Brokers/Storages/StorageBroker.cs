@@ -9,6 +9,7 @@ using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
@@ -30,6 +31,15 @@ namespace GitFyle.Core.Api.Brokers.Storages
                     name: "DefaultConnection");
 
             optionsBuilder.UseSqlServer(connectionString);
+        }
+
+        private async ValueTask<T> InsertAsync<T>(T entity)
+        {
+            var broker = new StorageBroker(this.configuration);
+            broker.Entry(entity).State = EntityState.Added;
+            await broker.SaveChangesAsync();
+
+            return entity;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
