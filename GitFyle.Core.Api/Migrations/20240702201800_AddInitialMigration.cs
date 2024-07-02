@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GitFyle.Core.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class addSourceContributorContributionTypeRepository : Migration
+    public partial class AddInitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -88,6 +88,56 @@ namespace GitFyle.Core.Api.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Contributions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RepositoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ContributorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ContributionTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExternalId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    MergedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contributions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Contributions_ContributionTypes_ContributionTypeId",
+                        column: x => x.ContributionTypeId,
+                        principalTable: "ContributionTypes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Contributions_Contributors_ContributorId",
+                        column: x => x.ContributorId,
+                        principalTable: "Contributors",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Contributions_Repositories_RepositoryId",
+                        column: x => x.RepositoryId,
+                        principalTable: "Repositories",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contributions_ContributionTypeId",
+                table: "Contributions",
+                column: "ContributionTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contributions_ContributorId",
+                table: "Contributions",
+                column: "ContributorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contributions_RepositoryId_ExternalId",
+                table: "Contributions",
+                columns: new[] { "RepositoryId", "ExternalId" },
+                unique: true);
+
             migrationBuilder.CreateIndex(
                 name: "IX_ContributionTypes_Name",
                 table: "ContributionTypes",
@@ -124,6 +174,9 @@ namespace GitFyle.Core.Api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Contributions");
+
             migrationBuilder.DropTable(
                 name: "ContributionTypes");
 
