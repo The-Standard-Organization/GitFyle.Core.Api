@@ -11,7 +11,7 @@ using GitFyle.Core.Api.Models.Foundations.Sources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
-using System
+using System;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
@@ -24,6 +24,17 @@ namespace GitFyle.Core.Api.Brokers.Storages
             this.configuration = configuration;
             this.Database.Migrate();
         }
+        
+        protected override void OnConfiguring(
+            DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
+            string connectionString = this.configuration
+                .GetConnectionString(name: "DefaultConnection");
+
+            optionsBuilder.UseSqlServer(connectionString);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,13 +42,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
             AddContributorConfigurations(modelBuilder.Entity<Contributor>());
             AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
             AddSourceConfigurations(modelBuilder.Entity<Source>());
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            string connectionString = this.configuration.GetConnectionString(name: "DefaultConnection");
-            optionsBuilder.UseSqlServer(connectionString);
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object)
