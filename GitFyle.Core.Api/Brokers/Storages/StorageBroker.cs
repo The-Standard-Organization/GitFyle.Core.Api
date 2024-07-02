@@ -3,11 +3,13 @@
 // ----------------------------------------------------------------------------------
 
 using EFxceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
@@ -31,9 +33,19 @@ namespace GitFyle.Core.Api.Brokers.Storages
             optionsBuilder.UseSqlServer(connectionString);
         }
 
+        private async ValueTask<T> InsertAsync<T>(T entity)
+        {
+            var broker = new StorageBroker(this.configuration);
+            broker.Entry(entity).State = EntityState.Added;
+            await broker.SaveChangesAsync();
+
+            return entity;
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());
+            AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());            
+            AddContributorConfigurations(modelBuilder.Entity<Contributor>());
             AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
             AddSourceConfigurations(modelBuilder.Entity<Source>());
         }
