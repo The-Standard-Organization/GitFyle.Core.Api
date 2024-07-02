@@ -42,6 +42,14 @@ namespace GitFyle.Core.Api.Brokers.Storages
             return entity;
         }
 
+        private async ValueTask<T> DeleteAsync<T>(T @object)
+        {
+            this.Entry(@object).State = EntityState.Deleted;
+            await this.SaveChangesAsync();
+
+            return @object;
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());            
