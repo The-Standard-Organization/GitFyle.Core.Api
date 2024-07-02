@@ -42,6 +42,14 @@ namespace GitFyle.Core.Api.Brokers.Storages
             return entity;
         }
 
+        private async ValueTask<T> UpdateAsync<T>(T @object)
+        {
+            this.Entry(@object).State = EntityState.Modified;
+            await this.SaveChangesAsync();
+
+            return @object;
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());            

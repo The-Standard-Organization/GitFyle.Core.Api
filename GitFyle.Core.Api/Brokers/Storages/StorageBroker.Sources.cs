@@ -5,6 +5,7 @@
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
@@ -14,5 +15,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         public ValueTask<Source> InsertSourceAsync(Source source) =>
             InsertAsync(source);
+
+        public async ValueTask<Source> UpdateSourceAsync(Source student) =>
+           await UpdateAsync(student);
     }
 }
