@@ -24,13 +24,19 @@ namespace GitFyle.Core.Api.Brokers.Storages
             this.Database.Migrate();
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());            
+            AddContributorConfigurations(modelBuilder.Entity<Contributor>());
+            AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
+            AddSourceConfigurations(modelBuilder.Entity<Source>());
+        }
+
         protected override void OnConfiguring(
             DbContextOptionsBuilder optionsBuilder)
         {
-            string connectionString =
-                this.configuration.GetConnectionString(
-                    name: "DefaultConnection");
-
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            string connectionString = this.configuration.GetConnectionString(name: "DefaultConnection");
             optionsBuilder.UseSqlServer(connectionString);
         }
 
@@ -44,13 +50,5 @@ namespace GitFyle.Core.Api.Brokers.Storages
         }
 
         private IQueryable<T> SelectAll<T>() where T : class => this.Set<T>();
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());            
-            AddContributorConfigurations(modelBuilder.Entity<Contributor>());
-            AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
-            AddSourceConfigurations(modelBuilder.Entity<Source>());
-        }
     }
 }
