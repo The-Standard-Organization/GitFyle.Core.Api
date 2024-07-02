@@ -42,6 +42,9 @@ namespace GitFyle.Core.Api.Brokers.Storages
             return entity;
         }
 
+        private async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T : class =>
+           await this.FindAsync<T>(objectIds);
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());            
