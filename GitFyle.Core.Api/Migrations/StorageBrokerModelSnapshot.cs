@@ -44,6 +44,52 @@ namespace GitFyle.Core.Api.Migrations
                     b.ToTable("ContributionTypes");
                 });
 
+            modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Contributions.Contribution", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ContributionTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ContributorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("MergedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("RepositoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContributionTypeId");
+
+                    b.HasIndex("ContributorId");
+
+                    b.HasIndex("RepositoryId", "ExternalId")
+                        .IsUnique();
+
+                    b.ToTable("Contributions");
+                });
+
             modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Contributors.Contributor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -167,6 +213,33 @@ namespace GitFyle.Core.Api.Migrations
                     b.ToTable("Sources");
                 });
 
+            modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Contributions.Contribution", b =>
+                {
+                    b.HasOne("GitFyle.Core.Api.Models.Foundations.ContributionTypes.ContributionType", "ContributionType")
+                        .WithMany("Contributions")
+                        .HasForeignKey("ContributionTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("GitFyle.Core.Api.Models.Foundations.Contributors.Contributor", "Contributor")
+                        .WithMany("Contributions")
+                        .HasForeignKey("ContributorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("GitFyle.Core.Api.Models.Foundations.Repositories.Repository", "Repository")
+                        .WithMany("Contributions")
+                        .HasForeignKey("RepositoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ContributionType");
+
+                    b.Navigation("Contributor");
+
+                    b.Navigation("Repository");
+                });
+
             modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Contributors.Contributor", b =>
                 {
                     b.HasOne("GitFyle.Core.Api.Models.Foundations.Sources.Source", "Source")
@@ -187,6 +260,21 @@ namespace GitFyle.Core.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Source");
+                });
+
+            modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.ContributionTypes.ContributionType", b =>
+                {
+                    b.Navigation("Contributions");
+                });
+
+            modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Contributors.Contributor", b =>
+                {
+                    b.Navigation("Contributions");
+                });
+
+            modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Repositories.Repository", b =>
+                {
+                    b.Navigation("Contributions");
                 });
 
             modelBuilder.Entity("GitFyle.Core.Api.Models.Foundations.Sources.Source", b =>
