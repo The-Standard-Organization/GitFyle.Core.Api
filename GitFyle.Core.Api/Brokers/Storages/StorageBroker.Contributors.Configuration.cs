@@ -33,9 +33,9 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
             builder.HasIndex(contributor => new
             {
-                    contributor.ExternalId,
-                    contributor.SourceId,
-                    contributor.Username,
+                contributor.ExternalId,
+                contributor.SourceId,
+                contributor.Username,
             });
 
             builder.HasOne(contributor => contributor.Source)
