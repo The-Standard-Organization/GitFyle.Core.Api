@@ -11,34 +11,45 @@ namespace GitFyle.Core.Api.Brokers.Storages
     internal partial class StorageBroker
     {
 
-        void AddContributorConfigurations(EntityTypeBuilder<Contributor> builder) 
+        void AddContributorConfigurations(EntityTypeBuilder<Contributor> builder)
         {
 
-            builder.Property(contributor => contributor.ExternalId)
+            builder
+                .Property(contributor => contributor.ExternalId)
                 .HasMaxLength(255)
                 .IsRequired();
 
-            builder.Property(contributor => contributor.SourceId)
+            builder
+                .Property(contributor => contributor.SourceId)
                 .IsRequired();
 
-            builder.Property(contributor => contributor.Username)
+            builder
+                .Property(contributor => contributor.Username)
                 .HasMaxLength(255)
                 .IsRequired();
 
-            builder.Property(contributor => contributor.Name)
+            builder
+                .Property(contributor => contributor.Name)
                 .HasMaxLength(255);
 
-            builder.Property(contributor => contributor.Email)
+            builder
+                .Property(contributor => contributor.Email)
                 .HasMaxLength(255);
 
-            builder.HasIndex(contributor => new
-            {
-                contributor.ExternalId,
-                contributor.SourceId,
-                contributor.Username,
-            });
+            builder
+                .Property(contributor => contributor.AvatarUrl)
+                .IsRequired(false);
 
-            builder.HasOne(contributor => contributor.Source)
+            builder
+                .HasIndex(contributor => new
+                {
+                    contributor.ExternalId,
+                    contributor.SourceId,
+                    contributor.Username,
+                });
+
+            builder
+                .HasOne(contributor => contributor.Source)
                 .WithMany(source => source.Contributors)
                 .HasForeignKey(contributor => contributor.SourceId)
                 .OnDelete(DeleteBehavior.NoAction);

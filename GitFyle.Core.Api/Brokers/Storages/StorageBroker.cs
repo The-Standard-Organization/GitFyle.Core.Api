@@ -9,6 +9,7 @@ using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Sources;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -41,6 +42,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
             AddContributorConfigurations(modelBuilder.Entity<Contributor>());
             AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
             AddSourceConfigurations(modelBuilder.Entity<Source>());
+            AddContributionConfigurations(modelBuilder.Entity<Contribution>());
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object)
