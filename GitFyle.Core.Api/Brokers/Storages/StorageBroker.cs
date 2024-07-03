@@ -53,6 +53,9 @@ namespace GitFyle.Core.Api.Brokers.Storages
             return @object;
         }
 
+        private async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T: class =>
+            await this.FindAsync<T>(@objectIds);
+
         private void DetachSavedEntity<T>(T @object)
         {
             this.Entry(@object).State = EntityState.Detached;
