@@ -35,7 +35,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             var filler = new Filler<Source>();
 
             filler.Setup()
-                .OnProperty(source => source.Repositories).IgnoreIt();
+                .OnProperty(source => source.Repositories).IgnoreIt()
+                .OnProperty(source => source.Contributors).IgnoreIt();
 
             return filler;
         }
