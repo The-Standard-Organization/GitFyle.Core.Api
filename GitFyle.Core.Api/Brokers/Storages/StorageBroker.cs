@@ -13,7 +13,6 @@ using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
