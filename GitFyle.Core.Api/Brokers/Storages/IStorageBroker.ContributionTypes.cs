@@ -3,17 +3,12 @@
 // ----------------------------------------------------------------------------------
 
 using System.Threading.Tasks;
-using System;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
-using Microsoft.EntityFrameworkCore;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
-    internal partial class StorageBroker
+    internal partial interface IStorageBroker
     {
-        public DbSet<ContributionType> ContributionTypes { get; set; }
-
-        public async ValueTask<ContributionType> UpdateContributionTypeAsync(ContributionType contributionType) =>
-            await UpdateAsync(contributionType);
+        ValueTask<ContributionType> UpdateContributionTypeAsync(ContributionType contributionType);
     }
 }
