@@ -2,6 +2,8 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
@@ -63,6 +65,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
         {
             this.Entry(@object).State = EntityState.Modified;
             await this.SaveChangesAsync();
+
+            DetachSavedEntity(@object);
 
             return @object;
         }
