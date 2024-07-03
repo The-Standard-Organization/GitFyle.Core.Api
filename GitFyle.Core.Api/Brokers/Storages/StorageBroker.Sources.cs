@@ -16,7 +16,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
         public ValueTask<Source> InsertSourceAsync(Source source) =>
             InsertAsync(source);
 
-        public async ValueTask<Source> UpdateSourceAsync(Source student) =>
-           await UpdateAsync(student);
+        public async ValueTask<Source> UpdateSourceAsync(Source source) =>
+           await UpdateAsync(source);
     }
 }
