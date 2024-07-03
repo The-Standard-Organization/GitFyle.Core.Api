@@ -4,16 +4,11 @@
 
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
-    internal partial class StorageBroker
+    internal partial interface IStorageBroker
     {
-        public DbSet<Repository> Repositories { get; set; }
-
-        public async ValueTask<Repository> InsertRepositoryAsync(Repository repository) =>
-            await InsertAsync(repository);
+        ValueTask<Repository> InsertRepositoryAsync(Repository repository);
     }
 }
-
