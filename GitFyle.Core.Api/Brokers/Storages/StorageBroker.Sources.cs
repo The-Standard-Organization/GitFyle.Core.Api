@@ -22,5 +22,11 @@ namespace GitFyle.Core.Api.Brokers.Storages
       
         public async ValueTask<Source> SelectSourceByIdAsync(Guid sourceId) =>
             await SelectAsync<Source>(sourceId);
+
+        public async ValueTask<Source> UpdateSourceAsync(Source source) =>
+            await UpdateAsync(source);
+      
+        public async ValueTask<Source> DeleteSourceAsync(Source source) =>
+            await DeleteAsync(source);
     }
 }
