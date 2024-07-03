@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
@@ -21,5 +22,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
             await SelectAsync<Source>(sourceId);
 
         public IQueryable<Source> SelectAllSources() => SelectAll<Source>();
+
+        public async ValueTask<Source> UpdateSourceAsync(Source source) =>
+            await UpdateAsync(source);
     }
 }

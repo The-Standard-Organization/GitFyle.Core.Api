@@ -60,6 +60,15 @@ namespace GitFyle.Core.Api.Brokers.Storages
         private async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T : class =>
             await this.FindAsync<T>(objectIds);
 
+        private async ValueTask<T> UpdateAsync<T>(T @object)
+        {
+            this.Entry(@object).State = EntityState.Modified;
+            await this.SaveChangesAsync();
+            DetachSavedEntity(@object);
+
+            return @object;
+        }
+
         private void DetachSavedEntity<T>(T @object)
         {
             this.Entry(@object).State = EntityState.Detached;
