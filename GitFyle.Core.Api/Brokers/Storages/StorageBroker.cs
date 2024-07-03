@@ -2,6 +2,8 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
@@ -52,6 +54,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
             return @object;
         }
+
+        private IQueryable<T> SelectAll<T>() where T : class => this.Set<T>();
 
         private void DetachSavedEntity<T>(T @object)
         {
