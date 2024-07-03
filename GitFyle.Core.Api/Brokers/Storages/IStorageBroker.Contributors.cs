@@ -1,4 +1,8 @@
-﻿using GitFyle.Core.Api.Models.Foundations.Contributors;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
+using GitFyle.Core.Api.Models.Foundations.Contributors;
 using System;
 using System.Threading.Tasks;
 
