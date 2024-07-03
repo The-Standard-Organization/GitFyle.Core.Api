@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
