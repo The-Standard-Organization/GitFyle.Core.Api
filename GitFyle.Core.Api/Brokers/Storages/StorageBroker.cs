@@ -68,7 +68,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
         {
             this.Entry(@object).State = EntityState.Deleted;
             await this.SaveChangesAsync();
-
+            
             return @object;
         }
 
