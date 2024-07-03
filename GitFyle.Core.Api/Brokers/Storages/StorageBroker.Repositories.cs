@@ -16,4 +16,3 @@ namespace GitFyle.Core.Api.Brokers.Storages
             await InsertAsync(repository);
     }
 }
-
