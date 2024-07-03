@@ -14,6 +14,9 @@ namespace GitFyle.Core.Api.Brokers.Storages
     {
         public DbSet<Contributor> Contributors {  get; set; }
 
+        public ValueTask<Contributor> InsertContributorAsync(Contributor contributor) =>
+            InsertAsync(contributor); 
+
         public async ValueTask<Contributor> SelectContributorByIdAsync(Guid contributorId) =>
             await SelectAsync<Contributor>(contributorId);
 
