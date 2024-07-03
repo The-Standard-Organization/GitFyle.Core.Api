@@ -25,7 +25,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
             this.configuration = configuration;
             this.Database.Migrate();
         }
-        
+
         protected override void OnConfiguring(
             DbContextOptionsBuilder optionsBuilder)
         {
@@ -39,7 +39,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());            
+            AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());
             AddContributorConfigurations(modelBuilder.Entity<Contributor>());
             AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
             AddSourceConfigurations(modelBuilder.Entity<Source>());
@@ -57,12 +57,9 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         private IQueryable<T> SelectAll<T>() where T : class => this.Set<T>();
 
-        private void DetachSavedEntity<T>(T @object) =>
-        private async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T : class =>
-            await this.FindAsync<T>(objectIds);
-
         private void DetachSavedEntity<T>(T @object)
         {
             this.Entry(@object).State = EntityState.Detached;
+        }
     }
 }
