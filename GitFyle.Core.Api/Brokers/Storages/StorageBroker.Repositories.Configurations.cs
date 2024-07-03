@@ -12,16 +12,23 @@ namespace GitFyle.Core.Api.Brokers.Storages
     {
         void AddRepositoryConfigurations(EntityTypeBuilder<Repository> builder)
         {
-            builder.Property(repository => repository.Name)
+            builder
+                .Property(repository => repository.Name)
                 .HasMaxLength(255)
                 .IsRequired();
 
-            builder.Property(repository => repository.Owner)
+            builder
+                .Property(repository => repository.Owner)
                 .HasMaxLength(255)
                 .IsRequired();
 
-            builder.Property(repository => repository.ExternalId)
+            builder
+                .Property(repository => repository.ExternalId)
                 .HasMaxLength(255)
+                .IsRequired();
+
+            builder
+                .Property(repository => repository.SourceId)
                 .IsRequired();
 
             builder.HasIndex(repository => new
