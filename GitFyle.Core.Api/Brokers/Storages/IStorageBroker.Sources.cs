@@ -15,5 +15,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
         IQueryable<Source> SelectAllSources();
         ValueTask<Source> SelectSourceByIdAsync(Guid sourceId);
         ValueTask<Source> UpdateSourceAsync(Source source);
+        ValueTask<Source> DeleteSourceAsync(Source source);
     }
 }

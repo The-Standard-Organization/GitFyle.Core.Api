@@ -23,7 +23,11 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         public IQueryable<Source> SelectAllSources() => SelectAll<Source>();
 
+
         public async ValueTask<Source> UpdateSourceAsync(Source source) =>
             await UpdateAsync(source);
+
+        public async ValueTask<Source> DeleteSourceAsync(Source source) =>
+            await DeleteAsync(source);
     }
 }
