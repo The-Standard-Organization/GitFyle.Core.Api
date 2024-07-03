@@ -2,17 +2,15 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
-using GitFyle.Core.Api.Models.Foundations.Repositories;
-using Microsoft.EntityFrameworkCore;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
-    internal partial class StorageBroker
+    internal partial interface IStorageBroker
     {
-        public DbSet<Repository> Repositories { get; set; }
-
-        public async ValueTask<Repository> InsertRepositoryAsync(Repository repository) =>
-            await InsertAsync(repository);
+        ValueTask<Contribution> InsertContributionAsync(Contribution contribution);
+        ValueTask<Contribution> SelectContributionByIdAsync(Guid contributionId);
     }
 }
