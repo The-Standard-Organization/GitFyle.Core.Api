@@ -2,6 +2,9 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Models.Foundations.Sources;
@@ -39,6 +42,26 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 .OnProperty(source => source.Contributors).IgnoreIt();
 
             return filler;
+        }
+
+        private delegate ValueTask ReturningNothingFunction();
+
+        private async ValueTask MustCompleteWithinTimeout(
+            ReturningNothingFunction returningNothingFunction,
+            int timeoutMilliseconds)
+        {
+            using var cts = new CancellationTokenSource();
+            var timeoutTask = Task.Delay(timeoutMilliseconds, cts.Token);
+            var testTask = Task.Run(async () => await returningNothingFunction(), cts.Token);
+            var completedTask = await Task.WhenAny(testTask, timeoutTask);
+
+            if (completedTask == timeoutTask)
+            {
+                cts.Cancel();
+                throw new TimeoutException($"The test exceeded the allowed timeout period of {timeoutMilliseconds}ms.");
+            }
+
+            await testTask;
         }
     }
 }

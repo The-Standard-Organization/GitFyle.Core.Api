@@ -15,29 +15,33 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         [Fact]
         public async Task ShouldAddSourceAsync()
         {
-            // given
-            Source randomSource = CreateRandomSource();
-            Source inputSource = randomSource;
-            Source insertedSource = inputSource.DeepClone();
-            Source expectedSource = insertedSource.DeepClone();
+            await MustCompleteWithinTimeout(async () =>
+            {
+                // given
+                Source randomSource = CreateRandomSource();
+                Source inputSource = randomSource;
+                Source insertedSource = inputSource.DeepClone();
+                Source expectedSource = insertedSource.DeepClone();
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertSourceAsync(inputSource))
-                    .ReturnsAsync(insertedSource);
+                this.storageBrokerMock.Setup(broker =>
+                    broker.InsertSourceAsync(inputSource))
+                        .ReturnsAsync(insertedSource);
 
-            // when
-            Source actualSource =
-                await this.sourceService.AddSourceAsync(inputSource);
+                // when
+                Source actualSource =
+                    await this.sourceService.AddSourceAsync(inputSource);
 
-            // then
-            actualSource.Should().BeEquivalentTo(expectedSource);
+                // then
+                actualSource.Should().BeEquivalentTo(expectedSource);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertSourceAsync(inputSource),
-                    Times.Once);
+                this.storageBrokerMock.Verify(broker =>
+                    broker.InsertSourceAsync(inputSource),
+                        Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
+                this.storageBrokerMock.VerifyNoOtherCalls();
+                this.loggingBrokerMock.VerifyNoOtherCalls();
+            },
+            timeoutMilliseconds: 1000);
         }
     }
 }
