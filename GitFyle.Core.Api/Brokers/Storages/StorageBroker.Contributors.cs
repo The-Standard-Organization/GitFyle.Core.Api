@@ -14,6 +14,5 @@ namespace GitFyle.Core.Api.Brokers.Storages
         public DbSet<Contributor> Contributors {  get; set; }
 
         public IQueryable<Contributor> SelectAllContributorsAsync() => SelectAll<Contributor>(); 
-
     }
 }
