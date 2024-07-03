@@ -12,4 +12,3 @@ namespace GitFyle.Core.Api.Brokers.Storages
         public DbSet<Repository> Repositories { get; set; }
     }
 }
-
