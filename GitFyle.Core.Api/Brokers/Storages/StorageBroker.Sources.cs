@@ -17,6 +17,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
             InsertAsync(source);
 
         public async ValueTask<Source> SelectSourceByIdAsync(Guid sourceId) =>
-          await SelectAsync<Source>(sourceId);
+            await SelectAsync<Source>(sourceId);
     }
 }
