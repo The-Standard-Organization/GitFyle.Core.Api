@@ -11,6 +11,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
     internal partial class StorageBroker
     {
         public DbSet<Contribution> Contributions { get; set; }
+
         public async ValueTask<Contribution> InsertContributionAsync(Contribution contribution) =>
             await InsertAsync(contribution);
     }
