@@ -1,7 +1,10 @@
-﻿namespace GitFyle.Core.Api.Brokers.Storages
+﻿using GitFyle.Core.Api.Models.Foundations.Contributors;
+using System.Threading.Tasks;
+
+namespace GitFyle.Core.Api.Brokers.Storages
 {
     internal partial interface IStorageBroker   
     {
-
+        public ValueTask<Contributor> UpdateContributorAsync(Contributor contributor);
     }
 }
