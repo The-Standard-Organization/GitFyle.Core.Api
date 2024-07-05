@@ -77,9 +77,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
             return @object;
         }
 
-        private void DetachSavedEntity<T>(T @object)
-        {
-            this.Entry(@object).State = EntityState.Detached;
-        }
+        private void DetachSavedEntity<T>(T @object) => this.Entry(@object).State = EntityState.Detached;
     }
 }
