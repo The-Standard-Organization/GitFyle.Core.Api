@@ -1,6 +1,6 @@
 @GitFyle.Core.Api_HostAddress = http://localhost:5184
 
-GET {{GitFyle.Core.Api_HostAddress}}/weatherforecast/
+GET {{GitFyle.Core.Api_HostAddress}}/api/home/
 Accept: application/json
 
 ###
