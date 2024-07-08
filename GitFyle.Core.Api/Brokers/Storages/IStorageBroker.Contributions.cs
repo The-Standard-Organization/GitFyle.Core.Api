@@ -14,5 +14,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
         ValueTask<Contribution> InsertContributionAsync(Contribution contribution);
         IQueryable<Contribution> SelectAllContributionsAsync();
         ValueTask<Contribution> SelectContributionByIdAsync(Guid contributionId);
+        ValueTask<Contribution> UpdateContributionAsync(Contribution contribution);
     }
 }
