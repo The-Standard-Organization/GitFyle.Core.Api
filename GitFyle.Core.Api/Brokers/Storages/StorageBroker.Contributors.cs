@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
         public ValueTask<Contributor> InsertContributorAsync(Contributor contributor) =>
             InsertAsync(contributor); 
 
+        public IQueryable<Contributor> SelectAllContributorsAsync() => SelectAll<Contributor>(); 
+      
         public async ValueTask<Contributor> SelectContributorByIdAsync(Guid contributorId) =>
             await SelectAsync<Contributor>(contributorId);
 
