@@ -10,45 +10,44 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace GitFyle.Core.Api
+namespace GitFyle.Core.Api;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        WebApplicationBuilder builder =
+            WebApplication.CreateBuilder(args);
+
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+        builder.Services.AddDbContext<StorageBroker>();
+
+        builder.Services.AddTransient<
+            IStorageBroker,
+            StorageBroker>();
+
+        builder.Services.AddTransient<
+            ILoggingBroker,
+            LoggingBroker>();
+
+        builder.Services.AddTransient<
+            IDateTimeBroker, 
+            DateTimeBroker>();
+
+        WebApplication webApplication =
+            builder.Build();
+
+        if (webApplication.Environment.IsDevelopment())
         {
-            WebApplicationBuilder builder =
-                WebApplication.CreateBuilder(args);
-
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<StorageBroker>();
-
-            builder.Services.AddTransient<
-                IStorageBroker,
-                StorageBroker>();
-
-            builder.Services.AddTransient<
-                ILoggingBroker,
-                LoggingBroker>();
-
-            builder.Services.AddTransient<
-                IDateTimeBroker, 
-                DateTimeBroker>();
-
-            WebApplication webApplication =
-                builder.Build();
-
-            if (webApplication.Environment.IsDevelopment())
-            {
-                webApplication.UseSwagger();
-                webApplication.UseSwaggerUI();
-            }
-
-            webApplication.UseHttpsRedirection();
-            webApplication.UseAuthorization();
-            webApplication.MapControllers();
-            webApplication.Run();
+            webApplication.UseSwagger();
+            webApplication.UseSwaggerUI();
         }
+
+        webApplication.UseHttpsRedirection();
+        webApplication.UseAuthorization();
+        webApplication.MapControllers();
+        webApplication.Run();
     }
 }
