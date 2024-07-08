@@ -4,14 +4,13 @@
 
 using GitFyle.Core.Infrastructure.Services;
 
-namespace GitFyle.Core.Infrastructure
+namespace GitFyle.Core.Infrastructure;
+
+internal class Program
 {
-    internal class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            var scriptGenerationService = new ScriptGenerationService();
-            scriptGenerationService.GenerateBuildScript();
-        }
+        var scriptGenerationService = new ScriptGenerationService();
+        scriptGenerationService.GenerateBuildScript();
     }
 }
