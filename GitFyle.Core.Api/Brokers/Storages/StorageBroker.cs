@@ -13,72 +13,71 @@ using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GitFyle.Core.Api.Brokers.Storages
+namespace GitFyle.Core.Api.Brokers.Storages;
+
+internal partial class StorageBroker : EFxceptionsContext, IStorageBroker
 {
-    internal partial class StorageBroker : EFxceptionsContext, IStorageBroker
+    private readonly IConfiguration configuration;
+
+    public StorageBroker(IConfiguration configuration)
     {
-        private readonly IConfiguration configuration;
+        this.configuration = configuration;
+        this.Database.Migrate();
+    }
 
-        public StorageBroker(IConfiguration configuration)
-        {
-            this.configuration = configuration;
-            this.Database.Migrate();
-        }
+    protected override void OnConfiguring(
+        DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
-        protected override void OnConfiguring(
-            DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        string connectionString = this.configuration
+            .GetConnectionString(name: "DefaultConnection");
 
-            string connectionString = this.configuration
-                .GetConnectionString(name: "DefaultConnection");
+        optionsBuilder.UseSqlServer(connectionString);
+    }
 
-            optionsBuilder.UseSqlServer(connectionString);
-        }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());
+        AddContributorConfigurations(modelBuilder.Entity<Contributor>());
+        AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
+        AddSourceConfigurations(modelBuilder.Entity<Source>());
+        AddContributionConfigurations(modelBuilder.Entity<Contribution>());
+    }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            AddContributionTypeConfigurations(modelBuilder.Entity<ContributionType>());
-            AddContributorConfigurations(modelBuilder.Entity<Contributor>());
-            AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
-            AddSourceConfigurations(modelBuilder.Entity<Source>());
-            AddContributionConfigurations(modelBuilder.Entity<Contribution>());
-        }
+    private async ValueTask<T> InsertAsync<T>(T @object)
+    {
+        this.Entry(@object).State = EntityState.Added;
+        await this.SaveChangesAsync();
+        DetachSavedEntity(@object);
 
-        private async ValueTask<T> InsertAsync<T>(T @object)
-        {
-            this.Entry(@object).State = EntityState.Added;
-            await this.SaveChangesAsync();
-            DetachSavedEntity(@object);
+        return @object;
+    }
 
-            return @object;
-        }
+    private IQueryable<T> SelectAll<T>() where T : class => this.Set<T>();
 
-        private IQueryable<T> SelectAll<T>() where T : class => this.Set<T>();
+    private async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T : class =>
+        await this.FindAsync<T>(objectIds);
 
-        private async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T : class =>
-            await this.FindAsync<T>(objectIds);
+    private async ValueTask<T> UpdateAsync<T>(T @object)
+    {
+        this.Entry(@object).State = EntityState.Modified;
+        await this.SaveChangesAsync();
+        DetachSavedEntity(@object);
 
-        private async ValueTask<T> UpdateAsync<T>(T @object)
-        {
-            this.Entry(@object).State = EntityState.Modified;
-            await this.SaveChangesAsync();
-            DetachSavedEntity(@object);
+        return @object;
+    }
 
-            return @object;
-        }
+    private async ValueTask<T> DeleteAsync<T>(T @object)
+    {
+        this.Entry(@object).State = EntityState.Deleted;
+        await this.SaveChangesAsync();
 
-        private async ValueTask<T> DeleteAsync<T>(T @object)
-        {
-            this.Entry(@object).State = EntityState.Deleted;
-            await this.SaveChangesAsync();
+        return @object;
+    }
 
-            return @object;
-        }
-
-        private void DetachSavedEntity<T>(T @object)
-        {
-            this.Entry(@object).State = EntityState.Detached;
-        }
+    private void DetachSavedEntity<T>(T @object)
+    {
+        this.Entry(@object).State = EntityState.Detached;
     }
 }
