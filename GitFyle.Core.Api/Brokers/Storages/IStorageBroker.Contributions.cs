@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 
 namespace GitFyle.Core.Api.Brokers.Storages
@@ -11,7 +12,9 @@ namespace GitFyle.Core.Api.Brokers.Storages
     internal partial interface IStorageBroker
     {
         ValueTask<Contribution> InsertContributionAsync(Contribution contribution);
-        ValueTask<Contribution> DeleteContributionAsync(Contribution contribution);
+        IQueryable<Contribution> SelectAllContributionsAsync();
         ValueTask<Contribution> SelectContributionByIdAsync(Guid contributionId);
+        ValueTask<Contribution> UpdateContributionAsync(Contribution contribution);
+        ValueTask<Contribution> DeleteContributionAsync(Contribution contribution);
     }
 }
