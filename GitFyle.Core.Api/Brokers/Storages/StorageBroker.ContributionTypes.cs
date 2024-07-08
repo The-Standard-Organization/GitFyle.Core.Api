@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using System.Linq;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
@@ -18,6 +19,9 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         public IQueryable<ContributionType> SelectAllContributionTypesAsync() =>
             SelectAll<ContributionType>();
+      
+        public async ValueTask<ContributionType> SelectContributionTypeByIdAsync(Guid contributionTypeId) =>
+            await SelectAsync<ContributionType>(contributionTypeId);
       
         public async ValueTask<ContributionType> DeleteContributionTypeAsync(ContributionType contributionType) =>
             await DeleteAsync(contributionType);
