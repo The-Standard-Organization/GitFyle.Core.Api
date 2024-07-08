@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
@@ -22,6 +22,9 @@ namespace GitFyle.Core.Api.Brokers.Storages
       
         public async ValueTask<ContributionType> SelectContributionTypeByIdAsync(Guid contributionTypeId) =>
             await SelectAsync<ContributionType>(contributionTypeId);
+
+        public async ValueTask<ContributionType> UpdateContributionTypeAsync(ContributionType contributionType) =>
+            await UpdateAsync(contributionType);
       
         public async ValueTask<ContributionType> DeleteContributionTypeAsync(ContributionType contributionType) =>
             await DeleteAsync(contributionType);
