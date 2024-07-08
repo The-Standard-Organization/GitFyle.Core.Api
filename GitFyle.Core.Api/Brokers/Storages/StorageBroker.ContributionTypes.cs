@@ -18,5 +18,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         public IQueryable<ContributionType> SelectAllContributionTypesAsync() =>
             SelectAll<ContributionType>();
+      
+        public async ValueTask<ContributionType> DeleteContributionTypeAsync(ContributionType contributionType) =>
+            await DeleteAsync(contributionType);
     }
 }
