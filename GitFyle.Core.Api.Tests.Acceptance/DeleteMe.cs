@@ -2,12 +2,11 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-namespace GitFyle.Core.Api.Tests.Acceptance
+namespace GitFyle.Core.Api.Tests.Acceptance;
+
+public class DeleteMe
 {
-    public class DeleteMe
-    {
-        [Fact]
-        public void ShouldBeTrue() =>
-            Assert.True(condition: true);
-    }
+    [Fact]
+    public void ShouldBeTrue() =>
+        Assert.True(condition: true);
 }
