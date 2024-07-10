@@ -50,14 +50,14 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             ReturningNothingFunction returningNothingFunction,
             int timeoutMilliseconds)
         {
-            using var cts = new CancellationTokenSource();
-            var timeoutTask = Task.Delay(timeoutMilliseconds, cts.Token);
-            var testTask = Task.Run(async () => await returningNothingFunction(), cts.Token);
+            using var cancellationTokenSource = new CancellationTokenSource();
+            var timeoutTask = Task.Delay(timeoutMilliseconds, cancellationTokenSource.Token);
+            var testTask = Task.Run(async () => await returningNothingFunction(), cancellationTokenSource.Token);
             var completedTask = await Task.WhenAny(testTask, timeoutTask);
 
             if (completedTask == timeoutTask)
             {
-                cts.Cancel();
+                cancellationTokenSource.Cancel();
                 throw new TimeoutException($"The test exceeded the allowed timeout period of {timeoutMilliseconds}ms.");
             }
 
