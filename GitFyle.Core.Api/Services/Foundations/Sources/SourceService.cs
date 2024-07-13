@@ -9,20 +9,25 @@ using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Sources
 {
-    internal class SourceService : ISourceService
+    internal partial class SourceService : ISourceService
     {
         private readonly IStorageBroker storageBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public SourceService(
-            IStorageBroker storageBroker, 
+            IStorageBroker storageBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Source> AddSourceAsync(Source source) =>
-            await this.storageBroker.InsertSourceAsync(source);
+        public ValueTask<Source> AddSourceAsync(Source source) =>
+        TryCatch(async () =>
+        {
+            ValidateSourceOnAdd(source);
+
+            return await this.storageBroker.InsertSourceAsync(source);
+        });
     }
 }
