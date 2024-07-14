@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.Loggings;
@@ -11,6 +12,7 @@ using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Services.Foundations.Sources;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 {
@@ -28,6 +30,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             this.sourceService = new SourceService(
                 storageBroker: this.storageBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
+        }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(
+            Xeption expectedException)
+        {
+            return actualException =>
+                actualException.SameExceptionAs(expectedException);
         }
 
         private static Source CreateRandomSource() =>
