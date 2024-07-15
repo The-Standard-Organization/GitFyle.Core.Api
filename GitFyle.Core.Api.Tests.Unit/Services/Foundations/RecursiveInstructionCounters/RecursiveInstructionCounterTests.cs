@@ -17,15 +17,15 @@ using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
+namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.RecursiveInstructionCounters
 {
-    public partial class InstructionCounterTests
+    public partial class RecursiveInstructionCounterTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly SourceService sourceService;
 
-        public InstructionCounterTests()
+        public RecursiveInstructionCounterTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();

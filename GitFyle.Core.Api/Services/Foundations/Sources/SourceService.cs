@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
@@ -26,9 +27,22 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
         TryCatch(async () =>
         {
             ValidateSourceOnAdd(source);
-            //var x = 1 + 2;
+            DoSomeAdditionalInstruction();
 
             return await this.storageBroker.InsertSourceAsync(source);
         });
+
+        public IQueryable<Source> RetrieveAllSources() =>
+        TryCatch(() =>
+        {
+            DoSomeAdditionalInstruction();
+
+            return this.storageBroker.SelectAllSources();
+        });
+
+        private static void DoSomeAdditionalInstruction()
+        {
+            var x = 1 + 2;
+        }
     }
 }

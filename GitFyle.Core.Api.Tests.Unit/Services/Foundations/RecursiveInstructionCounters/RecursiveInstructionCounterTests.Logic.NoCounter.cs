@@ -9,9 +9,9 @@ using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using Moq;
 
-namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
+namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.RecursiveInstructionCounters
 {
-    public partial class InstructionCounterTests
+    public partial class RecursiveInstructionCounterTests
     {
         [Fact]
         public async Task NoCounterAsync()

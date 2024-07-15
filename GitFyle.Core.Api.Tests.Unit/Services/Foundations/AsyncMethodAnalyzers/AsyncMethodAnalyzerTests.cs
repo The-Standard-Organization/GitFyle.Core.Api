@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
@@ -16,15 +17,15 @@ using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
+namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.AsyncMethodAnalyzers
 {
-    public partial class SourceServiceTests
+    public partial class AsyncMethodAnalyzerTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly SourceService sourceService;
 
-        public SourceServiceTests()
+        public AsyncMethodAnalyzerTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
@@ -39,6 +40,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         {
             return actualException =>
                 actualException.SameExceptionAs(expectedException);
+        }
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static IQueryable<Source> CreateRandomSources()
+        {
+            return CreateSourceFiller()
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
         }
 
         private static Source CreateRandomSource() =>

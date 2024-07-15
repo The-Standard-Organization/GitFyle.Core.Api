@@ -11,9 +11,9 @@ using GitFyle.Core.Api.Tests.Unit.Helpers;
 using Mono.Cecil;
 using Moq;
 
-namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
+namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.AsyncMethodAnalyzers
 {
-    public partial class InstructionCounterTests
+    public partial class AsyncMethodAnalyzerTests
     {
 
         [Fact]
@@ -22,7 +22,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
             await MustCompleteWithinTimeout(async () =>
             {
                 // given
-                int expectedNumberOfInstructions = 14;
+                int expectedNumberOfInstructions = 39;
 
                 MethodDefinition methodDefinition =
                     FindMethodDefinition(methodDelegate: this.sourceService.AddSourceAsync);
@@ -41,7 +41,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
                     await this.sourceService.AddSourceAsync(inputSource);
 
                 int actualNumberOfInstructions =
-                    GetInstructionCount(methodDefinition);
+                    AsyncMethodAnalyzer.AnalyzeAsyncMethod(methodDelegate: this.sourceService.AddSourceAsync);
 
                 // then
                 actualSource.Should().BeEquivalentTo(expectedSource);
@@ -61,7 +61,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
         public async Task InstructionCounterWithTryCatchAsync()
         {
             // given
-            int expectedNumberOfInstructions = 33;
+            int expectedNumberOfInstructions = 39;
 
             InstructionCounter instructionCounter = new InstructionCounter(
                 methodDelegate: this.sourceService.AddSourceAsync);
@@ -79,7 +79,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
             Source actualSource =
                 await this.sourceService.AddSourceAsync(inputSource);
 
-            int actualNumberOfInstructions = instructionCounter.CountInstructionsIncludingTryCatch();
+            int actualNumberOfInstructions =
+                AsyncMethodAnalyzer.AnalyzeAsyncMethod(methodDelegate: this.sourceService.AddSourceAsync);
 
             // then
             actualSource.Should().BeEquivalentTo(expectedSource);
@@ -97,7 +98,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
         public void InstructionCounterWithTryCatch()
         {
             // given
-            int expectedNumberOfInstructions = 16;
+            int expectedNumberOfInstructions = 39;
 
             InstructionCounter instructionCounter = new InstructionCounter(
                 methodDelegate: this.sourceService.RetrieveAllSources);
@@ -115,7 +116,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
             IQueryable<Source> actualSources =
                 this.sourceService.RetrieveAllSources();
 
-            int actualNumberOfInstructions = instructionCounter.CountInstructionsIncludingTryCatch();
+            int actualNumberOfInstructions =
+                AsyncMethodAnalyzer.AnalyzeAsyncMethod(methodDelegate: this.sourceService.AddSourceAsync);
 
             // then
             actualSources.Should().BeEquivalentTo(expectedSources);

@@ -11,59 +11,55 @@ using GitFyle.Core.Api.Tests.Unit.Helpers;
 using Mono.Cecil;
 using Moq;
 
-namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
+namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.RecursiveInstructionCounters
 {
-    public partial class InstructionCounterTests
+    public partial class RecursiveInstructionCounterTests
     {
 
         [Fact]
-        public async Task BasicInstructionCounterAsync()
+        public async Task BasicRecursiveInstructionCounterAsync()
         {
-            await MustCompleteWithinTimeout(async () =>
-            {
-                // given
-                int expectedNumberOfInstructions = 14;
+            // given
+            int expectedNumberOfInstructions = 14;
 
-                MethodDefinition methodDefinition =
-                    FindMethodDefinition(methodDelegate: this.sourceService.AddSourceAsync);
+            MethodDefinition methodDefinition =
+                FindMethodDefinition(methodDelegate: this.sourceService.AddSourceAsync);
 
-                Source randomSource = CreateRandomSource();
-                Source inputSource = randomSource;
-                Source insertedSource = inputSource.DeepClone();
-                Source expectedSource = insertedSource.DeepClone();
+            Source randomSource = CreateRandomSource();
+            Source inputSource = randomSource;
+            Source insertedSource = inputSource.DeepClone();
+            Source expectedSource = insertedSource.DeepClone();
 
-                this.storageBrokerMock.Setup(broker =>
-                    broker.InsertSourceAsync(inputSource))
-                        .ReturnsAsync(insertedSource);
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertSourceAsync(inputSource))
+                    .ReturnsAsync(insertedSource);
 
-                // when
-                Source actualSource =
-                    await this.sourceService.AddSourceAsync(inputSource);
+            // when
+            Source actualSource =
+                await this.sourceService.AddSourceAsync(inputSource);
 
-                int actualNumberOfInstructions =
-                    GetInstructionCount(methodDefinition);
+            int actualNumberOfInstructions =
+                GetInstructionCount(methodDefinition);
 
-                // then
-                actualSource.Should().BeEquivalentTo(expectedSource);
-                actualNumberOfInstructions.Should().Be(expectedNumberOfInstructions);
+            // then
+            actualSource.Should().BeEquivalentTo(expectedSource);
+            actualNumberOfInstructions.Should().Be(expectedNumberOfInstructions);
 
-                this.storageBrokerMock.Verify(broker =>
-                    broker.InsertSourceAsync(inputSource),
-                        Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertSourceAsync(inputSource),
+                    Times.Once);
 
-                this.storageBrokerMock.VerifyNoOtherCalls();
-                this.loggingBrokerMock.VerifyNoOtherCalls();
-            },
-            timeoutMilliseconds: 1000);
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task InstructionCounterWithTryCatchAsync()
+        public async Task RecursiveInstructionCounterWithTryCatchAsync()
         {
             // given
-            int expectedNumberOfInstructions = 33;
+            int expectedNumberOfInstructions = 91237;
 
-            InstructionCounter instructionCounter = new InstructionCounter(
+            RecursiveInstructionCounter instructionCounter = new RecursiveInstructionCounter(
                 methodDelegate: this.sourceService.AddSourceAsync);
 
             Source randomSource = CreateRandomSource();
@@ -79,7 +75,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
             Source actualSource =
                 await this.sourceService.AddSourceAsync(inputSource);
 
-            int actualNumberOfInstructions = instructionCounter.CountInstructionsIncludingTryCatch();
+            int actualNumberOfInstructions = instructionCounter.CountInstructionsRecursive();
 
             // then
             actualSource.Should().BeEquivalentTo(expectedSource);
@@ -94,12 +90,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
         }
 
         [Fact]
-        public void InstructionCounterWithTryCatch()
+        public void RecursiveInstructionCounterWithTryCatch()
         {
             // given
-            int expectedNumberOfInstructions = 16;
+            int expectedNumberOfInstructions = 128;
 
-            InstructionCounter instructionCounter = new InstructionCounter(
+            RecursiveInstructionCounter instructionCounter = new RecursiveInstructionCounter(
                 methodDelegate: this.sourceService.RetrieveAllSources);
 
             // given
@@ -115,7 +111,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.InstructionCounters
             IQueryable<Source> actualSources =
                 this.sourceService.RetrieveAllSources();
 
-            int actualNumberOfInstructions = instructionCounter.CountInstructionsIncludingTryCatch();
+            int actualNumberOfInstructions = instructionCounter.CountInstructionsRecursive();
 
             // then
             actualSources.Should().BeEquivalentTo(expectedSources);
