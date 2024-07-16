@@ -13,6 +13,7 @@ using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
@@ -50,7 +51,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
         {
             this.Entry(@object).State = EntityState.Added;
             await this.SaveChangesAsync();
-            DetachSavedEntity(@object);
+            DetachEntity(@object);
 
             return @object;
         }
@@ -58,13 +59,13 @@ namespace GitFyle.Core.Api.Brokers.Storages
         private IQueryable<T> SelectAll<T>() where T : class => this.Set<T>();
 
         private async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T : class =>
-            await this.FindAsync<T>(objectIds);
+            await this.FindAsync<T>(@objectIds);
 
         private async ValueTask<T> UpdateAsync<T>(T @object)
         {
             this.Entry(@object).State = EntityState.Modified;
             await this.SaveChangesAsync();
-            DetachSavedEntity(@object);
+            DetachEntity(@object);
 
             return @object;
         }
@@ -73,11 +74,12 @@ namespace GitFyle.Core.Api.Brokers.Storages
         {
             this.Entry(@object).State = EntityState.Deleted;
             await this.SaveChangesAsync();
+            DetachEntity(@object);
 
             return @object;
         }
 
-        private void DetachSavedEntity<T>(T @object)
+        private void DetachEntity<T>(T @object)
         {
             this.Entry(@object).State = EntityState.Detached;
         }
