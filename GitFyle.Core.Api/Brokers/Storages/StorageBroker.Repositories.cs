@@ -13,7 +13,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
     internal partial class StorageBroker
     {
         public DbSet<Repository> Repositories { get; set; }
-       
+
         public async ValueTask<Repository> InsertRepositoryAsync(Repository repository) =>
             await InsertAsync(repository);
 
@@ -22,7 +22,10 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         public async ValueTask<Repository> SelectRepositoryByIdAsync(Guid repositoryId) =>
             await SelectAsync<Repository>(repositoryId);   
-      
+
+        public async ValueTask<Repository> UpdateRepositoryAsync(Repository repository) =>
+            await UpdateAsync(repository); 
+
         public async ValueTask<Repository> DeleteRepositoryAsync(Repository repository) =>
             await DeleteAsync(repository);
     }
