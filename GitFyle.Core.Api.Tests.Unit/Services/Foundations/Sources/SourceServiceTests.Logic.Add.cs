@@ -7,6 +7,7 @@ using FluentAssertions;
 using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using Moq;
+using Valid8R;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 {
@@ -33,8 +34,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             actualSource.Should().BeEquivalentTo(expectedSource);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertSourceAsync(inputSource),
-                    Times.Once);
+                broker.UpdateSourceAsync(
+                    It.Is(Valid8.SameObjectAs<Source>(inputSource, output, "1st this.storageBrokerMock.Verify"))),
+                        Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

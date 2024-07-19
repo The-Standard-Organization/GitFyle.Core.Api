@@ -11,6 +11,7 @@ using GitFyle.Core.Api.Services.Foundations.Sources;
 using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit.Abstractions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 {
@@ -19,9 +20,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly SourceService sourceService;
+        private readonly ITestOutputHelper output;
 
-        public SourceServiceTests()
+        public SourceServiceTests(ITestOutputHelper output)
         {
+            this.output = output;
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
@@ -30,12 +33,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
-        private static Expression<Func<Xeption, bool>> SameExceptionAs(
-            Xeption expectedException)
-        {
-            return actualException =>
-                actualException.SameExceptionAs(expectedException);
-        }
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private static Source CreateRandomSource() =>
             CreateSourceFiller().Create();

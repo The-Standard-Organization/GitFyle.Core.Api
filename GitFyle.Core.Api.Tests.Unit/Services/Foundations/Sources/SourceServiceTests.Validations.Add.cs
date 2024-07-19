@@ -4,10 +4,10 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Moq;
+using Valid8R;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 {
@@ -42,7 +42,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(
-                    SameExceptionAs(expectedSourceValidationException))),
+                    Valid8.SameExceptionAs(expectedSourceValidationException, output, "this.loggingBrokerMock.Verify"))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>

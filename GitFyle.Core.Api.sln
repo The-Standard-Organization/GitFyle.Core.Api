@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitFyle.Core.Api", "GitFyle
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitFyle.Core.Infrastructure", "GitFyle.Core.Infrastructure\GitFyle.Core.Infrastructure.csproj", "{888F927E-06AA-4652-A67E-FEBD1A449DCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitFyle.Core.Api.Tests.Unit", "GitFyle.Core.Api.Tests.Unit\GitFyle.Core.Api.Tests.Unit.csproj", "{4958E09C-F0F6-490C-8758-037F2BD588C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitFyle.Core.Api.Tests.Unit", "GitFyle.Core.Api.Tests.Unit\GitFyle.Core.Api.Tests.Unit.csproj", "{4958E09C-F0F6-490C-8758-037F2BD588C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitFyle.Core.Api.Tests.Acceptance", "GitFyle.Core.Api.Tests.Acceptance\GitFyle.Core.Api.Tests.Acceptance.csproj", "{078B3B1F-67AE-4399-AA59-CE503F07F7BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitFyle.Core.Api.Tests.Acceptance", "GitFyle.Core.Api.Tests.Acceptance\GitFyle.Core.Api.Tests.Acceptance.csproj", "{078B3B1F-67AE-4399-AA59-CE503F07F7BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
