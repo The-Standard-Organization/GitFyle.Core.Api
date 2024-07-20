@@ -5,7 +5,6 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Moq;
@@ -72,17 +71,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");
 
-            invalidSourceException.Data.Add(
+            invalidSourceException.AddData(
                 key: nameof(Source.Id),
-                value: "Id is invalid");
+                values: "Id is invalid");
 
-            invalidSourceException.Data.Add(
+            invalidSourceException.AddData(
                 key: nameof(Source.Name),
-                value: "Text is required");
+                values: "Text is required");
 
-            invalidSourceException.Data.Add(
+            invalidSourceException.AddData(
                 key: nameof(Source.Url),
-                value: "Text is required");
+                values: "Text is required");
 
             var expectedSourceValidationException =
                 new SourceValidationException(

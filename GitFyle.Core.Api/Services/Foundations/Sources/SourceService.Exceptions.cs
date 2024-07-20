@@ -23,6 +23,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             {
                 throw CreateAndLogValidationException(nullSourceException);
             }
+            catch (InvalidSourceException invalidSourceException)
+            {
+                throw CreateAndLogValidationException(invalidSourceException);
+            }
         }
 
         private SourceValidationException CreateAndLogValidationException(
