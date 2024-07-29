@@ -37,14 +37,24 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 actualException.SameExceptionAs(expectedException);
         }
 
-        private static Source CreateRandomSource() =>
-            CreateSourceFiller().Create();
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static Filler<Source> CreateSourceFiller()
+        private static Source CreateRandomSource() =>
+            CreateRandomSource(dateTimeOffset: GetRandomDateTimeOffset());
+
+        private static Source CreateRandomSource(DateTimeOffset dateTimeOffset) =>
+            CreateSourceFiller(dateTimeOffset).Create();
+
+        private static Filler<Source> CreateSourceFiller(DateTimeOffset dateTimeOffset)
         {
+            string user = Guid.NewGuid().ToString();
             var filler = new Filler<Source>();
 
             filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnProperty(address => address.CreatedBy).Use(user)
+                .OnProperty(address => address.UpdatedBy).Use(user)
                 .OnProperty(source => source.Repositories).IgnoreIt()
                 .OnProperty(source => source.Contributors).IgnoreIt();
 
