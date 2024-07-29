@@ -12,7 +12,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
     internal partial interface IStorageBroker
     {
         ValueTask<Contribution> InsertContributionAsync(Contribution contribution);
-        IQueryable<Contribution> SelectAllContributionsAsync();
+        ValueTask<IQueryable<Contribution>> SelectAllContributionsAsync();
         ValueTask<Contribution> SelectContributionByIdAsync(Guid contributionId);
         ValueTask<Contribution> UpdateContributionAsync(Contribution contribution);
         ValueTask<Contribution> DeleteContributionAsync(Contribution contribution);
