@@ -17,8 +17,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
         public async ValueTask<Repository> InsertRepositoryAsync(Repository repository) =>
             await InsertAsync(repository);
 
-        public IQueryable<Repository> SelectAllRepositoriesAsync() =>
-            SelectAll<Repository>();
+        public async ValueTask<IQueryable<Repository>> SelectAllRepositoriesAsync() =>
+            await SelectAllAsync<Repository>();
 
         public async ValueTask<Repository> SelectRepositoryByIdAsync(Guid repositoryId) =>
             await SelectAsync<Repository>(repositoryId);   
