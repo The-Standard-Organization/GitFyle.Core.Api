@@ -57,7 +57,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
         }
 
         private async ValueTask<IQueryable<T>> SelectAllAsync<T>() where T : class => 
-            await Task.FromResult(this.Set<T>());
+            this.Set<T>();
 
         private async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T : class =>
             await this.FindAsync<T>(@objectIds);
