@@ -94,11 +94,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             invalidSourceException.AddData(
                 key: nameof(Source.UpdatedBy),
                 values: "Text is required");
-            
+
             invalidSourceException.AddData(
                 key: nameof(Source.CreatedDate),
                 values: "Date is invalid");
-            
+
             invalidSourceException.AddData(
                 key: nameof(Source.UpdatedDate),
                 values: "Date is invalid");
@@ -149,6 +149,56 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             invalidSourceException.AddData(
                 key: nameof(Source.Url),
                 values: "Url is invalid");
+
+            var expectedSourceValidationException =
+                new SourceValidationException(
+                    message: "Source validation error occurred, fix errors and try again.",
+                    innerException: invalidSourceException);
+
+            // when
+            ValueTask<Source> addSourceTask =
+                this.sourceService.AddSourceAsync(invalidSource);
+
+            SourceValidationException actualSourceValidationException =
+                await Assert.ThrowsAsync<SourceValidationException>(
+                    addSourceTask.AsTask);
+
+            // then
+            actualSourceValidationException.Should().BeEquivalentTo(
+                expectedSourceValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(
+                    SameExceptionAs(expectedSourceValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertSourceAsync(It.IsAny<Source>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfAuditPropertiesIsNotTheSameAndLogItAsync()
+        {
+            // given
+            Source randomSource = CreateRandomSource();
+            Source invalidSource = randomSource;
+            string invalidUrl = GetRandomString();
+
+            var invalidSourceException = new InvalidSourceException(
+                message: "Source is invalid, fix the errors and try again.");
+
+            invalidSourceException.AddData(
+                key: nameof(Source.CreatedBy),
+                values: "Values should be the same");
+
+            invalidSourceException.AddData(
+                key: nameof(Source.CreatedDate),
+                values: "Values should be the same");
 
             var expectedSourceValidationException =
                 new SourceValidationException(
