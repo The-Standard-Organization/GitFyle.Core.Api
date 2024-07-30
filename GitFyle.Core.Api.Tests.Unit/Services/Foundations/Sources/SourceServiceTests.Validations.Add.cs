@@ -193,12 +193,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 message: "Source is invalid, fix the errors and try again.");
 
             invalidSourceException.AddData(
-                key: nameof(Source.CreatedBy),
-                values: "Values should be the same");
+                key: nameof(Source.UpdatedBy),
+                values: "Text should be the same as CreatedBy");
 
             invalidSourceException.AddData(
-                key: nameof(Source.CreatedDate),
-                values: "Values should be the same");
+                key: nameof(Source.UpdatedDate),
+                values: "Date should be the same as CreatedDate");
 
             var expectedSourceValidationException =
                 new SourceValidationException(
