@@ -65,7 +65,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             {
                 Id = Guid.Empty,
                 Name = invalidString,
-                Url = invalidString
+                Url = invalidString,
+                CreatedBy = invalidString,
+                UpdatedBy = invalidString,
+                CreatedDate = default,
+                UpdatedDate = default
             };
 
             var invalidSourceException = new InvalidSourceException(
@@ -82,6 +86,22 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             invalidSourceException.AddData(
                 key: nameof(Source.Url),
                 values: "Url is invalid");
+
+            invalidSourceException.AddData(
+                key: nameof(Source.CreatedBy),
+                values: "Text is required");
+
+            invalidSourceException.AddData(
+                key: nameof(Source.UpdatedBy),
+                values: "Text is required");
+            
+            invalidSourceException.AddData(
+                key: nameof(Source.CreatedDate),
+                values: "Date is invalid");
+            
+            invalidSourceException.AddData(
+                key: nameof(Source.UpdatedDate),
+                values: "Date is invalid");
 
             var expectedSourceValidationException =
                 new SourceValidationException(
