@@ -2,18 +2,17 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
+using GitFyle.Core.Api.Models.Foundations.Configurations;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Sources;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
 
 namespace GitFyle.Core.Api.Brokers.Storages
 {
@@ -45,6 +44,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
             AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
             AddSourceConfigurations(modelBuilder.Entity<Source>());
             AddContributionConfigurations(modelBuilder.Entity<Contribution>());
+            AddConfigurationConfigurations(modelBuilder.Entity<Configuration>());
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object)
@@ -56,7 +56,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
             return @object;
         }
 
-        private async ValueTask<IQueryable<T>> SelectAllAsync<T>() where T : class => 
+        private async ValueTask<IQueryable<T>> SelectAllAsync<T>() where T : class =>
             this.Set<T>();
 
         private async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T : class =>
