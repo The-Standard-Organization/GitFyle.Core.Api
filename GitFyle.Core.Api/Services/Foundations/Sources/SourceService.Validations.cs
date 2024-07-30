@@ -17,6 +17,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             Validate(
                 (Rule: IsInvalid(source.Id), Parameter: nameof(Source.Id)),
                 (Rule: IsInvalid(source.Name), Parameter: nameof(Source.Name)),
+                (Rule: IsInvalid(source.CreatedBy), Parameter: nameof(Source.CreatedBy)),
+                (Rule: IsInvalid(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
+                (Rule: IsInvalid(source.CreatedDate), Parameter: nameof(Source.CreatedDate)),
+                (Rule: IsInvalid(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
                 (Rule: IsInvalidUrl(source.Url), Parameter: nameof(Source.Url)));
         }
 
@@ -30,6 +34,12 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
         {
             Condition = String.IsNullOrWhiteSpace(name),
             Message = "Text is required"
+        };
+
+        private static dynamic IsInvalid(DateTimeOffset date) => new
+        {
+            Condition = date == default,
+            Message = "Date is invalid"
         };
 
         private static dynamic IsInvalidUrl(string url) => new
