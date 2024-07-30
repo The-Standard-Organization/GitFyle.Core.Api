@@ -54,6 +54,8 @@ If you have any suggestions, comments or questions, please feel free to contact 
 
 ### Important Notice and Acknowledgements
 A special thanks to all the community members, and the following dedicated engineers for their hard work and dedication to this project.
+> Mr. Greg H
+>
 >Mr. Hassan Habib
 >
 >Mr. Christo du Toit
