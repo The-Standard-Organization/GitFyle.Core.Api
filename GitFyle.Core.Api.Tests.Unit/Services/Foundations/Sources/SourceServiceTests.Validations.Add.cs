@@ -187,18 +187,21 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             // given
             Source randomSource = CreateRandomSource();
             Source invalidSource = randomSource;
-            string invalidUrl = GetRandomString();
+            invalidSource.CreatedBy = GetRandomString();
+            invalidSource.UpdatedBy = GetRandomString();
+            invalidSource.CreatedDate = GetRandomDateTimeOffset();
+            invalidSource.UpdatedDate = GetRandomDateTimeOffset();
 
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");
 
             invalidSourceException.AddData(
-                key: nameof(invalidSource.UpdatedBy),
-                values: $"Text is not the same as {nameof(invalidSource.CreatedBy)}");
+                key: nameof(Source.UpdatedBy),
+                values: $"Text is not the same as {nameof(Source.CreatedBy)}");
 
             invalidSourceException.AddData(
-                key: nameof(invalidSource.UpdatedDate),
-                values: $"Date is not the same as {nameof(invalidSource.CreatedDate)}");
+                key: nameof(Source.UpdatedDate),
+                values: $"Date is not the same as {nameof(Source.CreatedDate)}");
 
             var expectedSourceValidationException =
                 new SourceValidationException(

@@ -21,7 +21,21 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: IsInvalid(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
                 (Rule: IsInvalid(source.CreatedDate), Parameter: nameof(Source.CreatedDate)),
                 (Rule: IsInvalid(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
-                (Rule: IsInvalidUrl(source.Url), Parameter: nameof(Source.Url)));
+                (Rule: IsInvalidUrl(source.Url), Parameter: nameof(Source.Url)),
+
+                (Rule: IsValuesNotSame(
+                    createBy: source.UpdatedBy,
+                    updatedBy: source.CreatedBy,
+                    createdByName: nameof(Source.CreatedBy)),
+
+                Parameter: nameof(Source.UpdatedBy)),
+
+                (Rule: IsDatesNotSame(
+                    createdDate: source.CreatedDate,
+                    updatedDate: source.UpdatedDate,
+                    nameof(Source.CreatedDate)),
+
+                Parameter: nameof(Source.UpdatedDate)));
         }
 
         private static dynamic IsInvalid(Guid id) => new
@@ -47,6 +61,24 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             Condition = IsValidUrl(url) is false,
             Message = "Url is invalid"
         };
+
+        private static dynamic IsDatesNotSame(
+            DateTimeOffset createdDate,
+            DateTimeOffset updatedDate,
+            string createdDateName) => new
+            {
+                Condition = createdDate != updatedDate,
+                Message = $"Date is not the same as {createdDateName}"
+            };
+
+        private static dynamic IsValuesNotSame(
+            string createBy,
+            string updatedBy,
+            string createdByName) => new
+            {
+                Condition = createBy != updatedBy,
+                Message = $"Text is not the same as {createdByName}"
+            };
 
         public static bool IsValidUrl(string url)
         {
