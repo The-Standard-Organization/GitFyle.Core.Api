@@ -112,5 +112,51 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfUrlIsInvalidAndLogItAsync()
+        {
+            // given
+            Source randomSource = CreateRandomSource();
+            Source invalidSource = randomSource;
+            string invalidUrl = GetRandomString();
+            invalidSource.Url = invalidUrl;
+
+            var invalidSourceException = new InvalidSourceException(
+                message: "Source is invalid, fix the errors and try again.");
+
+            invalidSourceException.AddData(
+                key: nameof(Source.Url),
+                values: "Url is invalid");
+
+            var expectedSourceValidationException =
+                new SourceValidationException(
+                    message: "Source validation error occurred, fix errors and try again.",
+                    innerException: invalidSourceException);
+
+            // when
+            ValueTask<Source> addSourceTask =
+                this.sourceService.AddSourceAsync(invalidSource);
+
+            SourceValidationException actualSourceValidationException =
+                await Assert.ThrowsAsync<SourceValidationException>(
+                    addSourceTask.AsTask);
+
+            // then
+            actualSourceValidationException.Should().BeEquivalentTo(
+                expectedSourceValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(
+                    SameExceptionAs(expectedSourceValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertSourceAsync(It.IsAny<Source>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

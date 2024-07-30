@@ -37,6 +37,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 actualException.SameExceptionAs(expectedException);
         }
 
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
+
         private static Source CreateRandomSource() =>
             CreateSourceFiller().Create();
 
