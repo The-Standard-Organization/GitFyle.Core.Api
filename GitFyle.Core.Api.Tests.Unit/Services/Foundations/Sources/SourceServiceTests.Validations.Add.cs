@@ -81,7 +81,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             invalidSourceException.AddData(
                 key: nameof(Source.Url),
-                values: "Text is required");
+                values: "Url is invalid");
 
             var expectedSourceValidationException =
                 new SourceValidationException(

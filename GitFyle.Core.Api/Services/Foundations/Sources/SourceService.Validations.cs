@@ -17,7 +17,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             Validate(
                 (Rule: IsInvalid(source.Id), Parameter: nameof(Source.Id)),
                 (Rule: IsInvalid(source.Name), Parameter: nameof(Source.Name)),
-                (Rule: IsInvalid(source.Url), Parameter: nameof(Source.Url)));
+                (Rule: IsInvalidUrl(source.Url), Parameter: nameof(Source.Url)));
         }
 
         private static dynamic IsInvalid(Guid id) => new
@@ -31,6 +31,27 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             Condition = String.IsNullOrWhiteSpace(name),
             Message = "Text is required"
         };
+
+        private static dynamic IsInvalidUrl(string url) => new
+        {
+            Condition = IsValidUrl(url) is false,
+            Message = "Url is invalid"
+        };
+
+        public static bool IsValidUrl(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return false;
+            }
+
+            if (!Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult))
+            {
+                return false;
+            }
+
+            return uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps;
+        }
 
         private static void ValidateSourceIsNotNull(Source source)
         {
