@@ -57,6 +57,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
+        [InlineData("   ")]
+        [InlineData("\t")]
+        [InlineData("\n")]
+        [InlineData("\r")]
+        [InlineData("\t \n\r")]
         public async Task ShouldCallValidateWithTheseExpectedValidationRulesAsync(string invalidString)
         {
             // given
@@ -71,90 +76,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 UpdatedDate = default
             };
 
-            (dynamic Rule, string Parameter)[] validationCriteria =
-            [
-                (
-                    Rule: new { Condition = true, Message = "Id is invalid" },
-                    Parameter: nameof(Source.Id)
-                ),
-
-                (
-                    Rule: new { Condition = true, Message = "Text is invalid" },
-                    Parameter: nameof(Source.Name)
-                ),
-
-                (
-                    Rule: new { Condition = true, Message = "Url is invalid" },
-                    Parameter: nameof(Source.Url)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Text exceed max length of 255 characters" },
-                    Parameter: nameof(Source.Name)
-                ),
-
-                (
-                    Rule: new { Condition = true, Message = "Text is invalid" },
-                    Parameter: nameof(Source.CreatedBy)
-                ),
-
-                (
-                    Rule: new { Condition = true, Message = "Text is invalid" },
-                    Parameter: nameof(Source.UpdatedBy)
-                ),
-
-                (
-                    Rule: new { Condition = true, Message = "Date is invalid" },
-                    Parameter: nameof(Source.CreatedDate)
-                ),
-
-                (
-                    Rule: new { Condition = true, Message = "Date is invalid" },
-                    Parameter: nameof(Source.UpdatedDate)
-                ),
-
-
-                (
-                    Rule: new { Condition = false, Message = $"Text is not the same as {nameof(Source.CreatedBy)}" },
-                    Parameter: nameof(Source.UpdatedBy)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = $"Date is not the same as {nameof(Source.CreatedDate)}" },
-                    Parameter: nameof(Source.UpdatedDate)
-                )
-            ];
+            (dynamic Rule, string Parameter)[] validationCriteria = CreateValidationCriteria(
+                    source: invalidSource,
+                    idCondition: true,
+                    nameCondition: true,
+                    urlCondition: true,
+                    createdByCondition: true,
+                    updatedByCondition: true,
+                    createdDateCondition: true,
+                    updatedDateCondition: true);
 
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");
-
-            invalidSourceException.AddData(
-                key: nameof(Source.Id),
-                values: "Id is invalid");
-
-            invalidSourceException.AddData(
-                key: nameof(Source.Name),
-                values: "Text is invalid");
-
-            invalidSourceException.AddData(
-                key: nameof(Source.Url),
-                values: "Url is invalid");
-
-            invalidSourceException.AddData(
-                key: nameof(Source.CreatedBy),
-                values: "Text is invalid");
-
-            invalidSourceException.AddData(
-                key: nameof(Source.UpdatedBy),
-                values: "Text is invalid");
-
-            invalidSourceException.AddData(
-                key: nameof(Source.CreatedDate),
-                values: "Date is invalid");
-
-            invalidSourceException.AddData(
-                key: nameof(Source.UpdatedDate),
-                values: "Date is invalid");
 
             var expectedSourceValidationException =
                 new SourceValidationException(
@@ -183,7 +116,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             this.validationBrokerMock.Verify(broker =>
                 broker.Validate<InvalidSourceException>(
                     "Source is invalid, fix the errors and try again.",
-                        It.Is(Validations.Comparer.SameRulesAs(validationCriteria, output, "Validation Rules:"))),
+                        It.Is(Validations.Comparer.SameRulesAs(validationCriteria))),
                             Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -211,57 +144,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             invalidSource.Url = invalidUrl;
 
             (dynamic Rule, string Parameter)[] validationCriteria =
-            [
-                (
-                    Rule: new { Condition = false, Message = "Id is invalid" },
-                    Parameter: nameof(Source.Id)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Text is invalid" },
-                    Parameter: nameof(Source.Name)
-                ),
-
-                (
-                    Rule: new { Condition = true, Message = "Url is invalid" },
-                    Parameter: nameof(Source.Url)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Text exceed max length of 255 characters" },
-                    Parameter: nameof(Source.Name)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Date is invalid" },
-                    Parameter: nameof(Source.CreatedDate)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Text is invalid" },
-                    Parameter: nameof(Source.CreatedBy)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Date is invalid" },
-                    Parameter: nameof(Source.UpdatedDate)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Text is invalid" },
-                    Parameter: nameof(Source.UpdatedBy)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = $"Date is not the same as {nameof(Source.CreatedDate)}" },
-                    Parameter: nameof(Source.UpdatedDate)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = $"Text is not the same as {nameof(Source.CreatedBy)}" },
-                    Parameter: nameof(Source.UpdatedBy)
-                )
-            ];
+                CreateValidationCriteria(source: invalidSource, urlCondition: true);
 
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");
@@ -326,58 +209,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             invalidSource.CreatedDate = GetRandomDateTimeOffset();
             invalidSource.UpdatedDate = GetRandomDateTimeOffset();
 
-            (dynamic Rule, string Parameter)[] validationCriteria =
-            [
-                (
-                    Rule: new { Condition = false, Message = "Id is invalid" },
-                    Parameter: nameof(Source.Id)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Text is invalid" },
-                    Parameter: nameof(Source.Name)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Text exceed max length of 255 characters" },
-                    Parameter: nameof(Source.Name)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Text is invalid" },
-                    Parameter: nameof(Source.CreatedBy)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Text is invalid" },
-                    Parameter: nameof(Source.UpdatedBy)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Date is invalid" },
-                    Parameter: nameof(Source.CreatedDate)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Date is invalid" },
-                    Parameter: nameof(Source.UpdatedDate)
-                ),
-
-                (
-                    Rule: new { Condition = false, Message = "Url is invalid" },
-                    Parameter: nameof(Source.Url)
-                ),
-
-                (
-                    Rule: new { Condition = true, Message = $"Text is not the same as {nameof(Source.CreatedBy)}" },
-                    Parameter: nameof(Source.UpdatedBy)
-                ),
-
-                (
-                    Rule: new { Condition = true, Message = $"Date is not the same as {nameof(Source.CreatedDate)}" },
-                    Parameter: nameof(Source.UpdatedDate)
-                )
-            ];
+            (dynamic Rule, string Parameter)[] validationCriteria = CreateValidationCriteria(
+                    source: invalidSource,
+                    updatedByMatchCreatedByCondition: true,
+                    updatedDateMatchCreatedDateCondition: true);
 
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");

@@ -19,7 +19,8 @@ namespace Validations
         public static dynamic IsInvalidMaxLength(string text, int maxLength) => new
         {
             Condition = IsExceedingLength(text, maxLength),
-            Message = $"Text exceed max length of {maxLength} characters"
+            Message = $"Text exceed max length of {maxLength} characters",
+            Values = new object[] { text, maxLength }
         };
 
         /// <summary>
@@ -35,7 +36,8 @@ namespace Validations
         public static dynamic IsInvalidMinimumLength(string text, int minimumLength) => new
         {
             Condition = IsLessThanLength(text, minimumLength),
-            Message = $"Text must be a minimum length of {minimumLength} characters"
+            Message = $"Text must be a minimum length of {minimumLength} characters",
+            Values = new object[] { text, minimumLength }
         };
 
         private static bool IsExceedingLength(string text, int maxLength) =>

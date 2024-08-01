@@ -22,7 +22,8 @@ namespace Validations
         public static dynamic IsNotSameAs(string first, string second, string secondName) => new
         {
             Condition = first != second,
-            Message = $"Text is not the same as {secondName}"
+            Message = $"Text is not the same as {secondName}",
+            Values = new object[] { first, second, secondName }
         };
 
         /// <summary>
@@ -39,7 +40,8 @@ namespace Validations
         public static dynamic IsNotSameAs(DateTimeOffset first, DateTimeOffset second, string secondName) => new
         {
             Condition = first != second,
-            Message = $"Date is not the same as {secondName}"
+            Message = $"Date is not the same as {secondName}",
+            Values = new object[] { first, second, secondName }
         };
     }
 }

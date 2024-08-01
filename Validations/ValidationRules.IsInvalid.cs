@@ -20,7 +20,8 @@ namespace Validations
         public static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
-            Message = "Id is invalid"
+            Message = "Id is invalid",
+            Values = new object[] { id }
         };
 
         /// <summary>
@@ -36,7 +37,8 @@ namespace Validations
         public static dynamic IsInvalid(string text) => new
         {
             Condition = String.IsNullOrWhiteSpace(text),
-            Message = "Text is invalid"
+            Message = "Text is invalid",
+            Values = new object[] { text }
         };
 
         /// <summary>
@@ -51,7 +53,8 @@ namespace Validations
         public static dynamic IsInvalid(DateTimeOffset date) => new
         {
             Condition = date == default,
-            Message = "Date is invalid"
+            Message = "Date is invalid",
+            Values = new object[] { date }
         };
     }
 }

@@ -22,7 +22,8 @@ namespace Validations
         public static dynamic IsSameAs(DateTimeOffset first, DateTimeOffset second, string secondName) => new
         {
             Condition = first == second,
-            Message = $"Date is the same as {secondName}"
+            Message = $"Date is the same as {secondName}",
+            Values = new object[] { first, second, secondName }
         };
     }
 }

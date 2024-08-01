@@ -23,7 +23,13 @@ namespace Validations.Tests.Unit
             return Enumerable.Range(1, count)
                 .Select(_ =>
                 (
-                    Rule: (dynamic)new { Condition = condition, Message = message },
+                    Rule: (dynamic)new
+                    {
+                        Condition = condition,
+                        Message = message,
+                        Values = new object[] { GetRandomString() }
+                    },
+
                     Parameter: new MnemonicString(wordCount: 1).GetValue()
                 )).ToArray();
         }

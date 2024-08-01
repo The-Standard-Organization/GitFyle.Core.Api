@@ -8,5 +8,6 @@ namespace Validations.Models
     {
         public bool Condition { get; set; }
         public string Message { get; set; }
+        public string Values { get; set; }
     }
 }

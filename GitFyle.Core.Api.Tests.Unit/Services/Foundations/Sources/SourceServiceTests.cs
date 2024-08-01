@@ -86,5 +86,113 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             return filler;
         }
+
+        private (dynamic Rule, string Parameter)[] CreateValidationCriteria(
+            Source source,
+            bool idCondition = false,
+            bool nameCondition = false,
+            bool urlCondition = false,
+            bool nameLengthCondition = false,
+            bool createdByCondition = false,
+            bool updatedByCondition = false,
+            bool createdDateCondition = false,
+            bool updatedDateCondition = false,
+            bool updatedByMatchCreatedByCondition = false,
+            bool updatedDateMatchCreatedDateCondition = false)
+        {
+            return new (dynamic Rule, string Parameter)[]
+            {
+                (
+                    Rule: new
+                    {
+                        Condition = idCondition,
+                        Message = "Id is invalid",
+                        Values = new object[] { source.Id }
+                    },
+                    Parameter: nameof(Source.Id)
+                ),
+                (
+                    Rule: new
+                    {
+                        Condition = nameCondition,
+                        Message = "Text is invalid",
+                        Values = new object[] { source.Name }
+                    },
+                    Parameter: nameof(Source.Name)
+                ),
+                (
+                    Rule: new
+                    {
+                        Condition = urlCondition,
+                        Message = "Url is invalid",
+                        Values = new object[] { source.Url }
+                    },
+                    Parameter: nameof(Source.Url)
+                ),
+                (
+                    Rule: new
+                    {
+                        Condition = nameLengthCondition,
+                        Message = "Text exceed max length of 255 characters",
+                        Values = new object[] { source.Name, 255 }
+                    },
+                    Parameter: nameof(Source.Name)
+                ),
+                (
+                    Rule: new
+                    {
+                        Condition = createdByCondition,
+                        Message = "Text is invalid",
+                        Values = new object[] { source.CreatedBy }
+                    },
+                    Parameter: nameof(Source.CreatedBy)
+                ),
+                (
+                    Rule: new
+                    {
+                        Condition = updatedByCondition,
+                        Message = "Text is invalid",
+                        Values = new object[] { source.UpdatedBy }
+                    },
+                    Parameter: nameof(Source.UpdatedBy)
+                ),
+                (
+                    Rule: new
+                    {
+                        Condition = createdDateCondition,
+                        Message = "Date is invalid",
+                        Values = new object[] { source.CreatedDate }
+                    },
+                    Parameter: nameof(Source.CreatedDate)
+                ),
+                (
+                    Rule: new
+                    {
+                        Condition = updatedDateCondition,
+                        Message = "Date is invalid",
+                        Values = new object[] { source.UpdatedDate }
+                    },
+                    Parameter: nameof(Source.UpdatedDate)
+                ),
+                (
+                    Rule: new
+                    {
+                        Condition = updatedByMatchCreatedByCondition,
+                        Message = $"Text is not the same as {nameof(Source.CreatedBy)}",
+                        Values = new object[] { source.UpdatedBy, source.CreatedBy, nameof(Source.CreatedBy) }
+                    },
+                    Parameter: nameof(Source.UpdatedBy)
+                ),
+                (
+                    Rule: new
+                    {
+                        Condition = updatedDateMatchCreatedDateCondition,
+                        Message = $"Date is not the same as {nameof(Source.CreatedDate)}",
+                        Values = new object[] { source.UpdatedDate, source.CreatedDate, nameof(Source.CreatedDate) }
+                    },
+                    Parameter: nameof(Source.UpdatedDate)
+                )
+            };
+        }
     }
 }

@@ -38,8 +38,6 @@ namespace Validations
             string reference = "") =>
                 actualRules => SameExceptionAs(actualRules, expectedRules, testOutputHelper, reference);
 
-
-
         public static bool SameExceptionAs(
             this (dynamic Rule, string Parameter)[] rules,
             (dynamic Rule, string Parameter)[] otherRules) =>
@@ -96,6 +94,8 @@ namespace Validations
             {
                 bool ruleCondition = SafeGetDynamicProperty<bool>(rule, "Condition");
                 string ruleMessage = SafeGetDynamicProperty<string>(rule, "Message");
+                object[] ruleValues = SafeGetDynamicProperty<object[]>(rule, "Values");
+                string values = string.Join(", ", ruleValues);
 
                 actualValidationCriteria.Add(new ValidationCriteria
                 {
@@ -103,7 +103,8 @@ namespace Validations
                     Rule = new Rule
                     {
                         Message = ruleMessage,
-                        Condition = ruleCondition
+                        Condition = ruleCondition,
+                        Values = values
                     }
                 });
             }
@@ -112,6 +113,8 @@ namespace Validations
             {
                 bool ruleCondition = SafeGetDynamicProperty<bool>(rule, "Condition");
                 string ruleMessage = SafeGetDynamicProperty<string>(rule, "Message");
+                object[] ruleValues = SafeGetDynamicProperty<object[]>(rule, "Values");
+                string values = string.Join(", ", ruleValues);
 
                 expectedValidationCriteria.Add(new ValidationCriteria
                 {
@@ -119,7 +122,8 @@ namespace Validations
                     Rule = new Rule
                     {
                         Message = ruleMessage,
-                        Condition = ruleCondition
+                        Condition = ruleCondition,
+                        Values = values
                     }
                 });
             }
@@ -150,6 +154,15 @@ namespace Validations
                             $"and message '{expectedRule.Rule.Message}', " +
                             $"expected condition '{expectedRule.Rule.Condition}' " +
                             $"but found '{matchingRule.Rule.Condition}'");
+                    }
+
+                    if (matchingRule.Rule.Values != expectedRule.Rule.Values)
+                    {
+                        error.AppendLine(
+                            $"For parameter '{expectedRule.Parameter}', " +
+                            $"and message '{expectedRule.Rule.Message}', " +
+                            $"expected values '{expectedRule.Rule.Values}' " +
+                            $"but found '{matchingRule.Rule.Values}'");
                     }
                 }
             }

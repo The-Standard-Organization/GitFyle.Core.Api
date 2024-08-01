@@ -27,7 +27,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: ValidationRules.IsInvalid(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
                 (Rule: ValidationRules.IsInvalid(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
 
-                (Rule: ValidationRules.IsNotSameAs(
+                (Rule: IsNotSameAs(
                     first: source.UpdatedDate,
                     second: source.CreatedDate,
                     secondName: nameof(Source.CreatedDate)),
@@ -43,25 +43,29 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
         internal static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
-            Message = "Id is invalid"
+            Message = "Id is invalid",
+            Values = new object[] { id }
         };
 
         internal static dynamic IsInvalid(string name) => new
         {
             Condition = String.IsNullOrWhiteSpace(name),
-            Message = "Url is invalid"
+            Message = "Url is invalid",
+            Values = new object[] { name }
         };
 
         internal static dynamic IsInvalid(DateTimeOffset date) => new
         {
             Condition = date == default,
-            Message = "Date is invalid"
+            Message = "Date is invalid",
+            Values = new object[] { date }
         };
 
         internal static dynamic IsInvalidLength(string text, int maxLength) => new
         {
             Condition = IsExceedingLength(text, maxLength),
-            Message = $"Text exceed max length of {maxLength} characters"
+            Message = $"Text exceed max length of {maxLength} characters",
+            Values = new object[] { text, maxLength }
         };
 
         private static bool IsExceedingLength(string text, int maxLength) =>
@@ -70,16 +74,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
         internal static dynamic IsInvalidUrl(string url) => new
         {
             Condition = IsValidUrl(url) is false,
-            Message = "Url is invalid"
+            Message = "Url is invalid",
+            Values = new object[] { url }
         };
 
         internal static dynamic IsNotSameAs(
-            DateTimeOffset firstDate,
-            DateTimeOffset secondDate,
-            string secondDateName) => new
+            DateTimeOffset first,
+            DateTimeOffset second,
+            string secondName) => new
             {
-                Condition = firstDate != secondDate,
-                Message = $"Date is not the same as {secondDateName}"
+                Condition = first != second,
+                Message = $"Date is not the same as {secondName}",
+                Values = new object[] { first, second, secondName }
             };
 
         internal static dynamic IsNotSameAs(
@@ -88,7 +94,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
            string secondName) => new
            {
                Condition = first != second,
-               Message = $"Text is not the same as {secondName}"
+               Message = $"Text is not the same as {secondName}",
+               Values = new object[] { first, second, secondName }
            };
 
         internal static bool IsValidUrl(string url)

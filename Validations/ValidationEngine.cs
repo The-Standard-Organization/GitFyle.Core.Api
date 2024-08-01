@@ -19,7 +19,7 @@ namespace Validations
 
             foreach ((dynamic rule, string parameter) in validations)
             {
-                if (string.IsNullOrWhiteSpace(parameter))
+                if (String.IsNullOrWhiteSpace(parameter))
                 {
                     throw new InvalidOperationException("Parameter is invalid");
                 }
@@ -32,13 +32,17 @@ namespace Validations
                 bool ruleCondition = SafeGetDynamicProperty<bool>(rule, "Condition");
                 string ruleMessage = SafeGetDynamicProperty<string>(rule, "Message");
 
+                if (String.IsNullOrWhiteSpace(ruleMessage))
+                {
+                    throw new InvalidOperationException("Message in invalid");
+                }
+
                 if (ruleCondition)
                 {
                     invalidDataException.UpsertDataList(
                         key: parameter,
                         value: ruleMessage);
                 }
-
             }
 
             invalidDataException?.ThrowIfContainsErrors();
