@@ -18,6 +18,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+		<PackageReference Include="Valid8R" Version="0.2.0" />
 		<PackageReference Include="Xeption" Version="2.8.0" />
 	</ItemGroup>
 
@@ -29,6 +30,10 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Validations\Validations.csproj" />
   </ItemGroup>
 
 </Project>

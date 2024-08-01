@@ -14,22 +14,25 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
     {
         private readonly IStorageBroker storageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
+        private readonly IValidationBroker validationBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public SourceService(
             IStorageBroker storageBroker,
             IDateTimeBroker dateTimeBroker,
+            IValidationBroker validationBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
             this.dateTimeBroker = dateTimeBroker;
+            this.validationBroker = validationBroker;
             this.loggingBroker = loggingBroker;
         }
 
         public ValueTask<Source> AddSourceAsync(Source source) =>
         TryCatch(async () =>
         {
-            ValidateSourceOnAdd(source);
+            await ValidateSourceOnAdd(source);
 
             return await this.storageBroker.InsertSourceAsync(source);
         });

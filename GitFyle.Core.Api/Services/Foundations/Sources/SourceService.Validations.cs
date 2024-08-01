@@ -3,84 +3,95 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
+using Validations;
 
 namespace GitFyle.Core.Api.Services.Foundations.Sources
 {
     internal partial class SourceService : ISourceService
     {
-        private void ValidateSourceOnAdd(Source source)
+        private async ValueTask ValidateSourceOnAdd(Source source)
         {
             ValidateSourceIsNotNull(source);
 
-            Validate(
-                (Rule: IsInvalid(source.Id), Parameter: nameof(Source.Id)),
-                (Rule: IsInvalid(source.Name), Parameter: nameof(Source.Name)),
-                (Rule: IsInvalid(source.CreatedBy), Parameter: nameof(Source.CreatedBy)),
-                (Rule: IsInvalid(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
-                (Rule: IsInvalid(source.CreatedDate), Parameter: nameof(Source.CreatedDate)),
-                (Rule: IsInvalid(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
+            await this.validationBroker.Validate<InvalidSourceException>(
+                message: "Source is invalid, fix the errors and try again.",
+                (Rule: ValidationRules.IsInvalid(source.Id), Parameter: nameof(Source.Id)),
+                (Rule: ValidationRules.IsInvalid(source.Name), Parameter: nameof(Source.Name)),
                 (Rule: IsInvalidUrl(source.Url), Parameter: nameof(Source.Url)),
+                (Rule: ValidationRules.IsInvalidMaxLength(source.Name, 255), Parameter: nameof(Source.Name)),
+                (Rule: ValidationRules.IsInvalid(source.CreatedDate), Parameter: nameof(Source.CreatedDate)),
+                (Rule: ValidationRules.IsInvalid(source.CreatedBy), Parameter: nameof(Source.CreatedBy)),
+                (Rule: ValidationRules.IsInvalid(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
+                (Rule: ValidationRules.IsInvalid(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
 
-                (Rule: IsValuesNotSame(
-                    createBy: source.UpdatedBy,
-                    updatedBy: source.CreatedBy,
-                    createdByName: nameof(Source.CreatedBy)),
+                (Rule: ValidationRules.IsNotSameAs(
+                    first: source.UpdatedDate,
+                    second: source.CreatedDate,
+                    secondName: nameof(Source.CreatedDate)),
+                Parameter: nameof(Source.UpdatedDate)),
 
-                Parameter: nameof(Source.UpdatedBy)),
-
-                (Rule: IsDatesNotSame(
-                    createdDate: source.CreatedDate,
-                    updatedDate: source.UpdatedDate,
-                    nameof(Source.CreatedDate)),
-
-                Parameter: nameof(Source.UpdatedDate)));
+                (Rule: ValidationRules.IsNotSameAs(
+                    first: source.UpdatedBy,
+                    second: source.CreatedBy,
+                    secondName: nameof(Source.CreatedBy)),
+                Parameter: nameof(Source.UpdatedBy)));
         }
 
-        private static dynamic IsInvalid(Guid id) => new
+        internal static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
             Message = "Id is invalid"
         };
 
-        private static dynamic IsInvalid(string name) => new
+        internal static dynamic IsInvalid(string name) => new
         {
             Condition = String.IsNullOrWhiteSpace(name),
-            Message = "Text is required"
+            Message = "Url is invalid"
         };
 
-        private static dynamic IsInvalid(DateTimeOffset date) => new
+        internal static dynamic IsInvalid(DateTimeOffset date) => new
         {
             Condition = date == default,
             Message = "Date is invalid"
         };
 
-        private static dynamic IsInvalidUrl(string url) => new
+        internal static dynamic IsInvalidLength(string text, int maxLength) => new
+        {
+            Condition = IsExceedingLength(text, maxLength),
+            Message = $"Text exceed max length of {maxLength} characters"
+        };
+
+        private static bool IsExceedingLength(string text, int maxLength) =>
+            (text ?? string.Empty).Length > maxLength;
+
+        internal static dynamic IsInvalidUrl(string url) => new
         {
             Condition = IsValidUrl(url) is false,
             Message = "Url is invalid"
         };
 
-        private static dynamic IsDatesNotSame(
-            DateTimeOffset createdDate,
-            DateTimeOffset updatedDate,
-            string createdDateName) => new
+        internal static dynamic IsNotSameAs(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
             {
-                Condition = createdDate != updatedDate,
-                Message = $"Date is not the same as {createdDateName}"
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
             };
 
-        private static dynamic IsValuesNotSame(
-            string createBy,
-            string updatedBy,
-            string createdByName) => new
-            {
-                Condition = createBy != updatedBy,
-                Message = $"Text is not the same as {createdByName}"
-            };
+        internal static dynamic IsNotSameAs(
+           string first,
+           string second,
+           string secondName) => new
+           {
+               Condition = first != second,
+               Message = $"Text is not the same as {secondName}"
+           };
 
-        public static bool IsValidUrl(string url)
+        internal static bool IsValidUrl(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {

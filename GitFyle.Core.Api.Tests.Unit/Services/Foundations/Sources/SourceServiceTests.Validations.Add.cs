@@ -57,20 +57,73 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnAddIfSourceIsInvalidAndLogItAsync(
-            string invalidString)
+        public async Task ShouldCallValidateWithTheseExpectedValidationRulesAsync(string invalidString)
         {
             // given
             var invalidSource = new Source
             {
                 Id = Guid.Empty,
                 Name = invalidString,
-                Url = invalidString,
+                Url = "invalidString",
                 CreatedBy = invalidString,
                 UpdatedBy = invalidString,
                 CreatedDate = default,
                 UpdatedDate = default
             };
+
+            (dynamic Rule, string Parameter)[] validationCriteria =
+            [
+                (
+                    Rule: new { Condition = true, Message = "Id is invalid" },
+                    Parameter: nameof(Source.Id)
+                ),
+
+                (
+                    Rule: new { Condition = true, Message = "Text is invalid" },
+                    Parameter: nameof(Source.Name)
+                ),
+
+                (
+                    Rule: new { Condition = true, Message = "Url is invalid" },
+                    Parameter: nameof(Source.Url)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Text exceed max length of 255 characters" },
+                    Parameter: nameof(Source.Name)
+                ),
+
+                (
+                    Rule: new { Condition = true, Message = "Text is invalid" },
+                    Parameter: nameof(Source.CreatedBy)
+                ),
+
+                (
+                    Rule: new { Condition = true, Message = "Text is invalid" },
+                    Parameter: nameof(Source.UpdatedBy)
+                ),
+
+                (
+                    Rule: new { Condition = true, Message = "Date is invalid" },
+                    Parameter: nameof(Source.CreatedDate)
+                ),
+
+                (
+                    Rule: new { Condition = true, Message = "Date is invalid" },
+                    Parameter: nameof(Source.UpdatedDate)
+                ),
+
+
+                (
+                    Rule: new { Condition = false, Message = $"Text is not the same as {nameof(Source.CreatedBy)}" },
+                    Parameter: nameof(Source.UpdatedBy)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = $"Date is not the same as {nameof(Source.CreatedDate)}" },
+                    Parameter: nameof(Source.UpdatedDate)
+                )
+            ];
 
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");
@@ -81,7 +134,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             invalidSourceException.AddData(
                 key: nameof(Source.Name),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidSourceException.AddData(
                 key: nameof(Source.Url),
@@ -89,11 +142,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             invalidSourceException.AddData(
                 key: nameof(Source.CreatedBy),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidSourceException.AddData(
                 key: nameof(Source.UpdatedBy),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidSourceException.AddData(
                 key: nameof(Source.CreatedDate),
@@ -108,6 +161,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                     message: "Source validation error occurred, fix errors and try again.",
                     innerException: invalidSourceException);
 
+            this.validationBrokerMock
+                .Setup(broker =>
+                    broker.Validate<InvalidSourceException>(
+                        "Source is invalid, fix the errors and try again.",
+                        It.IsAny<(dynamic Rule, string Parameter)[]>()))
+                .ThrowsAsync(invalidSourceException);
+
             // when
             ValueTask<Source> addSourceTask =
                 this.sourceService.AddSourceAsync(invalidSource);
@@ -120,6 +180,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             actualSourceValidationException.Should().BeEquivalentTo(
                 expectedSourceValidationException);
 
+            this.validationBrokerMock.Verify(broker =>
+                broker.Validate<InvalidSourceException>(
+                    "Source is invalid, fix the errors and try again.",
+                        It.Is(Validations.Comparer.SameRulesAs(validationCriteria, output, "Validation Rules:"))),
+                            Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(
                     SameExceptionAs(expectedSourceValidationException))),
@@ -129,6 +195,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 broker.InsertSourceAsync(It.IsAny<Source>()),
                     Times.Never);
 
+            this.validationBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -143,6 +210,59 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             string invalidUrl = GetRandomString();
             invalidSource.Url = invalidUrl;
 
+            (dynamic Rule, string Parameter)[] validationCriteria =
+            [
+                (
+                    Rule: new { Condition = false, Message = "Id is invalid" },
+                    Parameter: nameof(Source.Id)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Text is invalid" },
+                    Parameter: nameof(Source.Name)
+                ),
+
+                (
+                    Rule: new { Condition = true, Message = "Url is invalid" },
+                    Parameter: nameof(Source.Url)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Text exceed max length of 255 characters" },
+                    Parameter: nameof(Source.Name)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Date is invalid" },
+                    Parameter: nameof(Source.CreatedDate)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Text is invalid" },
+                    Parameter: nameof(Source.CreatedBy)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Date is invalid" },
+                    Parameter: nameof(Source.UpdatedDate)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Text is invalid" },
+                    Parameter: nameof(Source.UpdatedBy)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = $"Date is not the same as {nameof(Source.CreatedDate)}" },
+                    Parameter: nameof(Source.UpdatedDate)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = $"Text is not the same as {nameof(Source.CreatedBy)}" },
+                    Parameter: nameof(Source.UpdatedBy)
+                )
+            ];
+
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");
 
@@ -154,6 +274,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 new SourceValidationException(
                     message: "Source validation error occurred, fix errors and try again.",
                     innerException: invalidSourceException);
+
+            this.validationBrokerMock
+                .Setup(broker =>
+                    broker.Validate<InvalidSourceException>(
+                        "Source is invalid, fix the errors and try again.",
+                        It.IsAny<(dynamic Rule, string Parameter)[]>()))
+                .ThrowsAsync(invalidSourceException);
 
             // when
             ValueTask<Source> addSourceTask =
@@ -167,6 +294,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             actualSourceValidationException.Should().BeEquivalentTo(
                 expectedSourceValidationException);
 
+            this.validationBrokerMock.Verify(broker =>
+                broker.Validate<InvalidSourceException>(
+                    "Source is invalid, fix the errors and try again.",
+                    It.Is(Validations.Comparer.SameRulesAs(validationCriteria, output, "Validation Rules:"))),
+                            Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(
                     SameExceptionAs(expectedSourceValidationException))),
@@ -176,6 +309,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 broker.InsertSourceAsync(It.IsAny<Source>()),
                     Times.Never);
 
+            this.validationBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -191,6 +325,59 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             invalidSource.UpdatedBy = GetRandomString();
             invalidSource.CreatedDate = GetRandomDateTimeOffset();
             invalidSource.UpdatedDate = GetRandomDateTimeOffset();
+
+            (dynamic Rule, string Parameter)[] validationCriteria =
+            [
+                (
+                    Rule: new { Condition = false, Message = "Id is invalid" },
+                    Parameter: nameof(Source.Id)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Text is invalid" },
+                    Parameter: nameof(Source.Name)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Text exceed max length of 255 characters" },
+                    Parameter: nameof(Source.Name)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Text is invalid" },
+                    Parameter: nameof(Source.CreatedBy)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Text is invalid" },
+                    Parameter: nameof(Source.UpdatedBy)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Date is invalid" },
+                    Parameter: nameof(Source.CreatedDate)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Date is invalid" },
+                    Parameter: nameof(Source.UpdatedDate)
+                ),
+
+                (
+                    Rule: new { Condition = false, Message = "Url is invalid" },
+                    Parameter: nameof(Source.Url)
+                ),
+
+                (
+                    Rule: new { Condition = true, Message = $"Text is not the same as {nameof(Source.CreatedBy)}" },
+                    Parameter: nameof(Source.UpdatedBy)
+                ),
+
+                (
+                    Rule: new { Condition = true, Message = $"Date is not the same as {nameof(Source.CreatedDate)}" },
+                    Parameter: nameof(Source.UpdatedDate)
+                )
+            ];
 
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");
@@ -208,6 +395,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                     message: "Source validation error occurred, fix errors and try again.",
                     innerException: invalidSourceException);
 
+            this.validationBrokerMock
+                .Setup(broker =>
+                    broker.Validate<InvalidSourceException>(
+                        "Source is invalid, fix the errors and try again.",
+                        It.IsAny<(dynamic Rule, string Parameter)[]>()))
+                .ThrowsAsync(invalidSourceException);
+
             // when
             ValueTask<Source> addSourceTask =
                 this.sourceService.AddSourceAsync(invalidSource);
@@ -220,6 +414,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             actualSourceValidationException.Should().BeEquivalentTo(
                 expectedSourceValidationException);
 
+            this.validationBrokerMock.Verify(broker =>
+                broker.Validate<InvalidSourceException>(
+                    "Source is invalid, fix the errors and try again.",
+                    It.Is(Validations.Comparer.SameRulesAs(validationCriteria, output, "Validation Rules:"))),
+                        Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(
                     SameExceptionAs(expectedSourceValidationException))),
@@ -229,6 +429,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 broker.InsertSourceAsync(It.IsAny<Source>()),
                     Times.Never);
 
+            this.validationBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
