@@ -58,6 +58,22 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 actualException.SameExceptionAs(expectedException);
         }
 
+        public Expression<Func<(dynamic Rule, string Parameter)[], bool>> SameRulesAs(
+            (dynamic Rule, string Parameter)[] expectedRules) =>
+                actualRules => IsSameRulesAs(actualRules, expectedRules);
+
+        public bool IsSameRulesAs(
+            (dynamic Rule, string Parameter)[] actualRules,
+            (dynamic Rule, string Parameter)[] expectedRules)
+        {
+            var comparisonResult = this.compareLogic.Compare(actualRules, expectedRules);
+
+            if (!comparisonResult.AreEqual)
+                this.output.WriteLine(comparisonResult.DifferencesString);
+
+            return comparisonResult.AreEqual;
+        }
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 

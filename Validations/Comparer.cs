@@ -23,7 +23,7 @@ namespace Validations
         /// <returns>An expression to compare the actual rules with the expected rules</returns>
         public static Expression<Func<(dynamic Rule, string Parameter)[], bool>> SameRulesAs(
             (dynamic Rule, string Parameter)[] expectedRules) =>
-                actualRules => SameExceptionAs(actualRules, expectedRules);
+                actualRules => SameRulesAs(actualRules, expectedRules);
 
         /// <summary>
         /// Compares two arrays and writes a failure message to the test explorer if they are not the same.
@@ -36,14 +36,14 @@ namespace Validations
             (dynamic Rule, string Parameter)[] expectedRules,
             ITestOutputHelper testOutputHelper,
             string reference = "") =>
-                actualRules => SameExceptionAs(actualRules, expectedRules, testOutputHelper, reference);
+                actualRules => SameRulesAs(actualRules, expectedRules, testOutputHelper, reference);
 
-        public static bool SameExceptionAs(
+        public static bool SameRulesAs(
             this (dynamic Rule, string Parameter)[] rules,
             (dynamic Rule, string Parameter)[] otherRules) =>
                 IsSameRulesAs(rules, otherRules, out string message);
 
-        public static bool SameExceptionAs(
+        public static bool SameRulesAs(
             this (dynamic Rule, string Parameter)[] rules,
             (dynamic Rule, string Parameter)[] otherRules,
             ITestOutputHelper testOutputHelper,

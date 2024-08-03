@@ -116,7 +116,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             this.validationBrokerMock.Verify(broker =>
                 broker.Validate<InvalidSourceException>(
                     "Source is invalid, fix the errors and try again.",
-                        It.Is(Validations.Comparer.SameRulesAs(validationCriteria))),
+                        It.Is(Validations.Comparer.SameRulesAs(validationCriteria, this.output, ""))),
                             Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
