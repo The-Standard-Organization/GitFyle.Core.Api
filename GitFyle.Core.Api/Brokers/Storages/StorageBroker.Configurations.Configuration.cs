@@ -13,12 +13,10 @@ namespace GitFyle.Core.Api.Brokers.Storages
         {
             builder
                 .Property(configuration => configuration.Name)
-                .HasMaxLength(255)
                 .IsRequired();
 
             builder
                 .Property(configuration => configuration.Value)
-                .HasMaxLength(255)
                 .IsRequired();
 
             builder
