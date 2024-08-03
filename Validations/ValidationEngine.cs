@@ -37,15 +37,22 @@ namespace Validations
                     throw new InvalidOperationException("Message in invalid");
                 }
 
+                //if (invalidDataException.Data.Count < 500)
+                //{
                 if (ruleCondition)
                 {
                     invalidDataException.UpsertDataList(
                         key: parameter,
                         value: ruleMessage);
                 }
+                //}
             }
 
+            //if (invalidDataException.Data.Count < 500)
+            //{
             invalidDataException?.ThrowIfContainsErrors();
+            //}
+
             await ValueTask.CompletedTask;
         }
 

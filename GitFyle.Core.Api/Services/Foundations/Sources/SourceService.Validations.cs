@@ -85,7 +85,12 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             {
                 Condition = first != second,
                 Message = $"Date is not the same as {secondName}",
-                Values = new object[] { first, second, secondName }
+                Values = new object[]
+                {
+                    first,
+                    second,
+                    secondName
+                }
             };
 
         internal static dynamic IsNotSameAs(

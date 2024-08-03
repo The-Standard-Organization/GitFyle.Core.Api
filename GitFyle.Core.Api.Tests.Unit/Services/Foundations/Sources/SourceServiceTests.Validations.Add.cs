@@ -53,25 +53,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        [InlineData("   ")]
-        [InlineData("\t")]
-        [InlineData("\n")]
-        [InlineData("\r")]
-        [InlineData("\t \n\r")]
-        public async Task ShouldCallValidateWithTheseExpectedValidationRulesAsync(string invalidString)
+        [Fact]
+        public async Task ShouldCallValidateWithTheseExpectedValidationRulesAsync()
         {
             // given
+            string invalidUser = GetInvalidString();
+
             var invalidSource = new Source
             {
                 Id = Guid.Empty,
-                Name = invalidString,
+                Name = GetInvalidString(),
                 Url = "invalidString",
-                CreatedBy = invalidString,
-                UpdatedBy = invalidString,
+                CreatedBy = invalidUser,
+                UpdatedBy = invalidUser,
                 CreatedDate = default,
                 UpdatedDate = default
             };

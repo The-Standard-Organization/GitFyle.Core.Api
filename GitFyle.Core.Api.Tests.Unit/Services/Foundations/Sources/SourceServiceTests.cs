@@ -74,6 +74,26 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             return comparisonResult.AreEqual;
         }
 
+        private static readonly string[] InvalidStrings = new string[]
+        {
+                null,
+                "",
+                " ",
+                "   ",
+                "\t",
+                "\n",
+                "\r",
+                "\t \n\r"
+        };
+
+        private static string GetInvalidString()
+        {
+            Random random = new Random();
+            int index = random.Next(InvalidStrings.Length);
+
+            return InvalidStrings[index];
+        }
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
@@ -204,7 +224,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                     {
                         Condition = updatedDateMatchCreatedDateCondition,
                         Message = $"Date is not the same as {nameof(Source.CreatedDate)}",
-                        Values = new object[] { source.UpdatedDate, source.CreatedDate, nameof(Source.CreatedDate) }
+                        Values = new object[]
+                        {
+                            source.UpdatedDate,
+                            source.CreatedDate,
+                            nameof(Source.CreatedDate)
+                        }
                     },
                     Parameter: nameof(Source.UpdatedDate)
                 )
