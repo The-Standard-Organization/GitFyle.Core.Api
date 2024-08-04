@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GitFyle.Core.Api.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20240730193424_AddConfigurations")]
+    [Migration("20240804182138_AddConfigurations")]
     partial class AddConfigurations
     {
         /// <inheritdoc />
@@ -39,13 +39,11 @@ namespace GitFyle.Core.Api.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -55,8 +53,7 @@ namespace GitFyle.Core.Api.Migrations
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
