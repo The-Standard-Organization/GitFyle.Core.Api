@@ -5,6 +5,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
+using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
@@ -43,6 +44,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
             AddRepositoryConfigurations(modelBuilder.Entity<Repository>());
             AddSourceConfigurations(modelBuilder.Entity<Source>());
             AddContributionConfigurations(modelBuilder.Entity<Contribution>());
+            AddConfigurationConfigurations(modelBuilder.Entity<Configuration>());
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object)
