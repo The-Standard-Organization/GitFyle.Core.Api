@@ -28,9 +28,9 @@ namespace GitFyle.Core.Api.Brokers.Loggings
             this.logger.LogWarning(message);
             
         public async ValueTask LogErrorAsync(Exception exception) =>
-           this.logger.LogError(exception, exception.Message);
+            this.logger.LogError(exception, exception.Message);
 
         public async ValueTask LogCriticalAsync(Exception exception) =>
-           this.logger.LogCritical(exception, exception.Message);
+            this.logger.LogCritical(exception, exception.Message);
     }
 }
