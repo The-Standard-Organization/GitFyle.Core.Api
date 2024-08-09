@@ -9,7 +9,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
 {
     internal partial class StorageBroker
     {
-        void AddSourceConfigurations(EntityTypeBuilder<Source> builder)
+        static void AddSourceConfigurations(EntityTypeBuilder<Source> builder)
         {
             builder.Property(source => source.Name)
                 .HasMaxLength(255)
