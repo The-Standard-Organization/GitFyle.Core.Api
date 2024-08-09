@@ -41,7 +41,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 expectedSourceValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(
+                broker.LogErrorAsync(It.Is(
                     SameExceptionAs(expectedSourceValidationException))),
                         Times.Once);
 
@@ -121,7 +121,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 expectedSourceValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(
+                broker.LogErrorAsync(It.Is(
                     SameExceptionAs(expectedSourceValidationException))),
                         Times.Once);
 
@@ -168,7 +168,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 expectedSourceValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(
+                broker.LogErrorAsync(It.Is(
                     SameExceptionAs(expectedSourceValidationException))),
                         Times.Once);
 
@@ -221,7 +221,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 expectedSourceValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(
+                broker.LogErrorAsync(It.Is(
                     SameExceptionAs(expectedSourceValidationException))),
                         Times.Once);
 

@@ -21,22 +21,22 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             }
             catch (NullSourceException nullSourceException)
             {
-                throw CreateAndLogValidationException(nullSourceException);
+                throw await CreateAndLogValidationExceptionAsync(nullSourceException);
             }
             catch (InvalidSourceException invalidSourceException)
             {
-                throw CreateAndLogValidationException(invalidSourceException);
+                throw await CreateAndLogValidationExceptionAsync(invalidSourceException);
             }
         }
 
-        private SourceValidationException CreateAndLogValidationException(
+        private async ValueTask<SourceValidationException> CreateAndLogValidationExceptionAsync(
             Xeption exception)
         {
             var sourceValidationException = new SourceValidationException(
                 message: "Source validation error occurred, fix errors and try again.",
                 innerException: exception);
 
-            this.loggingBroker.LogError(sourceValidationException);
+            await this.loggingBroker.LogErrorAsync(sourceValidationException);
 
             return sourceValidationException;
         }
