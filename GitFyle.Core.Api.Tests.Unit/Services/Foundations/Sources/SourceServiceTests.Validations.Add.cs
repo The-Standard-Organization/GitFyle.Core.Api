@@ -142,7 +142,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         public async Task ShouldThrowValidationExceptionOnAddIfUrlIsInvalidAndLogItAsync()
         {
             // given
-            Source randomSource = CreateRandomSource();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            DateTimeOffset now = randomDateTime;
+            Source randomSource = CreateRandomSource(now);
             Source invalidSource = randomSource;
             string invalidUrl = GetRandomString();
             invalidSource.Url = invalidUrl;
@@ -159,6 +161,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                     message: "Source validation error occurred, fix errors and try again.",
                     innerException: invalidSourceException);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(now);
+
             // when
             ValueTask<Source> addSourceTask =
                 this.sourceService.AddSourceAsync(invalidSource);
@@ -170,6 +176,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             // then
             actualSourceValidationException.Should().BeEquivalentTo(
                 expectedSourceValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(
