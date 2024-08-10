@@ -29,7 +29,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
         public ValueTask<Source> AddSourceAsync(Source source) =>
         TryCatch(async () =>
         {
-            ValidateSourceOnAdd(source);
+            await ValidateSourceOnAddAsync(source);
 
             return await this.storageBroker.InsertSourceAsync(source);
         });

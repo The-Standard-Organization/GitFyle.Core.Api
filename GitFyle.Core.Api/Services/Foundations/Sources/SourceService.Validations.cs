@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 
@@ -10,59 +11,75 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 {
     internal partial class SourceService : ISourceService
     {
-        private void ValidateSourceOnAdd(Source source)
+        private async ValueTask ValidateSourceOnAddAsync(Source source)
         {
             ValidateSourceIsNotNull(source);
 
             Validate(
-                (Rule: IsInvalid(source.Id), Parameter: nameof(Source.Id)),
-                (Rule: IsInvalid(source.Name), Parameter: nameof(Source.Name)),
-                (Rule: IsInvalid(source.CreatedBy), Parameter: nameof(Source.CreatedBy)),
-                (Rule: IsInvalid(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
-                (Rule: IsInvalid(source.CreatedDate), Parameter: nameof(Source.CreatedDate)),
-                (Rule: IsInvalid(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
-                (Rule: IsInvalidUrl(source.Url), Parameter: nameof(Source.Url)),
+                (Rule: await IsInvalid(source.Id), Parameter: nameof(Source.Id)),
+                (Rule: await IsInvalid(source.Name), Parameter: nameof(Source.Name)),
+                (Rule: await IsInvalid(source.CreatedBy), Parameter: nameof(Source.CreatedBy)),
+                (Rule: await IsInvalid(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
+                (Rule: await IsInvalid(source.CreatedDate), Parameter: nameof(Source.CreatedDate)),
+                (Rule: await IsInvalid(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
+                (Rule: await IsInvalidUrl(source.Url), Parameter: nameof(Source.Url)),
 
-                (Rule: IsValuesNotSame(
+                (Rule: await IsValuesNotSame(
                     createBy: source.UpdatedBy,
                     updatedBy: source.CreatedBy,
                     createdByName: nameof(Source.CreatedBy)),
 
                 Parameter: nameof(Source.UpdatedBy)),
 
-                (Rule: IsDatesNotSame(
+                (Rule: await IsDatesNotSame(
                     createdDate: source.CreatedDate,
                     updatedDate: source.UpdatedDate,
                     nameof(Source.CreatedDate)),
 
-                Parameter: nameof(Source.UpdatedDate)));
+                Parameter: nameof(Source.UpdatedDate)),
+
+                (Rule: await IsNotRecent(source.CreatedDate), Parameter: nameof(Source.CreatedDate)));
         }
 
-        private static dynamic IsInvalid(Guid id) => new
+        private async ValueTask<dynamic> IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = await IsDateNotRecent(date),
+            Message = "Date is not recent"
+        };
+
+        private async ValueTask<bool> IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+
+            return timeDifference.TotalSeconds is > 60 or < 0;
+        }
+
+        private async ValueTask<dynamic> IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
             Message = "Id is invalid"
         };
 
-        private static dynamic IsInvalid(string name) => new
+        private async ValueTask<dynamic> IsInvalid(string name) => new
         {
             Condition = String.IsNullOrWhiteSpace(name),
             Message = "Text is required"
         };
 
-        private static dynamic IsInvalid(DateTimeOffset date) => new
+        private async ValueTask<dynamic> IsInvalid(DateTimeOffset date) => new
         {
             Condition = date == default,
             Message = "Date is invalid"
         };
 
-        private static dynamic IsInvalidUrl(string url) => new
+        private async ValueTask<dynamic> IsInvalidUrl(string url) => new
         {
             Condition = IsValidUrl(url) is false,
             Message = "Url is invalid"
         };
 
-        private static dynamic IsDatesNotSame(
+        private async ValueTask<dynamic> IsDatesNotSame(
             DateTimeOffset createdDate,
             DateTimeOffset updatedDate,
             string createdDateName) => new
@@ -71,7 +88,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 Message = $"Date is not the same as {createdDateName}"
             };
 
-        private static dynamic IsValuesNotSame(
+        private async ValueTask<dynamic> IsValuesNotSame(
             string createBy,
             string updatedBy,
             string createdByName) => new
