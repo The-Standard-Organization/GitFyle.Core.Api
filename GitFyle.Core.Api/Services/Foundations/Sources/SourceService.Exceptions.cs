@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -36,6 +37,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageSourceException);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsSourceException =
+                    new AlreadyExistsSourceException(
+                        message: "Source already exists error occurred.",
+                        innerException: duplicateKeyException,
+                        data: duplicateKeyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsSourceException);
+            }
         }
 
         private async ValueTask<SourceValidationException> CreateAndLogValidationExceptionAsync(
@@ -60,6 +71,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             await this.loggingBroker.LogCriticalAsync(sourceDependencyException);
 
             return sourceDependencyException;
+        }
+
+        private async ValueTask<SourceDependencyValidationException> CreateAndLogDependencyValidationExceptionAsync(
+            Xeption exception)
+        {
+            var sourceDependencyValidationException = new SourceDependencyValidationException(
+                message: "Source dependency validation error occurred, fix errors and try again.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(sourceDependencyValidationException);
+
+            return sourceDependencyValidationException;
         }
     }
 }

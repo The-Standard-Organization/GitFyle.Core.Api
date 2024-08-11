@@ -74,7 +74,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             var duplicateKeyException =
                 new DuplicateKeyException(
-                    message: "Duplicate key error ocurred");
+                    message: "Duplicate key error occurred");
 
             var alreadyExistsSourceException =
                 new AlreadyExistsSourceException(
