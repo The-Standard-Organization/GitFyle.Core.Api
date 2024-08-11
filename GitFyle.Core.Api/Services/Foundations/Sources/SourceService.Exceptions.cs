@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Sources;
@@ -58,6 +59,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationSourceException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceSourceException =
+                    new FailedServiceSourceException(
+                        message: "Failed service source error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceSourceException);
+            }
         }
 
         private async ValueTask<SourceValidationException> CreateAndLogValidationExceptionAsync(
@@ -106,6 +116,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             await this.loggingBroker.LogErrorAsync(sourceDependencyException);
 
             return sourceDependencyException;
+        }
+
+        private async ValueTask<SourceServiceException> CreateAndLogServiceExceptionAsync(
+           Xeption exception)
+        {
+            var sourceServiceException = new SourceServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(sourceServiceException);
+
+            return sourceServiceException;
         }
     }
 }
