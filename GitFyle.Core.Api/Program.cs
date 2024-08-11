@@ -2,9 +2,10 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.DateTimes;
+using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
+using GitFyle.Core.Api.Services.Foundations.Sources;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,8 +34,12 @@ namespace GitFyle.Core.Api
                 LoggingBroker>();
 
             builder.Services.AddTransient<
-                IDateTimeBroker, 
+                IDateTimeBroker,
                 DateTimeBroker>();
+
+            builder.Services.AddTransient<
+                ISourceService,
+                SourceService>();
 
             WebApplication webApplication =
                 builder.Build();
