@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
@@ -164,6 +165,58 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedSourceDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertSourceAsync(It.IsAny<Source>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccurredAndLogItAsync()
+        {
+            // given
+            Source randomSource = CreateRandomSource();
+            var serviceException = new Exception();
+            
+            var failedServiceSourceException =
+                new FailedServiceSourceException(
+                    message: "Failed service source error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedSourceServiceException =
+                new SourceServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceSourceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Source> addSourceTask =
+                this.sourceService.AddSourceAsync(
+                    randomSource);
+
+            SourceServiceException actualSourceServiceException =
+                await Assert.ThrowsAsync<SourceServiceException>(
+                    testCode: addSourceTask.AsTask);
+
+            // then
+            actualSourceServiceException.Should().BeEquivalentTo(
+                expectedSourceServiceException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedSourceServiceException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
