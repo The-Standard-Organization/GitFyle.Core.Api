@@ -5,6 +5,7 @@
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
+using Microsoft.Data.SqlClient;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Sources
@@ -27,6 +28,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidSourceException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedStorageSourceException = new FailedStorageSourceException(
+                    message: "Failed source storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageSourceException);
+            }
         }
 
         private async ValueTask<SourceValidationException> CreateAndLogValidationExceptionAsync(
@@ -39,6 +48,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             await this.loggingBroker.LogErrorAsync(sourceValidationException);
 
             return sourceValidationException;
+        }
+
+        private async ValueTask<SourceDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
+            Xeption exception)
+        {
+            var sourceDependencyException = new SourceDependencyException(
+                message: "Source dependency error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogCriticalAsync(sourceDependencyException);
+
+            return sourceDependencyException;
         }
     }
 }
