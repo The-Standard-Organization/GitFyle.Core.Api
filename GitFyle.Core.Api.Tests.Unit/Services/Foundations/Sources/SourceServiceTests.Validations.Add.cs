@@ -133,9 +133,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 broker.InsertSourceAsync(It.IsAny<Source>()),
                     Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -190,9 +190,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 broker.InsertSourceAsync(It.IsAny<Source>()),
                     Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -253,9 +253,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 broker.InsertSourceAsync(It.IsAny<Source>()),
                     Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Theory]
