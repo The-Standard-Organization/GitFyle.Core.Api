@@ -13,9 +13,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         private DbUpdateException innerException;
 
         public FailedOperationSourceException(string message, DbUpdateException innerException)
-        {
-            this.message = message;
-            this.innerException = innerException;
-        }
+            : base(message, innerException)
+        { }
     }
 }

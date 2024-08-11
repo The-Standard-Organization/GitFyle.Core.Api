@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
+using GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Sources
@@ -47,6 +49,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsSourceException);
             }
+            catch (DbUpdateException dbUpdateException)
+            {
+                var failedOperationSourceException =
+                    new FailedOperationSourceException(
+                        message: "Failed operation source  error occurred, contact support.",
+                        innerException: dbUpdateException);
+
+                throw await CreateAndLogDependencyExceptionAsync(failedOperationSourceException);
+            }
         }
 
         private async ValueTask<SourceValidationException> CreateAndLogValidationExceptionAsync(
@@ -83,6 +94,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             await this.loggingBroker.LogErrorAsync(sourceDependencyValidationException);
 
             return sourceDependencyValidationException;
+        }
+
+        private async ValueTask<SourceDependencyException> CreateAndLogDependencyExceptionAsync(
+            Xeption exception)
+        {
+            var sourceDependencyException = new SourceDependencyException(
+                message: "Source dependency error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(sourceDependencyException);
+
+            return sourceDependencyException;
         }
     }
 }
