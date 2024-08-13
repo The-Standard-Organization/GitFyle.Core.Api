@@ -11,6 +11,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
     internal partial interface IStorageBroker
     {
         ValueTask<Configuration> InsertConfigurationAsync(Configuration configuration);
-        ValueTask<IQueryable<Configuration>> GetAllConfigurationsAsync();
+        ValueTask<IQueryable<Configuration>> SelectAllConfigurationsAsync();
     }
 }
