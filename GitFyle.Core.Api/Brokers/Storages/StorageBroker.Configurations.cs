@@ -17,7 +17,7 @@ namespace GitFyle.Core.Api.Brokers.Storages
         public async ValueTask<Configuration> InsertConfigurationAsync(Configuration configuration) =>
             await InsertAsync(configuration);
 
-        public async ValueTask<IQueryable<Configuration>> GetAllConfigurationsAsync() =>
+        public async ValueTask<IQueryable<Configuration>> SelectAllConfigurationsAsync() =>
             await SelectAllAsync<Configuration>();
 
         public async ValueTask<Configuration> SelectConfigurationByIdAsync(Guid configurationId) =>
