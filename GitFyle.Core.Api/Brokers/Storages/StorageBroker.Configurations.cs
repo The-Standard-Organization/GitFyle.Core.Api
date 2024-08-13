@@ -25,5 +25,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         public async ValueTask<Configuration> UpdateConfigurationAsync(Configuration configuration) =>
             await UpdateAsync(configuration);
+
+        public async ValueTask<Configuration> DeleteConfigurationAsync(Configuration configuration) =>
+            await DeleteAsync(configuration);
     }
 }

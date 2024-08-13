@@ -15,5 +15,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
         ValueTask<IQueryable<Configuration>> GetAllConfigurationsAsync();
         ValueTask<Configuration> SelectConfigurationByIdAsync(Guid configurationId);
         ValueTask<Configuration> UpdateConfigurationAsync(Configuration configuration);
+        ValueTask<Configuration> DeleteConfigurationAsync(Configuration configuration);
     }
 }
