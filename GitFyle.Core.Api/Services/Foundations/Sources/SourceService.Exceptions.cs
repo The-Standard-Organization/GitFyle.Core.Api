@@ -14,7 +14,7 @@ using Xeptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Sources
 {
-    internal partial class SourceService : ISourceService
+    internal partial class SourceService
     {
         private delegate ValueTask<Source> ReturningSourceFunction();
 

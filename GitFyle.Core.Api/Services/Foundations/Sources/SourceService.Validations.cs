@@ -9,7 +9,7 @@ using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Sources
 {
-    internal partial class SourceService : ISourceService
+    internal partial class SourceService
     {
         private async ValueTask ValidateSourceOnAddAsync(Source source)
         {
