@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
@@ -12,5 +13,6 @@ namespace GitFyle.Core.Api.Brokers.Storages
     {
         ValueTask<Configuration> InsertConfigurationAsync(Configuration configuration);
         ValueTask<IQueryable<Configuration>> SelectAllConfigurationsAsync();
+        ValueTask<Configuration> SelectConfigurationByIdAsync(Guid configurationId);
     }
 }
