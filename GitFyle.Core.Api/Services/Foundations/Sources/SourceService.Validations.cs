@@ -22,6 +22,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: await IsInvalid(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
                 (Rule: await IsInvalid(source.CreatedDate), Parameter: nameof(Source.CreatedDate)),
                 (Rule: await IsInvalid(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
+                (Rule: await IsInvalidLength(source.Name, 255), Parameter: nameof(Source.Name)),
                 (Rule: await IsInvalidUrl(source.Url), Parameter: nameof(Source.Url)),
 
                 (Rule: await IsValuesNotSame(
@@ -55,31 +56,40 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             return timeDifference.TotalSeconds is > 60 or < 0;
         }
 
-        private async ValueTask<dynamic> IsInvalid(Guid id) => new
+        private static async ValueTask<dynamic> IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
             Message = "Id is invalid"
         };
 
-        private async ValueTask<dynamic> IsInvalid(string name) => new
+        private static async ValueTask<dynamic> IsInvalid(string name) => new
         {
             Condition = String.IsNullOrWhiteSpace(name),
             Message = "Text is required"
         };
 
-        private async ValueTask<dynamic> IsInvalid(DateTimeOffset date) => new
+        private static async ValueTask<dynamic> IsInvalid(DateTimeOffset date) => new
         {
             Condition = date == default,
             Message = "Date is invalid"
         };
 
-        private async ValueTask<dynamic> IsInvalidUrl(string url) => new
+        private static async ValueTask<dynamic> IsInvalidLength(string text, int maxLength) => new
         {
-            Condition = IsValidUrl(url) is false,
+            Condition = await IsExceedingLength(text, maxLength),
+            Message = $"Text exceed max length of {maxLength} characters"
+        };
+
+        private static async ValueTask<bool> IsExceedingLength(string text, int maxLength) =>
+            (text ?? string.Empty).Length > maxLength;
+
+        private static async ValueTask<dynamic> IsInvalidUrl(string url) => new
+        {
+            Condition = await IsValidUrl(url) is false,
             Message = "Url is invalid"
         };
 
-        private async ValueTask<dynamic> IsDatesNotSame(
+        private static async ValueTask<dynamic> IsDatesNotSame(
             DateTimeOffset createdDate,
             DateTimeOffset updatedDate,
             string createdDateName) => new
@@ -88,7 +98,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 Message = $"Date is not the same as {createdDateName}"
             };
 
-        private async ValueTask<dynamic> IsValuesNotSame(
+        private static async ValueTask<dynamic> IsValuesNotSame(
             string createBy,
             string updatedBy,
             string createdByName) => new
@@ -97,7 +107,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 Message = $"Text is not the same as {createdByName}"
             };
 
-        public static bool IsValidUrl(string url)
+        public static async ValueTask<bool> IsValidUrl(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {

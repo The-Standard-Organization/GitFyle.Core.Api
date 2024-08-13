@@ -148,7 +148,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             var invalidSourceException =
                 new InvalidSourceException(
-                    message: "Invalid source. Please correct the errors and try again.");
+                    message: "Source is invalid, fix the errors and try again.");
 
             invalidSourceException.AddData(
                 key: nameof(Source.Name),
@@ -156,7 +156,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             var expectedSourceValidationException =
                 new SourceValidationException(
-                    message: "Source validation errors occurred, please try again.",
+                    message: "Source validation error occurred, fix errors and try again.",
                     innerException: invalidSourceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
