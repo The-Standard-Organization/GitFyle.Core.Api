@@ -22,5 +22,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
 
         public async ValueTask<Configuration> SelectConfigurationByIdAsync(Guid configurationId) =>
             await SelectAsync<Configuration>(configurationId);
+
+        public async ValueTask<Configuration> UpdateConfigurationAsync(Configuration configuration) =>
+            await UpdateAsync(configuration);
     }
 }
