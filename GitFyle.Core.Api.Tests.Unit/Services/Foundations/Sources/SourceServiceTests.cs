@@ -45,12 +45,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
         private SqlException CreateSqlException()
         {
-           return (SqlException)RuntimeHelpers.GetUninitializedObject(
-               type: typeof(SqlException));
+            return (SqlException)RuntimeHelpers.GetUninitializedObject(
+                type: typeof(SqlException));
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static string GetRandomStringWithLengthOf(int length)
+        {
+            return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
+                .GetValue();
+        }
 
         private static string GetRandomString() =>
             new MnemonicString().GetValue();

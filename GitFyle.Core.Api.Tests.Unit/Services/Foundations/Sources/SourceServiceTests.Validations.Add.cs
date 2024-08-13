@@ -139,6 +139,56 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         }
 
         [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfSourceHasInvalidLengthPropertiesAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            var invalidSource = CreateRandomSource(dateTimeOffset: randomDateTimeOffset);
+            invalidSource.Name = GetRandomStringWithLengthOf(256);
+
+            var invalidSourceException =
+                new InvalidSourceException(
+                    message: "Invalid source. Please correct the errors and try again.");
+
+            invalidSourceException.AddData(
+                key: nameof(Source.Name),
+                values: $"Text exceed max length of {invalidSource.Name.Length - 1} characters");
+
+            var expectedSourceValidationException =
+                new SourceValidationException(
+                    message: "Source validation errors occurred, please try again.",
+                    innerException: invalidSourceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Source> addSourceTask =
+                this.sourceService.AddSourceAsync(invalidSource);
+
+            SourceValidationException actualSourceValidationException =
+                await Assert.ThrowsAsync<SourceValidationException>(
+                    addSourceTask.AsTask);
+
+            // then
+            actualSourceValidationException.Should()
+                .BeEquivalentTo(expectedSourceValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedSourceValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertSourceAsync(It.IsAny<Source>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
         public async Task ShouldThrowValidationExceptionOnAddIfUrlIsInvalidAndLogItAsync()
         {
             // given
@@ -265,19 +315,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             int invalidSeconds)
         {
             // given
-            DateTimeOffset randomDateTime = 
+            DateTimeOffset randomDateTime =
                 GetRandomDateTimeOffset();
-            
+
             DateTimeOffset now = randomDateTime;
             Source randomSource = CreateRandomSource();
             Source invalidSource = randomSource;
-            
+
             DateTimeOffset invalidDate =
                 now.AddSeconds(invalidSeconds);
 
             invalidSource.CreatedDate = invalidDate;
             invalidSource.UpdatedDate = invalidDate;
-            
+
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");
 
@@ -298,7 +348,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             ValueTask<Source> addSourceTask =
                 this.sourceService.AddSourceAsync(invalidSource);
 
-            SourceValidationException actualSourceValidationException = 
+            SourceValidationException actualSourceValidationException =
                 await Assert.ThrowsAsync<SourceValidationException>(
                     addSourceTask.AsTask);
 
