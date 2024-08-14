@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
@@ -33,5 +34,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
             return await this.storageBroker.InsertSourceAsync(source);
         });
+
+        public async ValueTask<Source> RetrieveSourceByIdAsync(Guid sourceId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
