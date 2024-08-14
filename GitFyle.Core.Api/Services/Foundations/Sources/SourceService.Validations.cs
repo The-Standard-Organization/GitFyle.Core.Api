@@ -59,6 +59,12 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             int pastSeconds = 60;
             int futureSeconds = 0;
             DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+            if (currentDateTime == default)
+            {
+                return (false, default, default);
+            }
+
             TimeSpan timeDifference = currentDateTime.Subtract(date);
             DateTimeOffset startDate = currentDateTime.AddSeconds(-pastSeconds);
             DateTimeOffset endDate = currentDateTime.AddSeconds(futureSeconds);

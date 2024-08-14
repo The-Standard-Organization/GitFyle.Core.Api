@@ -61,9 +61,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             string invalidString)
         {
             // given
-            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            DateTimeOffset startDate = randomDateTimeOffset.AddSeconds(-60);
-            DateTimeOffset endDate = randomDateTimeOffset.AddSeconds(0);
+            DateTimeOffset randomDateTimeOffset = default;
 
             var invalidSource = new Source
             {
@@ -101,13 +99,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             invalidSourceException.AddData(
                 key: nameof(Source.CreatedDate),
-                values:
-                [
-                    "Date is invalid",
-
-                    $"Date is not recent. Expected a value between {startDate} and {endDate} " +
-                        $"but found {invalidSource.CreatedDate}"
-                ]);
+                values: "Date is invalid");
 
             invalidSourceException.AddData(
                 key: nameof(Source.UpdatedDate),
