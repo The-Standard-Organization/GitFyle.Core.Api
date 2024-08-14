@@ -61,6 +61,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             string invalidString)
         {
             // given
+            DateTimeOffset randomDateTimeOffset = default;
+
             var invalidSource = new Source
             {
                 Id = Guid.Empty,
@@ -107,6 +109,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 new SourceValidationException(
                     message: "Source validation error occurred, fix errors and try again.",
                     innerException: invalidSourceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
 
             // when
             ValueTask<Source> addSourceTask =
@@ -319,6 +325,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 GetRandomDateTimeOffset();
 
             DateTimeOffset now = randomDateTime;
+            DateTimeOffset startDate = now.AddSeconds(-60);
+            DateTimeOffset endDate = now.AddSeconds(0);
             Source randomSource = CreateRandomSource();
             Source invalidSource = randomSource;
 
@@ -332,8 +340,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 message: "Source is invalid, fix the errors and try again.");
 
             invalidSourceException.AddData(
-                key: nameof(Source.CreatedDate),
-                values: $"Date is not recent");
+            key: nameof(Source.CreatedDate),
+                values:
+                    $"Date is not recent. Expected a value between " +
+                    $"{startDate} and {endDate} but found {invalidDate}");
 
             var expectedSourceValidationException =
                 new SourceValidationException(
