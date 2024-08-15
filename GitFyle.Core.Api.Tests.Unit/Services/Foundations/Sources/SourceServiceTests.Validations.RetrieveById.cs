@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Moq;
@@ -18,12 +19,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             // given
             var invalidSourceId = Guid.Empty;
 
-            var invalidSourceException = new InvalidSourceException(
-                message: "Invalid Source Id, correct Id to continue");
+            var invalidSourceException =
+                new InvalidSourceException(
+                    message: "Source is invalid, fix the errors and try again.");
 
             invalidSourceException.AddData(
                 key: nameof(Source.Id),
-                values: "Id is required");
+                values: "Id is invalid");
 
             var expectedSourceValidationException =
                 new SourceValidationException(
@@ -39,8 +41,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                     retrieveSourceByIdTask.AsTask);
 
             // then
-            await Assert.ThrowsAsync<SourceValidationException>(
-                retrieveSourceByIdTask.AsTask);
+            actualSourceValidationException.Should().BeEquivalentTo(
+                expectedSourceValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

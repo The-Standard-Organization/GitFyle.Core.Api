@@ -138,6 +138,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
             return uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps;
         }
+        
+        private static async ValueTask ValidateSourceIdAsync(Guid sourceId) =>
+            Validate((Rule: await IsInvalidAsync(sourceId), Parameter: nameof(Source.Id)));
 
         private static void ValidateSourceIsNotNull(Source source)
         {
