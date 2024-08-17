@@ -150,6 +150,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             }
         }
 
+        private static async ValueTask ValidateSourceOnAddAsync(Source maybeSource, Guid id)
+        {
+            if (maybeSource is null)
+            {
+                throw new NotFoundSourceException(
+                    message: $"Source not found with id: { id}");
+            }
+        }
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidSourceException = new InvalidSourceException(
