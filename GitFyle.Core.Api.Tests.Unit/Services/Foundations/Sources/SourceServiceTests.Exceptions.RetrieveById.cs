@@ -17,7 +17,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSQLErrorOccursAndLogItAsync()
         {
             // given
-            Guid someGuid = Guid.NewGuid();
+            var someSourceId = Guid.NewGuid();
             var sqlException = CreateSqlException();
 
             var failedStorageSourceException =
@@ -31,19 +31,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                     innerException: failedStorageSourceException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectSourceByIdAsync(someGuid))
+                broker.SelectSourceByIdAsync(someSourceId))
                         .ThrowsAsync(sqlException);
 
             // when
             ValueTask<Source> retrieveSourceByIdTask =
-                this.sourceService.RetrieveSourceByIdAsync(someGuid);
+                this.sourceService.RetrieveSourceByIdAsync(someSourceId);
 
             // then
             await Assert.ThrowsAsync<SourceDependencyException>(() =>
                 retrieveSourceByIdTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectSourceByIdAsync(someGuid),
+                broker.SelectSourceByIdAsync(someSourceId),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -64,7 +64,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
         {
             //given
-            Guid someGuid = Guid.NewGuid();
+            var someSourceId = Guid.NewGuid();
             var serviceException = new Exception();
 
             var failedServiceSourceException =
@@ -83,7 +83,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             //when
             ValueTask<Source> retrieveSourceByIdTask =
-                this.sourceService.RetrieveSourceByIdAsync(someGuid);
+                this.sourceService.RetrieveSourceByIdAsync(someSourceId);
 
             SourceServiceException actualSourceServiceException =
                 await Assert.ThrowsAsync<SourceServiceException>(
