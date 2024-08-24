@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using GitFyle.Core.Api.Brokers.DateTimes;
@@ -69,6 +70,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
         private static Source CreateRandomSource(DateTimeOffset dateTimeOffset) =>
             CreateSourceFiller(dateTimeOffset).Create();
+
+        private static IQueryable<Source> CreateRandomSources()
+        {
+            return CreateSourceFiller(GetRandomDateTimeOffset())
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
 
         private static Filler<Source> CreateSourceFiller(DateTimeOffset dateTimeOffset)
         {
