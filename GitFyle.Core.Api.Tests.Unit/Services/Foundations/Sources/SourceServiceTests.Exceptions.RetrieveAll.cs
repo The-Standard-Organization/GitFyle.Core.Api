@@ -47,7 +47,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 expectedSourceDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertSourceAsync(It.IsAny<Source>()),
+                broker.SelectAllSourcesAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

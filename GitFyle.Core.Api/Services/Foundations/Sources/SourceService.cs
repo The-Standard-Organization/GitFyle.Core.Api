@@ -49,7 +49,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             return maybeSource;
         });
 
-        public async ValueTask<IQueryable<Source>> RetrieveAllSourcesAsync() =>
-            await this.storageBroker.SelectAllSourcesAsync();
+        public ValueTask<IQueryable<Source>> RetrieveAllSourcesAsync() =>
+        TryCatch(async () => await this.storageBroker.SelectAllSourcesAsync());
     }
 }

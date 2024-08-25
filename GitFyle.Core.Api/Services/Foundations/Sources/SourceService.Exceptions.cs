@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Sources;
@@ -17,6 +18,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
     internal partial class SourceService
     {
         private delegate ValueTask<Source> ReturningSourceFunction();
+        private delegate ValueTask<IQueryable<Source>> ReturningSourcesFunction();
 
         private async ValueTask<Source> TryCatch(ReturningSourceFunction returningSourceFunction)
         {
@@ -71,6 +73,22 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceSourceException);
+            }
+        }
+
+        private async ValueTask<IQueryable<Source>> TryCatch(ReturningSourcesFunction returningSourcesFunction)
+        {
+            try
+            {
+                return await returningSourcesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageSourceException = new FailedStorageSourceException(
+                    message: "Failed source storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageSourceException);
             }
         }
 
