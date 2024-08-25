@@ -90,6 +90,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageSourceException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceSourceException =
+                    new FailedServiceSourceException(
+                        message: "Failed service source error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceSourceException);
+            }
         }
 
         private async ValueTask<SourceValidationException> CreateAndLogValidationExceptionAsync(
