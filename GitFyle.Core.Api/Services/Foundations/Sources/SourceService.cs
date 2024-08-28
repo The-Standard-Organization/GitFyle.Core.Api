@@ -33,5 +33,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
             return await this.storageBroker.InsertSourceAsync(source);
         });
+
+        public ValueTask<Source> ModifySourceAsync(Source source)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
