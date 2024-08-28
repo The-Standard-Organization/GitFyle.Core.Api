@@ -10,5 +10,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
     public interface ISourceService
     {
         ValueTask<Source> AddSourceAsync(Source source);
+        ValueTask<Source> ModifySourceAsync(Source source);
     }
 }
