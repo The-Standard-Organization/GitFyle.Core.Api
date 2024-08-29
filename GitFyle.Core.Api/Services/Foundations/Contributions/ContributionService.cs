@@ -28,6 +28,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         }
 
         public ValueTask<Contribution> AddContributionAsync(Contribution contribution) =>
-            throw new NotImplementedException();
+            this.storageBroker.InsertContributionAsync(contribution);
     }
 }

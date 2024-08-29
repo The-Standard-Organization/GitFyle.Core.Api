@@ -28,9 +28,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 broker.InsertContributionAsync(inputContribution))
                     .ReturnsAsync(insertedContribution);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(now);
 
             // when
             Contribution actualContribution =
@@ -39,17 +36,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             // then
             actualContribution.Should().BeEquivalentTo(expectedContribution);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
-
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertContributionAsync(inputContribution),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
