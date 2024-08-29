@@ -2,14 +2,12 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
@@ -57,6 +55,62 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedContributionDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributionAsync(It.IsAny<Contribution>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfContributionAlreadyExistsAndLogItAsync()
+        {
+            // given
+            Contribution someContribution = CreateRandomContribution();
+
+            var duplicateKeyException =
+                new DuplicateKeyException(
+                    message: "Duplicate key error occurred");
+
+            var alreadyExistsContributionException =
+                new AlreadyExistsContributionException(
+                    message: "Contribution already exists error occurred.",
+                    innerException: duplicateKeyException,
+                    data: duplicateKeyException.Data);
+
+            var expectedContributionDependencyValidationException =
+                new ContributionDependencyValidationException(
+                    message: "Contribution dependency validation error occurred, fix errors and try again.",
+                    innerException: alreadyExistsContributionException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(duplicateKeyException);
+
+            // when
+            ValueTask<Contribution> addContributionTask =
+                this.contributionService.AddContributionAsync(
+                    someContribution);
+
+            ContributionDependencyValidationException actualContributionDependencyValidationException =
+                await Assert.ThrowsAsync<ContributionDependencyValidationException>(
+                    testCode: addContributionTask.AsTask);
+
+            // then
+            actualContributionDependencyValidationException.Should().BeEquivalentTo(
+                expectedContributionDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionDependencyValidationException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
