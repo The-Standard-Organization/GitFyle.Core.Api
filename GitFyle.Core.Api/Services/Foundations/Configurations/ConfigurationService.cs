@@ -22,9 +22,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Configuration> AddConfigurationAsync(Configuration configuration)
-        {
-            throw new System.NotImplementedException();
-        }
+        public ValueTask<Configuration> AddConfigurationAsync(Configuration configuration) =>
+            this.storageBroker.InsertConfigurationAsync(configuration);
     }
 }
