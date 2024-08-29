@@ -121,10 +121,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                     message: "Contribution validation error occurred, fix errors and try again.",
                     innerException: invalidContributionException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(randomDateTimeOffset);
-
             // when
             ValueTask<Contribution> addContributionTask =
                 this.contributionService.AddContributionAsync(invalidContribution);
@@ -137,10 +133,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             actualContributionValidationException.Should().BeEquivalentTo(
                 expectedContributionValidationException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(
                     SameExceptionAs(expectedContributionValidationException))),
@@ -150,7 +142,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 broker.InsertContributionAsync(It.IsAny<Contribution>()),
                     Times.Never);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }

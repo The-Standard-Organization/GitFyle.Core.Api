@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Contributions
@@ -18,6 +19,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             catch (NullContributionException nullContributionException)
             {
                 throw await CreateAndLogValidationExceptionAsync(nullContributionException);
+            }
+            catch (InvalidContributionException invalidContributionException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidContributionException);
             }
         }
 
