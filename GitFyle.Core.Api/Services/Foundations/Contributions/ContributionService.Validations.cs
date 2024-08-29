@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Contributions
 {
@@ -19,6 +17,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 (Rule: await IsInvalidAsync(contribution.ExternalId), Parameter: nameof(Contribution.ExternalId)),
                 (Rule: await IsInvalidAsync(contribution.RepositoryId), Parameter: nameof(Contribution.RepositoryId)),
                 (Rule: await IsInvalidAsync(contribution.ContributorId), Parameter: nameof(Contribution.ContributorId)),
+                (Rule: await IsInvalidLengthAsync(contribution.Title, 255), Parameter: nameof(Contribution.Title)),
+                (Rule: await IsInvalidLengthAsync(contribution.ExternalId, 255), Parameter: nameof(Contribution.ExternalId)),
                 (Rule: await IsInvalidAsync(contribution.ContributionTypeId), Parameter: nameof(Contribution.ContributionTypeId)),
                 (Rule: await IsInvalidAsync(contribution.ExternalCreatedAt), Parameter: nameof(Contribution.ExternalCreatedAt)),
                 (Rule: await IsInvalidAsync(contribution.ExternalUpdatedAt), Parameter: nameof(Contribution.ExternalUpdatedAt)),
@@ -50,6 +50,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             Condition = date == default,
             Message = "Date is invalid"
         };
+
+        private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new
+        {
+            Condition = await IsExceedingLengthAsync(text, maxLength),
+            Message = $"Text exceed max length of {maxLength} characters"
+        };
+
+        private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
+            (text ?? string.Empty).Length > maxLength;
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
