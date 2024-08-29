@@ -43,6 +43,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 actualException.SameExceptionAs(expectedException);
         }
 
+        private SqlException CreateSqlException()
+        {
+            return (SqlException)RuntimeHelpers.GetUninitializedObject(
+                type: typeof(SqlException));
+        }
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
@@ -51,6 +57,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
                 .GetValue();
         }
+
+        private static Contribution CreateRandomContribution() =>
+            CreateRandomContribution(dateTimeOffset: GetRandomDateTimeOffset());
 
         private static Contribution CreateRandomContribution(DateTimeOffset dateTimeOffset) =>
             CreateContributionFiller(dateTimeOffset).Create();
