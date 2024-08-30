@@ -3,7 +3,10 @@ using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Contributions
@@ -44,6 +47,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsContributionException);
             }
+            catch (DbUpdateException dbUpdateException)
+            {
+                var failedOperationContributionException =
+                    new FailedOperationContributionException(
+                        message: "Failed operation contribution  error occurred, contact support.",
+                        innerException: dbUpdateException);
+
+                throw await CreateAndLogDependencyExceptionAsync(failedOperationContributionException);
+            }
         }
 
 
@@ -81,6 +93,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             await this.loggingBroker.LogErrorAsync(contributionDependencyValidationException);
 
             return contributionDependencyValidationException;
+        }
+
+        private async ValueTask<ContributionDependencyException> CreateAndLogDependencyExceptionAsync(
+          Xeption exception)
+        {
+            var contributionDependencyException = new ContributionDependencyException(
+                message: "Contribution dependency error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(contributionDependencyException);
+
+            return contributionDependencyException;
         }
 
     }
