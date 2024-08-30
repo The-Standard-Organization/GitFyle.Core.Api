@@ -18,9 +18,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Configuration> AddConfigurationAsync(Configuration configuration)
-        {
-            throw new System.NotImplementedException();
-        }
+        public async ValueTask<Configuration> AddConfigurationAsync(Configuration configuration) =>
+            await this.storageBroker.InsertConfigurationAsync(configuration);
     }
 }
