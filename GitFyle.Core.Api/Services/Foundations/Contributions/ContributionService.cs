@@ -31,6 +31,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         TryCatch(async () =>
         {
             await ValidateContributionOnAddAsync(contribution);
+
             return await  this.storageBroker.InsertContributionAsync(contribution);
         });
           
