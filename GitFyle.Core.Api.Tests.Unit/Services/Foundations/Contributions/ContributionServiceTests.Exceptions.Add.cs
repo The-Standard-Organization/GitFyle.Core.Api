@@ -8,6 +8,7 @@ using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
@@ -111,6 +112,58 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedContributionDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributionAsync(It.IsAny<Contribution>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDependencyErrorOccurredAndLogItAsync()
+        {
+            // given
+            Contribution someContribution = CreateRandomContribution();
+            var dbUpdateException = new DbUpdateException();
+
+            var failedOperationContributionException =
+                new FailedOperationContributionException(
+                    message: "Failed operation contribution  error occurred, contact support.",
+                    innerException: dbUpdateException);
+
+            var expectedContributionDependencyException =
+                new ContributionDependencyException(
+                    message: "Contribution dependency error occurred, contact support.",
+                    innerException: failedOperationContributionException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(dbUpdateException);
+
+            // when
+            ValueTask<Contribution> addContributionTask =
+                this.contributionService.AddContributionAsync(
+                    someContribution);
+
+            ContributionDependencyException actualContributionDependencyException =
+                await Assert.ThrowsAsync<ContributionDependencyException>(
+                    testCode: addContributionTask.AsTask);
+
+            // then
+            actualContributionDependencyException.Should().BeEquivalentTo(
+                expectedContributionDependencyException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionDependencyException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
