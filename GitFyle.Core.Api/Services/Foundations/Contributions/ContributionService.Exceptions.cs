@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
@@ -56,6 +58,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationContributionException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceContributionException =
+                    new FailedServiceContributionException(
+                        message: "Failed service contribution error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceContributionException);
+            }
         }
 
 
@@ -105,6 +116,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             await this.loggingBroker.LogErrorAsync(contributionDependencyException);
 
             return contributionDependencyException;
+        }
+
+        private async ValueTask<ContributionServiceException> CreateAndLogServiceExceptionAsync(
+          Xeption exception)
+        {
+            var contributionServiceException = new ContributionServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(contributionServiceException);
+
+            return contributionServiceException;
         }
 
     }
