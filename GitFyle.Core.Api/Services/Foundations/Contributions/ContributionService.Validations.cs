@@ -1,10 +1,11 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
+using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Contributions
 {
@@ -15,17 +16,28 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             ValidateContributionIsNotNull(contribution);
 
             Validate(
-                (Rule: await IsInvalidAsync(contribution.Id), Parameter: nameof(Contribution.Id)),
-                (Rule: await IsInvalidAsync(contribution.Title), Parameter: nameof(Contribution.Title)),
-                (Rule: await IsInvalidAsync(contribution.ExternalId), Parameter: nameof(Contribution.ExternalId)),
-                (Rule: await IsInvalidAsync(contribution.RepositoryId), Parameter: nameof(Contribution.RepositoryId)),
-                (Rule: await IsInvalidAsync(contribution.ContributorId), Parameter: nameof(Contribution.ContributorId)),
-                (Rule: await IsInvalidLengthAsync(contribution.Title, 255), Parameter: nameof(Contribution.Title)),
-                (Rule: await IsInvalidLengthAsync(contribution.ExternalId, 255), Parameter: nameof(Contribution.ExternalId)),
-                (Rule: await IsInvalidAsync(contribution.ContributionTypeId), Parameter: nameof(Contribution.ContributionTypeId)),
-                (Rule: await IsInvalidAsync(contribution.ExternalCreatedAt), Parameter: nameof(Contribution.ExternalCreatedAt)),
-                (Rule: await IsInvalidAsync(contribution.ExternalUpdatedAt), Parameter: nameof(Contribution.ExternalUpdatedAt)),
-                (Rule: await IsInvalidAsync(contribution.ExternalMergedAt), Parameter: nameof(Contribution.ExternalMergedAt)),
+                (Rule: await IsInvalidAsync(contribution.Id),
+                    Parameter: nameof(Contribution.Id)),
+                (Rule: await IsInvalidAsync(contribution.Title),
+                    Parameter: nameof(Contribution.Title)),
+                (Rule: await IsInvalidAsync(contribution.ExternalId), 
+                    Parameter: nameof(Contribution.ExternalId)),
+                (Rule: await IsInvalidAsync(contribution.RepositoryId), 
+                    Parameter: nameof(Contribution.RepositoryId)),
+                (Rule: await IsInvalidAsync(contribution.ContributorId),
+                    Parameter: nameof(Contribution.ContributorId)),
+                (Rule: await IsInvalidLengthAsync(contribution.Title, 255), 
+                    Parameter: nameof(Contribution.Title)),
+                (Rule: await IsInvalidLengthAsync(contribution.ExternalId, 255), 
+                    Parameter: nameof(Contribution.ExternalId)),
+                (Rule: await IsInvalidAsync(contribution.ContributionTypeId), 
+                    Parameter: nameof(Contribution.ContributionTypeId)),
+                (Rule: await IsInvalidAsync(contribution.ExternalCreatedAt), 
+                    Parameter: nameof(Contribution.ExternalCreatedAt)),
+                (Rule: await IsInvalidAsync(contribution.ExternalUpdatedAt), 
+                    Parameter: nameof(Contribution.ExternalUpdatedAt)),
+                (Rule: await IsInvalidAsync(contribution.ExternalMergedAt), 
+                    Parameter: nameof(Contribution.ExternalMergedAt)),
 
                 (Rule: await IsDatesNotSameAsync(
                     createdDate: contribution.ExternalCreatedAt,
@@ -34,7 +46,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
 
                     Parameter: nameof(Contribution.ExternalUpdatedAt)),
 
-                (Rule: await IsNotRecentAsync(contribution.ExternalCreatedAt), Parameter: nameof(Contribution.ExternalCreatedAt)));
+                (Rule: await IsNotRecentAsync(contribution.ExternalCreatedAt), 
+                    Parameter: nameof(Contribution.ExternalCreatedAt)));
         }
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
@@ -51,7 +64,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         private async ValueTask<(bool IsNotRecent, DateTimeOffset StartDate, DateTimeOffset EndDate)>
             IsDateNotRecentAsync(DateTimeOffset date)
         {
-            int pastSeconds = 60;
+            int pastYears = 10;
             int futureSeconds = 0;
             DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
@@ -60,10 +73,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 return (false, default, default);
             }
 
-            TimeSpan timeDifference = currentDateTime.Subtract(date);
-            DateTimeOffset startDate = currentDateTime.AddSeconds(-pastSeconds);
+            DateTimeOffset startDate = currentDateTime.AddYears(-pastYears);
             DateTimeOffset endDate = currentDateTime.AddSeconds(futureSeconds);
-            bool isNotRecent = timeDifference.TotalSeconds is > 60 or < 0;
+            bool isNotRecent = date.Year < startDate.Year || date.Year > endDate.Year;
 
             return (isNotRecent, startDate, endDate);
         }
