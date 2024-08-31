@@ -63,8 +63,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             string invalidString)
         {
             // given
-            DateTimeOffset randomDateTimeOffset = default;
-
             var invalidContribution = new Contribution
             {
                 Id = Guid.Empty,
