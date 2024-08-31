@@ -150,7 +150,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             }
         }
 
-        private static async ValueTask ValidateSourceOnAddAsync(Source maybeSource, Guid id)
+        private static async ValueTask ValidateSourceRetrievedByIdAsync(Source maybeSource, Guid id)
         {
             if (maybeSource is null)
             {
