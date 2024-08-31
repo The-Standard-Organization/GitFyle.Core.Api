@@ -80,14 +80,14 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
         private static Filler<Source> CreateSourceFiller(DateTimeOffset dateTimeOffset)
         {
-            string user = Guid.NewGuid().ToString();
+            string someUser = Guid.NewGuid().ToString();
             var filler = new Filler<Source>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnProperty(address => address.Url).Use(new RandomUrl().GetValue())
-                .OnProperty(address => address.CreatedBy).Use(user)
-                .OnProperty(address => address.UpdatedBy).Use(user)
+                .OnProperty(someUser => someUser.CreatedBy).Use(someUser)
+                .OnProperty(someUser => someUser.UpdatedBy).Use(someUser)
                 .OnProperty(source => source.Repositories).IgnoreIt()
                 .OnProperty(source => source.Contributors).IgnoreIt();
 
