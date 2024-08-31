@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.Loggings;
@@ -13,6 +14,7 @@ using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Services.Foundations.Configurations;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 {
@@ -30,6 +32,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.configurationService = new ConfigurationService(
                 storageBroker: this.storageBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
+        }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(
+            Xeption expectedException)
+        {
+            return actualException =>
+                actualException.SameExceptionAs(expectedException);
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
