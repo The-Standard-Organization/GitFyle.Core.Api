@@ -7,11 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Moq;
-using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 {
@@ -65,6 +61,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             string invalidString)
         {
             // given
+            DateTimeOffset randomDateTimeOffset = default;
+
             var invalidContribution = new Contribution
             {
                 Id = Guid.Empty,
@@ -123,6 +121,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                     message: "Contribution validation error occurred, fix errors and try again.",
                     innerException: invalidContributionException);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
             // when
             ValueTask<Contribution> addContributionTask =
                 this.contributionService.AddContributionAsync(invalidContribution);
@@ -134,6 +136,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             // then
             actualContributionValidationException.Should().BeEquivalentTo(
                 expectedContributionValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(
@@ -189,6 +195,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             // then
             actualContributionValidationException.Should()
                 .BeEquivalentTo(expectedContributionValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
