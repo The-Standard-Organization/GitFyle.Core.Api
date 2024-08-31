@@ -28,7 +28,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 broker.InsertContributionAsync(inputContribution))
                     .ReturnsAsync(insertedContribution);
 
-
             // when
             Contribution actualContribution =
                 await this.contributionService.AddContributionAsync(inputContribution);
