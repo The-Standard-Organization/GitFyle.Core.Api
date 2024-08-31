@@ -5,6 +5,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
 {
     public interface IContributionService
     {
-            ValueTask<Contribution> AddContributionAsync(Contribution contribution);
+        ValueTask<Contribution> AddContributionAsync(Contribution contribution);
     }
 }

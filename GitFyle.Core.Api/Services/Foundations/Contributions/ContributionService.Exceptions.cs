@@ -69,7 +69,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             }
         }
 
-
         private async ValueTask<ContributionValidationException> CreateAndLogValidationExceptionAsync(
             Xeption exception)
         {
