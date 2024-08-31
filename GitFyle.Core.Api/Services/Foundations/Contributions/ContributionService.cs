@@ -5,6 +5,10 @@
 using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
+// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
@@ -32,7 +36,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         {
             await ValidateContributionOnAddAsync(contribution);
 
-            return await  this.storageBroker.InsertContributionAsync(contribution);
+            return await this.storageBroker.InsertContributionAsync(contribution);
         });
           
     }
