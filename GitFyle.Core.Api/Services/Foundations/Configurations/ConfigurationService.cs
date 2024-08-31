@@ -1,11 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
+using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 
 namespace GitFyle.Core.Api.Services.Foundations.Configurations
 {
-    internal class ConfigurationService : IConfigurationService
+    internal partial class ConfigurationService : IConfigurationService
     {
         private readonly IStorageBroker storageBroker;
         private readonly ILoggingBroker loggingBroker;
@@ -18,7 +22,11 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Configuration> AddConfigurationAsync(Configuration configuration) =>
-            await this.storageBroker.InsertConfigurationAsync(configuration);
+        public ValueTask<Configuration> AddConfigurationAsync(Configuration configuration) =>
+            TryCatch(async () =>
+            {
+                ValidateConfigurationOnAdd(configuration);
+                return await this.storageBroker.InsertConfigurationAsync(configuration);
+            });
     }
 }

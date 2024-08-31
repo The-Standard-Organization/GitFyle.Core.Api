@@ -2,18 +2,11 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Moq;
-using Xunit.Sdk;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 {
@@ -25,7 +18,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             // given
             Configuration nullConfiguration = null;
 
-            var nullConfigurationException = 
+            var nullConfigurationException =
                 new NullConfigurationException(
                     message: "Configuration is null");
 
@@ -35,10 +28,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     innerException: nullConfigurationException);
 
             // when
-            ValueTask<Configuration> addConfigurationTask = 
+            ValueTask<Configuration> addConfigurationTask =
                 this.configurationService.AddConfigurationAsync(nullConfiguration);
 
-            ConfigurationValidationException actualConfigurationValidationException = 
+            ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
                     addConfigurationTask.AsTask);
 
@@ -46,13 +39,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationValidationException.Should().BeEquivalentTo(
                 expectedConfigurationValidationException);
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationValidationException))), 
+                    expectedConfigurationValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.InsertConfigurationAsync(It.IsAny<Configuration>()), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertConfigurationAsync(It.IsAny<Configuration>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
