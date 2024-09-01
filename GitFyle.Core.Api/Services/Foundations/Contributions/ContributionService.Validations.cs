@@ -75,7 +75,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
 
             DateTimeOffset startDate = currentDateTime.AddYears(-pastYears);
             DateTimeOffset endDate = currentDateTime.AddSeconds(futureSeconds);
-            bool isNotRecent = date.Year < startDate.Year || date.Year > endDate.Year;
+            bool isNotRecent = date < startDate;
 
             return (isNotRecent, startDate, endDate);
         }

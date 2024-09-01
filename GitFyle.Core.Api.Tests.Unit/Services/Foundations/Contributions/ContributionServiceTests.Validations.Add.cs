@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Moq;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 {
@@ -269,5 +272,75 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(-11)]
+        public async Task ShouldThrowValidationExceptionOnAddIfAuditPropertiesIsNotRecentAndLogItAsync(
+           int invalidYears)
+        {
+            // given
+            DateTimeOffset randomDateTime =
+             GetRandomDateTimeOffset();
+
+            DateTimeOffset now = randomDateTime;
+            DateTimeOffset startDate = now.AddYears(-10);
+            DateTimeOffset endDate = now.AddSeconds(0);
+            Contribution randomContribution = CreateRandomContribution();
+            Contribution invalidContribution = randomContribution;
+
+            DateTimeOffset invalidDate =
+                now.AddYears(invalidYears);
+
+            invalidContribution.ExternalCreatedAt = invalidDate;
+            invalidContribution.ExternalUpdatedAt = invalidDate;
+
+            var invalidContributionException = new InvalidContributionException(
+                message: "Contribution is invalid, fix the errors and try again.");
+
+            invalidContributionException.AddData(
+            key: nameof(Contribution.ExternalCreatedAt),
+                values:
+                    $"Date is not recent. Expected a value between " +
+                    $"{startDate} and {endDate} but found {invalidContribution.ExternalCreatedAt}");
+
+            var expectedContributionValidationException =
+                new ContributionValidationException(
+                    message: "Contribution validation error occurred, fix errors and try again.",
+                    innerException: invalidContributionException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(now);
+
+            // when
+            ValueTask<Contribution> addContributionTask =
+                this.contributionService.AddContributionAsync(invalidContribution);
+
+            ContributionValidationException actualContributionValidationException =
+                await Assert.ThrowsAsync<ContributionValidationException>(
+                    addContributionTask.AsTask);
+
+            // then
+            actualContributionValidationException.Should().BeEquivalentTo(
+                expectedContributionValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedContributionValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributionAsync(It.IsAny<Contribution>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
     }
 }
