@@ -13,7 +13,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
     public partial class ConfigurationServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionIfConfigurationIsNullAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnAddIfConfigurationIsNullAndLogItAsync()
         {
             // given
             Configuration nullConfiguration = null;
