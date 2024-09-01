@@ -8,6 +8,7 @@ using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using Moq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 {
@@ -25,7 +26,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             var expectedConfigurationValidationException =
                 new ConfigurationValidationException(
-                    message: "Configuration validation error occurred, fix errors and try again",
+                    message: "Configuration validation error occurred, fix errors and try again.",
                     innerException: nullConfigurationException);
 
             // when
@@ -76,44 +77,49 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 new InvalidConfigurationException(
                     message: "Configuration is invalid, fix the errors and try again.");
 
-            invalidConfigurationException.Data.Add(
+            invalidConfigurationException.AddData(
                 key: nameof(Configuration.Id),
-                value: "Id is invalid."
+                values: "Id is invalid."
                 );
 
-            invalidConfigurationException.Data.Add(
+            invalidConfigurationException.AddData(
                 key: nameof(Configuration.Name),
-                value: "Text is required."
+                values: "Text is required."
                 );
 
-            invalidConfigurationException.Data.Add(
+            invalidConfigurationException.AddData(
+                key: nameof(Configuration.Type),
+                values: "Text is required."
+                );
+
+            invalidConfigurationException.AddData(
                 key: nameof(Configuration.Value),
-                value: "Text is required."
+                values: "Text is required."
                 );
 
-            invalidConfigurationException.Data.Add(
+            invalidConfigurationException.AddData(
                 key: nameof(Configuration.CreatedBy),
-                value: "Text is required."
+                values: "Text is required."
                 );
 
-            invalidConfigurationException.Data.Add(
+            invalidConfigurationException.AddData(
                 key: nameof(Configuration.UpdatedBy),
-                value: "Text is required."
+                values: "Text is required."
                 );
 
-            invalidConfigurationException.Data.Add(
+            invalidConfigurationException.AddData(
                 key: nameof(Configuration.CreatedDate),
-                value: "Date is invalid."
+                values: "Date is invalid."
                 );
 
-            invalidConfigurationException.Data.Add(
+            invalidConfigurationException.AddData(
                 key: nameof(Configuration.UpdatedDate),
-                value: "Date is invalid."
+                values: "Date is invalid."
                 );
 
             var expectedConfigurationValidationException = 
                 new ConfigurationValidationException(
-                    message: "Configuration validation error occurred, fix errors and try again.", 
+                    message: "Configuration validation error occurred, fix errors and try again.",
                     innerException: invalidConfigurationException);
 
             // when
@@ -130,15 +136,15 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             this.loggingBrokerMock.Verify(broker => 
                 broker.LogErrorAsync(It.Is(
-                    SameExceptionAs(expectedConfigurationValidationException))), 
+                    SameExceptionAs(expectedConfigurationValidationException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker => 
-                broker.InsertConfigurationAsync(invalidConfiguration), 
+                broker.InsertConfigurationAsync(It.IsAny<Configuration>()),
                     Times.Never);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

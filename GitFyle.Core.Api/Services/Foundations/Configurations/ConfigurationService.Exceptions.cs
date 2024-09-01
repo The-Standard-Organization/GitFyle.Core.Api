@@ -23,13 +23,17 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             {
                 throw CreateAndLogValidationException(nullConfigurationException);
             }
+            catch (InvalidConfigurationException invalidationConfigurationException)
+            {
+                throw CreateAndLogValidationException(invalidationConfigurationException);
+            }
         }
 
         private ConfigurationValidationException CreateAndLogValidationException(Xeption innerException)
         {
             var configurationValidationException =
                 new ConfigurationValidationException(
-                    message: "Configuration validation error occurred, fix errors and try again",
+                    message: "Configuration validation error occurred, fix errors and try again.",
                     innerException: innerException);
 
             this.loggingBroker.LogErrorAsync(configurationValidationException);
