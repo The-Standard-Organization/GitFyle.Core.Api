@@ -40,24 +40,21 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 (Rule: await IsInvalidAsync(contribution.ContributionTypeId), 
                     Parameter: nameof(Contribution.ContributionTypeId)),
 
-                (Rule: await IsInvalidAsync(contribution.ExternalCreatedAt), 
-                    Parameter: nameof(Contribution.ExternalCreatedAt)),
+                (Rule: await IsInvalidAsync(contribution.CreatedWhen), 
+                    Parameter: nameof(Contribution.CreatedWhen)),
 
-                (Rule: await IsInvalidAsync(contribution.ExternalUpdatedAt), 
-                    Parameter: nameof(Contribution.ExternalUpdatedAt)),
-
-                (Rule: await IsInvalidAsync(contribution.ExternalMergedAt), 
-                    Parameter: nameof(Contribution.ExternalMergedAt)),
+                (Rule: await IsInvalidAsync(contribution.UpdatedWhen), 
+                    Parameter: nameof(Contribution.UpdatedWhen)),
 
                 (Rule: await IsDatesNotSameAsync(
-                    createdDate: contribution.ExternalCreatedAt,
-                            updatedDate: contribution.ExternalUpdatedAt,
-                            nameof(Contribution.ExternalCreatedAt)),
+                    createdDate: contribution.CreatedWhen,
+                            updatedDate: contribution.UpdatedWhen,
+                            nameof(Contribution.CreatedWhen)),
 
-                    Parameter: nameof(Contribution.ExternalUpdatedAt)),
+                    Parameter: nameof(Contribution.UpdatedWhen)),
 
-                (Rule: await IsNotRecentAsync(contribution.ExternalCreatedAt), 
-                    Parameter: nameof(Contribution.ExternalCreatedAt)));
+                (Rule: await IsNotRecentAsync(contribution.CreatedWhen), 
+                    Parameter: nameof(Contribution.CreatedWhen)));
         }
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
@@ -72,9 +69,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         }
 
         private async ValueTask<(bool IsNotRecent, DateTimeOffset StartDate, DateTimeOffset EndDate)>
-            IsDateNotRecentAsync(DateTimeOffset date)
+          IsDateNotRecentAsync(DateTimeOffset date)
         {
-            int pastYears = 10;
+            int pastSeconds = 60;
             int futureSeconds = 0;
             DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
@@ -83,9 +80,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 return (false, default, default);
             }
 
-            DateTimeOffset startDate = currentDateTime.AddYears(-pastYears);
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            DateTimeOffset startDate = currentDateTime.AddSeconds(-pastSeconds);
             DateTimeOffset endDate = currentDateTime.AddSeconds(futureSeconds);
-            bool isNotRecent = date < startDate;
+            bool isNotRecent = timeDifference.TotalSeconds is > 60 or < 0;
 
             return (isNotRecent, startDate, endDate);
         }

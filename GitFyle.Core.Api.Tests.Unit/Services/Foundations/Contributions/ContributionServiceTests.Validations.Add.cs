@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
@@ -273,34 +275,35 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         }
 
         [Theory]
-        [InlineData(-11)]
-        public async Task ShouldThrowValidationExceptionOnAddIfAuditPropertiesIsNotRecentAndLogItAsync(
-           int invalidYears)
+        [InlineData(1)]
+        [InlineData(-61)]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(
+            int invalidSeconds)
         {
             // given
             DateTimeOffset randomDateTime =
-             GetRandomDateTimeOffset();
+                GetRandomDateTimeOffset();
 
             DateTimeOffset now = randomDateTime;
-            DateTimeOffset startDate = now.AddYears(-10);
+            DateTimeOffset startDate = now.AddSeconds(-60);
             DateTimeOffset endDate = now.AddSeconds(0);
             Contribution randomContribution = CreateRandomContribution();
             Contribution invalidContribution = randomContribution;
 
             DateTimeOffset invalidDate =
-                now.AddYears(invalidYears);
+                now.AddSeconds(invalidSeconds);
 
-            invalidContribution.ExternalCreatedAt = invalidDate;
-            invalidContribution.ExternalUpdatedAt = invalidDate;
+            invalidContribution.CreatedWhen = invalidDate;
+            invalidContribution.UpdatedWhen = invalidDate;
 
             var invalidContributionException = new InvalidContributionException(
                 message: "Contribution is invalid, fix the errors and try again.");
 
             invalidContributionException.AddData(
-            key: nameof(Contribution.ExternalCreatedAt),
+            key: nameof(Contribution.CreatedWhen),
                 values:
                     $"Date is not recent. Expected a value between " +
-                    $"{startDate} and {endDate} but found {invalidContribution.ExternalCreatedAt}");
+                    $"{startDate} and {endDate} but found {invalidDate}");
 
             var expectedContributionValidationException =
                 new ContributionValidationException(
@@ -340,6 +343,5 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
-
     }
 }
