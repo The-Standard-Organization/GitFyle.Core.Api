@@ -227,6 +227,5 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
-
     }
 }
