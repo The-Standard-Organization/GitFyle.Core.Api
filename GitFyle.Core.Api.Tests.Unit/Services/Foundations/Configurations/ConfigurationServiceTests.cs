@@ -52,9 +52,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         private static Filler<Configuration> CreateConfigurationFiller(DateTimeOffset dateTimeOffset)
         {
             var filler = new Filler<Configuration>();
+            string user = Guid.NewGuid().ToString();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(dateTimeOffset);
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnProperty(configuration => configuration.CreatedBy).Use(user)
+                .OnProperty(configuration => configuration.UpdatedBy).Use(user);
 
             return filler;
         }

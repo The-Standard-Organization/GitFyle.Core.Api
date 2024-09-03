@@ -25,9 +25,39 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 (Rule: await IsInvalidAsync(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
                 (Rule: await IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
                 (Rule: await IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
-                (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate))
+                (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
+
+                (Rule: await IsValuesNotSameAsync(
+                    createdBy: configuration.CreatedBy,
+                    updatedBy: configuration.UpdatedBy,
+                    createdByName: nameof(configuration.CreatedBy)), 
+                    Parameter: nameof(configuration.UpdatedBy)),
+
+                (Rule: await IsDatesNotSameAsync(
+                    createdDate: configuration.CreatedDate, 
+                    updatedDate: configuration.UpdatedDate,
+                    createdDateName: nameof(configuration.CreatedDate)
+                    ), 
+                    Parameter: nameof(configuration.UpdatedDate))
+
                 );
         }
+
+        private static async ValueTask<dynamic> IsDatesNotSameAsync(
+            DateTimeOffset createdDate, 
+            DateTimeOffset updatedDate,
+            string createdDateName
+            ) => new
+        {
+            Condition = createdDate != updatedDate,
+            Message = $"Date is not same as {createdDateName}"
+        };
+
+        private static async ValueTask<dynamic> IsValuesNotSameAsync(string createdBy, string updatedBy, string createdByName) => new
+        {
+            Condition = createdBy != updatedBy,
+            Message = $"Text is not same as {createdByName}"
+        };
 
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
         {

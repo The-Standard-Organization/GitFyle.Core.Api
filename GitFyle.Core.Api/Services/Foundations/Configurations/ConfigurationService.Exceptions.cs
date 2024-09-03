@@ -33,7 +33,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         {
             var configurationValidationException =
                 new ConfigurationValidationException(
-                    message: "Configuration validation error occurred, fix errors and try again.",
+                    message: "Configuration validation error occurred, fix the errors and try again.",
                     innerException: innerException);
 
             this.loggingBroker.LogErrorAsync(configurationValidationException);
