@@ -58,6 +58,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 .GetValue();
         }
 
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
+
         private static Contribution CreateRandomContribution() =>
             CreateRandomContribution(dateTimeOffset: GetRandomDateTimeOffset());
 
@@ -66,10 +69,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 
         private static Filler<Contribution> CreateContributionFiller(DateTimeOffset dateTimeOffset)
         {
+            string user = Guid.NewGuid().ToString();
             var filler = new Filler<Contribution>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnProperty(contribution => contribution.CreatedBy).Use(user)
+                .OnProperty(contribution => contribution.UpdatedBy).Use(user)
                 .OnProperty(contribution => contribution.ExternalCreatedAt).Use(dateTimeOffset)
                 .OnProperty(contribution => contribution.ExternalMergedAt).Use(dateTimeOffset)
                 .OnProperty(contribution => contribution.ExternalMergedAt).Use(dateTimeOffset)
