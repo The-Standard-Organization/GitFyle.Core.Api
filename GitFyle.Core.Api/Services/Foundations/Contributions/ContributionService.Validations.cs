@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Contributions
 {
@@ -25,8 +26,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 (Rule: await IsInvalidAsync(contribution.ExternalId), 
                     Parameter: nameof(Contribution.ExternalId)),
 
-                (Rule: await IsInvalidAsync(contribution.RepositoryId), 
-                    Parameter: nameof(Contribution.RepositoryId)),
+                (Rule: await IsInvalidAsync(contribution.RepositoryId),
+                     Parameter: nameof(Contribution.RepositoryId)),
+
+                (Rule: await IsInvalidAsync(contribution.CreatedBy), 
+                    Parameter: nameof(Contribution.CreatedBy)),
+
+                (Rule: await IsInvalidAsync(contribution.UpdatedBy), 
+                    Parameter: nameof(Contribution.UpdatedBy)),
 
                 (Rule: await IsInvalidAsync(contribution.ContributorId),
                     Parameter: nameof(Contribution.ContributorId)),
@@ -46,12 +53,19 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 (Rule: await IsInvalidAsync(contribution.UpdatedWhen), 
                     Parameter: nameof(Contribution.UpdatedWhen)),
 
+                (Rule: await IsValuesNotSameAsync(
+                    createBy: contribution.CreatedBy,
+                    updatedBy: contribution.UpdatedBy,
+                    createdByName: nameof(Contribution.CreatedBy)),
+
+                Parameter: nameof(Contribution.UpdatedBy)),
+
                 (Rule: await IsDatesNotSameAsync(
                     createdDate: contribution.CreatedWhen,
                             updatedDate: contribution.UpdatedWhen,
                             nameof(Contribution.CreatedWhen)),
 
-                    Parameter: nameof(Contribution.UpdatedWhen)),
+                Parameter: nameof(Contribution.UpdatedWhen)),
 
                 (Rule: await IsNotRecentAsync(contribution.CreatedWhen), 
                     Parameter: nameof(Contribution.CreatedWhen)));
@@ -132,6 +146,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                Message = $"Date is not the same as {createdDateName}"
            };
 
+        private static async ValueTask<dynamic> IsValuesNotSameAsync(
+            string createBy,
+            string updatedBy,
+            string createdByName) => new
+            {
+                Condition = createBy != updatedBy,
+                Message = $"Text is not the same as {createdByName}"
+            };
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidContributionException = new InvalidContributionException(

@@ -105,17 +105,20 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 key: nameof(Contribution.Title),
                 values: "Text is required");
 
+            invalidContributionException.AddData(
+               key: nameof(Contribution.CreatedBy),
+               values: "Text is required");
 
             invalidContributionException.AddData(
-                key: nameof(Contribution.ExternalCreatedAt),
+                key: nameof(Contribution.UpdatedBy),
+                values: "Text is required");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.CreatedWhen),
                 values: "Date is invalid");
 
             invalidContributionException.AddData(
-                key: nameof(Contribution.ExternalMergedAt),
-                values: "Date is invalid");
-
-            invalidContributionException.AddData(
-                key: nameof(Contribution.ExternalUpdatedAt),
+                key: nameof(Contribution.UpdatedWhen),
                 values: "Date is invalid");
 
             var expectedContributionValidationException =
@@ -225,15 +228,21 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             DateTimeOffset now = randomDateTime;
             Contribution randomContribution = CreateRandomContribution(now);
             Contribution invalidContribution = randomContribution;
-            invalidContribution.ExternalCreatedAt = now;
-            invalidContribution.ExternalUpdatedAt = GetRandomDateTimeOffset();
+            invalidContribution.CreatedBy = GetRandomString();
+            invalidContribution.UpdatedBy = GetRandomString();
+            invalidContribution.CreatedWhen = now;
+            invalidContribution.UpdatedWhen = GetRandomDateTimeOffset();
 
             var invalidContributionException = new InvalidContributionException(
                 message: "Contribution is invalid, fix the errors and try again.");
 
             invalidContributionException.AddData(
-                key: nameof(Contribution.ExternalUpdatedAt),
-                values: $"Date is not the same as {nameof(Contribution.ExternalCreatedAt)}");
+                key: nameof(Contribution.UpdatedBy),
+                values: $"Text is not the same as {nameof(Contribution.CreatedBy)}");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.UpdatedWhen),
+                values: $"Date is not the same as {nameof(Contribution.CreatedWhen)}");
 
             var expectedContributionValidationException =
                 new ContributionValidationException(
