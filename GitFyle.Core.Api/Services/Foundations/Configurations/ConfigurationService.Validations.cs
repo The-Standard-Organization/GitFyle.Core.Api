@@ -13,35 +13,35 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 {
     internal partial class ConfigurationService
     {
-        private void ValidateConfigurationOnAdd(Configuration configuration)
+        private async ValueTask ValidateConfigurationOnAdd(Configuration configuration)
         {
             ValidateConfigurationIsNotNull(configuration);
 
             Validate(
-                (Rule: IsInvalid(configuration.Id), Parameter: nameof(configuration.Id)),
-                (Rule: IsInvalid(configuration.Name), Parameter: nameof(configuration.Name)),
-                (Rule: IsInvalid(configuration.Type), Parameter: nameof(configuration.Type)),
-                (Rule: IsInvalid(configuration.Value), Parameter: nameof(configuration.Value)),
-                (Rule: IsInvalid(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
-                (Rule: IsInvalid(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
-                (Rule: IsInvalid(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
-                (Rule: IsInvalid(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate))
+                (Rule: IsInvalidAsync(configuration.Id), Parameter: nameof(configuration.Id)),
+                (Rule: IsInvalidAsync(configuration.Name), Parameter: nameof(configuration.Name)),
+                (Rule: IsInvalidAsync(configuration.Type), Parameter: nameof(configuration.Type)),
+                (Rule: IsInvalidAsync(configuration.Value), Parameter: nameof(configuration.Value)),
+                (Rule: IsInvalidAsync(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
+                (Rule: IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
+                (Rule: IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
+                (Rule: IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate))
                 );
         }
 
-        private static dynamic IsInvalid(Guid id) => new
+        private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
         {
             Condition = id == Guid.Empty,
             Message = "Id is invalid."
         };
 
-        private static dynamic IsInvalid(string name) => new
+        private static async ValueTask<dynamic> IsInvalidAsync(string name) => new
         {
             Condition = String.IsNullOrWhiteSpace(name),
             Message = "Text is required."
         };
 
-        private static dynamic IsInvalid(DateTimeOffset date) => new
+        private static async ValueTask<dynamic> IsInvalidAsync(DateTimeOffset date) => new
         {
             Condition = date == default,
             Message = "Date is invalid."
@@ -65,9 +65,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             invalidConfigurationException.ThrowIfContainsErrors();
         }
 
-        private void ValidateConfigurationIsNotNull(Configuration configuration) 
+        private static void ValidateConfigurationIsNotNull(Configuration configuration) 
         {
-            if (configuration == null)
+            if (configuration is null)
             {
                 throw new NullConfigurationException(message: "Configuration is null");
             }
