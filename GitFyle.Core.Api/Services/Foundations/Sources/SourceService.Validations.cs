@@ -150,12 +150,13 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             }
         }
 
-        private static async ValueTask ValidateSourceRetrievedByIdAsync(Source maybeSource, Guid id)
+        private static async ValueTask ValidateSourceOnRetrievedByIdAsync(
+            Source maybeSource, Guid sourceId)
         {
             if (maybeSource is null)
             {
                 throw new NotFoundSourceException(
-                    message: $"Source not found with id: { id}");
+                    message: $"Source not found with id: {sourceId}");
             }
         }
 
