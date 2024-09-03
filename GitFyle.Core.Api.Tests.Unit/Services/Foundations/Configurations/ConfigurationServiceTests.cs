@@ -37,6 +37,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 actualException.SameExceptionAs(expectedException);
         }
 
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 

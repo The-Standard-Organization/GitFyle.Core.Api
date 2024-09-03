@@ -37,7 +37,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertConfigurationAsync(
-                    It.IsAny<Configuration>()),
+                    inputConfiguration),
                         Times.Once());
 
             this.storageBrokerMock.VerifyNoOtherCalls();

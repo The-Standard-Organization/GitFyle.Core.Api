@@ -146,5 +146,55 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfAuditPropertiesAreNotSameAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDate = GetRandomDateTimeOffset();
+            Configuration randomConfiguration = CreateRandomConfiguration(randomDate);
+            Configuration invalidConfiguration = randomConfiguration;
+            invalidConfiguration.CreatedBy = GetRandomString();
+            invalidConfiguration.UpdatedBy = GetRandomString();
+
+            invalidConfiguration.UpdatedDate =
+                invalidConfiguration.CreatedDate.AddMinutes(1);
+
+            InvalidConfigurationException invalidConfigurationException = 
+                new InvalidConfigurationException("Configuration is invalid, fix the errors and try again.");
+
+            invalidConfigurationException.AddData(key: nameof(Configuration.UpdatedBy),
+                values: $"Text is not same as {nameof(Configuration.CreatedBy)}");
+
+            invalidConfigurationException.AddData(key: nameof(Configuration.UpdatedDate),
+                values: $"Date is not same as {nameof(Configuration.CreatedDate)}");
+
+            var expectedConfigurationValidationException = new ConfigurationValidationException(
+                message: "Configuration validation error occurred, fix errors and try again.",
+                innerException: invalidConfigurationException );
+
+            // when
+            ValueTask<Configuration> addConfigurationTask = 
+                this.configurationService.AddConfigurationAsync(invalidConfiguration);
+
+            ConfigurationValidationException actualConfigurationValidationException = 
+                await Assert.ThrowsAsync<ConfigurationValidationException>(addConfigurationTask.AsTask);
+
+            // then
+            actualConfigurationValidationException.Should()
+                .BeEquivalentTo(expectedConfigurationValidationException);
+
+            this.loggingBrokerMock.Verify(broker => 
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedConfigurationValidationException))), 
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker => 
+                broker.InsertConfigurationAsync(It.IsAny<Configuration>()), 
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

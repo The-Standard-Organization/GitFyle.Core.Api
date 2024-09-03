@@ -18,14 +18,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             ValidateConfigurationIsNotNull(configuration);
 
             Validate(
-                (Rule: IsInvalidAsync(configuration.Id), Parameter: nameof(configuration.Id)),
-                (Rule: IsInvalidAsync(configuration.Name), Parameter: nameof(configuration.Name)),
-                (Rule: IsInvalidAsync(configuration.Type), Parameter: nameof(configuration.Type)),
-                (Rule: IsInvalidAsync(configuration.Value), Parameter: nameof(configuration.Value)),
-                (Rule: IsInvalidAsync(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
-                (Rule: IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
-                (Rule: IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
-                (Rule: IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate))
+                (Rule: await IsInvalidAsync(configuration.Id), Parameter: nameof(configuration.Id)),
+                (Rule: await IsInvalidAsync(configuration.Name), Parameter: nameof(configuration.Name)),
+                (Rule: await IsInvalidAsync(configuration.Type), Parameter: nameof(configuration.Type)),
+                (Rule: await IsInvalidAsync(configuration.Value), Parameter: nameof(configuration.Value)),
+                (Rule: await IsInvalidAsync(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
+                (Rule: await IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
+                (Rule: await IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
+                (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate))
                 );
         }
 
