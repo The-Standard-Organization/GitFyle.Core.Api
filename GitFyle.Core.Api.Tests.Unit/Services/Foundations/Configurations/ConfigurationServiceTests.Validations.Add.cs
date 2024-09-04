@@ -143,6 +143,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 broker.InsertConfigurationAsync(It.IsAny<Configuration>()),
                     Times.Never);
 
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
