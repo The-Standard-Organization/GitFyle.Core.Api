@@ -205,9 +205,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             //given
             DateTimeOffset randomDate = GetRandomDateTimeOffset();
             DateTimeOffset now = randomDate;
-            DateTimeOffset invalidDate = now.AddSeconds(invalidSeconds);
-            DateTimeOffset startDate = invalidDate.AddSeconds(0);
-            DateTimeOffset endDate = invalidDate.AddSeconds(60);
+            DateTimeOffset startDate = now.AddSeconds(-60);
+            DateTimeOffset endDate = now.AddSeconds(0);
+            
+            DateTimeOffset invalidDate = 
+                now.AddSeconds(invalidSeconds);
 
             Configuration randomConfiguration =
                 CreateRandomConfiguration(invalidDate);
@@ -220,7 +222,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.CreatedDate),
                 values: $"Date is not recent. Expected a value between {startDate} and {endDate}" +
-                $"but found {invalidDate}");
+                $" but found {invalidDate}");
 
             var expectedConfigurationValidationException =
                 new ConfigurationValidationException(

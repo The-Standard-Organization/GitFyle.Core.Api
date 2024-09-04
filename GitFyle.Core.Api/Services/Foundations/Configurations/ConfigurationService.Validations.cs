@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace GitFyle.Core.Api.Services.Foundations.Configurations
 {
@@ -38,9 +39,43 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                     updatedDate: configuration.UpdatedDate,
                     createdDateName: nameof(configuration.CreatedDate)
                     ), 
-                    Parameter: nameof(configuration.UpdatedDate))
+                    Parameter: nameof(configuration.UpdatedDate)),
+
+                (Rule: await IsNotRecentAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate))
 
                 );
+        }
+
+        private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
+        {
+            var (isNotRecent, startDate, endDate) = await IsDateNotRecentAsync(date);
+
+            return new {
+                Condition = isNotRecent,
+                Message = $"Date is not recent. Expected a value between {startDate} and {endDate} but found {date}"
+            };
+        }
+
+        private async ValueTask<(bool IsNotRecent, DateTimeOffset StartDate, DateTimeOffset EndDate)>
+            IsDateNotRecentAsync(DateTimeOffset date)
+        {
+            int pastSeconds = 60;
+            int futureSeconds = 0;
+
+            DateTimeOffset currentDateTime = 
+                await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+            if (currentDateTime == default)
+            {
+                return (false, default, default);
+            }
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            DateTimeOffset startDate = currentDateTime.AddSeconds(-pastSeconds);
+            DateTimeOffset endDate = currentDateTime.AddSeconds(futureSeconds);
+            bool isNotRecent = timeDifference.TotalSeconds is > 60 or < 0;
+
+            return (isNotRecent, startDate, endDate);
         }
 
         private static async ValueTask<dynamic> IsDatesNotSameAsync(
