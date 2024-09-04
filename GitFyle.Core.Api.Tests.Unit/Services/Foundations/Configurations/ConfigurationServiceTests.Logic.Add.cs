@@ -40,6 +40,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     inputConfiguration),
                         Times.Once());
 
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
