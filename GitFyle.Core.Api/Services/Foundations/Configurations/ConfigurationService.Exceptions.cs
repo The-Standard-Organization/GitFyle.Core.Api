@@ -23,11 +23,11 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             }
             catch (NullConfigurationException nullConfigurationException)
             {
-                throw CreateAndLogValidationException(nullConfigurationException);
+                throw await CreateAndLogValidationExceptionAsync(nullConfigurationException);
             }
             catch (InvalidConfigurationException invalidationConfigurationException)
             {
-                throw CreateAndLogValidationException(invalidationConfigurationException);
+                throw await CreateAndLogValidationExceptionAsync(invalidationConfigurationException);
             }
             catch (SqlException sqlException)
             {
@@ -52,14 +52,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             return configurationDependencyException;
         }
 
-        private ConfigurationValidationException CreateAndLogValidationException(Xeption innerException)
+        private async ValueTask<ConfigurationValidationException> CreateAndLogValidationExceptionAsync(Xeption innerException)
         {
             var configurationValidationException =
                 new ConfigurationValidationException(
                     message: "Configuration validation error occurred, fix the errors and try again.",
                     innerException: innerException);
 
-            this.loggingBroker.LogErrorAsync(configurationValidationException);
+            await this.loggingBroker.LogErrorAsync(configurationValidationException);
 
             return configurationValidationException;
         }
