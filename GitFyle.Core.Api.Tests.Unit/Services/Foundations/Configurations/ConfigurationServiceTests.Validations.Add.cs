@@ -182,6 +182,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 message: "Configuration validation error occurred, fix the errors and try again.",
                 innerException: invalidConfigurationException);
 
+            this.datetimeBrokerMock.Setup(broker => 
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDate);
+
             // when
             ValueTask<Configuration> addConfigurationTask =
                 this.configurationService.AddConfigurationAsync(invalidConfiguration);
@@ -192,6 +196,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             // then
             actualConfigurationValidationException.Should()
                 .BeEquivalentTo(expectedConfigurationValidationException);
+
+            this.datetimeBrokerMock.Verify(broker => 
+                broker.GetCurrentDateTimeOffsetAsync(), 
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(
