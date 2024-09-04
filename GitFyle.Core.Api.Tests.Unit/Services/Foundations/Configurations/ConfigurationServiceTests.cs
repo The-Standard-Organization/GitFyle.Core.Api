@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq.Expressions;
+using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
@@ -18,16 +19,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
+        private readonly Mock<IDateTimeBroker> datetimeBrokerMock;
         private readonly ConfigurationService configurationService;
 
         public ConfigurationServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
+            this.datetimeBrokerMock = new Mock<IDateTimeBroker>();
 
             this.configurationService = new ConfigurationService(
                 storageBroker: this.storageBrokerMock.Object,
-                loggingBroker: this.loggingBrokerMock.Object);
+                loggingBroker: this.loggingBrokerMock.Object,
+                dateTimeBroker: this.datetimeBrokerMock.Object);
         }
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(
