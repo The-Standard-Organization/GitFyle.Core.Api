@@ -7,6 +7,7 @@ using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Xeptions;
@@ -59,6 +60,27 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationConfigurationException);
             }
+            catch (Exception serviceException)
+            {
+                var failedServiceConfigurationException = 
+                    new FailedServiceConfigurationException(
+                        message: "Failed service configuration error occurred, contact support.", 
+                        innerException: serviceException);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceConfigurationException);
+            }
+        }
+
+        private async ValueTask<ConfigurationServiceException> CreateAndLogServiceExceptionAsync(Xeption exception)
+        {
+            var configurationServiceException = 
+                new ConfigurationServiceException(
+                    message: "Service error occurred, contact support.", 
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(configurationServiceException);
+
+            return configurationServiceException;
         }
 
         private async ValueTask<ConfigurationDependencyException> CreateAndLogDependencyExceptionAsync(Xeption exception)
