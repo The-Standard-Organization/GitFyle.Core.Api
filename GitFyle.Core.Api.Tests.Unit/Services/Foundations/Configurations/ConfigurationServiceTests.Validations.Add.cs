@@ -8,7 +8,6 @@ using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using Moq;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 {
@@ -122,7 +121,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     message: "Configuration validation error occurred, fix the errors and try again.",
                     innerException: invalidConfigurationException);
 
-            this.datetimeBrokerMock.Setup(broker => 
+            this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(default(DateTimeOffset));
 
@@ -138,8 +137,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationValidationException.Should()
                 .BeEquivalentTo(expectedConfigurationValidationException);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -182,7 +181,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 message: "Configuration validation error occurred, fix the errors and try again.",
                 innerException: invalidConfigurationException);
 
-            this.datetimeBrokerMock.Setup(broker => 
+            this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDate);
 
@@ -197,8 +196,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationValidationException.Should()
                 .BeEquivalentTo(expectedConfigurationValidationException);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -225,8 +224,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             DateTimeOffset now = randomDate;
             DateTimeOffset startDate = now.AddSeconds(-60);
             DateTimeOffset endDate = now.AddSeconds(0);
-            
-            DateTimeOffset invalidDate = 
+
+            DateTimeOffset invalidDate =
                 now.AddSeconds(invalidSeconds);
 
             Configuration randomConfiguration =
@@ -247,7 +246,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     message: "Configuration validation error occurred, fix the errors and try again.",
                     innerException: invalidConfigurationException);
 
-            this.datetimeBrokerMock.Setup(broker => 
+            this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(now);
 
@@ -262,17 +261,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationValidationException.Should()
                 .BeEquivalentTo(expectedConfigurationValidationException);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationValidationException))), 
+                    expectedConfigurationValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.InsertConfigurationAsync(It.IsAny<Configuration>()), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertConfigurationAsync(It.IsAny<Configuration>()),
                     Times.Never);
 
             this.datetimeBrokerMock.VerifyNoOtherCalls();

@@ -21,10 +21,10 @@ namespace GitFyle.Core.Api.Brokers.Storages
             await SelectAllAsync<Repository>();
 
         public async ValueTask<Repository> SelectRepositoryByIdAsync(Guid repositoryId) =>
-            await SelectAsync<Repository>(repositoryId);   
+            await SelectAsync<Repository>(repositoryId);
 
         public async ValueTask<Repository> UpdateRepositoryAsync(Repository repository) =>
-            await UpdateAsync(repository); 
+            await UpdateAsync(repository);
 
         public async ValueTask<Repository> DeleteRepositoryAsync(Repository repository) =>
             await DeleteAsync(repository);

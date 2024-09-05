@@ -8,7 +8,7 @@ namespace GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions
 {
     public class NullConfigurationException : Xeption
     {
-        public NullConfigurationException(string message) 
-            : base(message) {}
+        public NullConfigurationException(string message)
+            : base(message) { }
     }
 }

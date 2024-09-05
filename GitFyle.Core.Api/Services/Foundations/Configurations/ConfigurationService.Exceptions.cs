@@ -2,14 +2,13 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Configurations
@@ -51,20 +50,20 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsConfigurationException);
             }
-            catch (DbUpdateException dbUpdateException) 
+            catch (DbUpdateException dbUpdateException)
             {
                 var failedOperationConfigurationException =
                     new FailedOperationConfigurationException(
-                        message: "Failed operation configuration error occurred, contact support.", 
+                        message: "Failed operation configuration error occurred, contact support.",
                         innerException: dbUpdateException);
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationConfigurationException);
             }
             catch (Exception serviceException)
             {
-                var failedServiceConfigurationException = 
+                var failedServiceConfigurationException =
                     new FailedServiceConfigurationException(
-                        message: "Failed service configuration error occurred, contact support.", 
+                        message: "Failed service configuration error occurred, contact support.",
                         innerException: serviceException);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceConfigurationException);
@@ -73,9 +72,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
         private async ValueTask<ConfigurationServiceException> CreateAndLogServiceExceptionAsync(Xeption exception)
         {
-            var configurationServiceException = 
+            var configurationServiceException =
                 new ConfigurationServiceException(
-                    message: "Service error occurred, contact support.", 
+                    message: "Service error occurred, contact support.",
                     innerException: exception);
 
             await this.loggingBroker.LogErrorAsync(configurationServiceException);
@@ -109,10 +108,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
         private async ValueTask<ConfigurationDependencyException> CreateAndLogCriticalDependencyExceptionAsync(Xeption exception)
         {
-            var configurationDependencyException = 
+            var configurationDependencyException =
                 new ConfigurationDependencyException(
-                    message: "Configuration dependency error occurred, contact support.", 
-                    innerException: exception);  
+                    message: "Configuration dependency error occurred, contact support.",
+                    innerException: exception);
 
             await this.loggingBroker.LogCriticalAsync(configurationDependencyException);
 

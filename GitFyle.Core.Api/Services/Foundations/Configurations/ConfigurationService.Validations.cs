@@ -3,12 +3,9 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.Data;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
-using Microsoft.AspNetCore.Http;
 
 namespace GitFyle.Core.Api.Services.Foundations.Configurations
 {
@@ -31,14 +28,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 (Rule: await IsValuesNotSameAsync(
                     createdBy: configuration.CreatedBy,
                     updatedBy: configuration.UpdatedBy,
-                    createdByName: nameof(configuration.CreatedBy)), 
+                    createdByName: nameof(configuration.CreatedBy)),
                     Parameter: nameof(configuration.UpdatedBy)),
 
                 (Rule: await IsDatesNotSameAsync(
-                    createdDate: configuration.CreatedDate, 
+                    createdDate: configuration.CreatedDate,
                     updatedDate: configuration.UpdatedDate,
                     createdDateName: nameof(configuration.CreatedDate)
-                    ), 
+                    ),
                     Parameter: nameof(configuration.UpdatedDate)),
 
                 (Rule: await IsNotRecentAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate))
@@ -50,7 +47,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         {
             var (isNotRecent, startDate, endDate) = await IsDateNotRecentAsync(date);
 
-            return new {
+            return new
+            {
                 Condition = isNotRecent,
                 Message = $"Date is not recent. Expected a value between {startDate} and {endDate} but found {date}"
             };
@@ -62,7 +60,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             int pastSeconds = 60;
             int futureSeconds = 0;
 
-            DateTimeOffset currentDateTime = 
+            DateTimeOffset currentDateTime =
                 await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
             if (currentDateTime == default)
@@ -79,14 +77,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         }
 
         private static async ValueTask<dynamic> IsDatesNotSameAsync(
-            DateTimeOffset createdDate, 
+            DateTimeOffset createdDate,
             DateTimeOffset updatedDate,
             string createdDateName
             ) => new
-        {
-            Condition = createdDate != updatedDate,
-            Message = $"Date is not same as {createdDateName}"
-        };
+            {
+                Condition = createdDate != updatedDate,
+                Message = $"Date is not same as {createdDateName}"
+            };
 
         private static async ValueTask<dynamic> IsValuesNotSameAsync(string createdBy, string updatedBy, string createdByName) => new
         {
@@ -130,7 +128,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             invalidConfigurationException.ThrowIfContainsErrors();
         }
 
-        private static void ValidateConfigurationIsNotNull(Configuration configuration) 
+        private static void ValidateConfigurationIsNotNull(Configuration configuration)
         {
             if (configuration is null)
             {

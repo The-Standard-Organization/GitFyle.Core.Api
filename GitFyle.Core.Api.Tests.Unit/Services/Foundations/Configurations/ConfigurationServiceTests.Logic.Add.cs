@@ -24,7 +24,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             Configuration inputConfiguration = randomConfiguration;
             Configuration expectedConfiguration = inputConfiguration.DeepClone();
 
-            this.datetimeBrokerMock.Setup(broker => 
+            this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDate);
 
@@ -39,8 +39,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             //then
             actualConfiguration.Should().BeEquivalentTo(expectedConfiguration);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
