@@ -6,6 +6,7 @@ using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Xeptions;
@@ -49,6 +50,27 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsConfigurationException);
             }
+            catch (DbUpdateException dbUpdateException) 
+            {
+                var failedOperationConfigurationException =
+                    new FailedOperationConfigurationException(
+                        message: "Failed operation configuration error occurred, contact support.", 
+                        innerException: dbUpdateException);
+
+                throw await CreateAndLogDependencyExceptionAsync(failedOperationConfigurationException);
+            }
+        }
+
+        private async ValueTask<ConfigurationDependencyException> CreateAndLogDependencyExceptionAsync(Xeption exception)
+        {
+            var configurationDependencyException =
+                new ConfigurationDependencyException(
+                    message: "Configuration dependency error occurred, contact support.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(configurationDependencyException);
+
+            return configurationDependencyException;
         }
 
         private async ValueTask<ConfigurationDependencyValidationException> CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
