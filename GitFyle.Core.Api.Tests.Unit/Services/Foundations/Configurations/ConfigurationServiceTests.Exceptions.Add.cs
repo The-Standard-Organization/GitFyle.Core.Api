@@ -8,6 +8,7 @@ using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Moq;
 
@@ -114,6 +115,59 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.storageBrokerMock.Verify(broker => 
                 broker.InsertConfigurationAsync(It.IsAny<Configuration>()), 
                     Times.Never);
+
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDependencyErrorOccurredAndLogItAsync()
+        {
+            // given
+            DateTimeOffset someDate = GetRandomDateTimeOffset();
+            Configuration someConfiguration = CreateRandomConfiguration(someDate);
+            var dbUpdateException = new DbUpdateException();
+
+
+            var failedOperationConfigurationException =
+                new FailedOperationConfigurationException(
+                    message: "Failed operation configuration error occurred, contact support.",
+                    innerException: dbUpdateException);
+
+            var expectedConfigurationDependencyException = 
+                new ConfigurationDependencyException(
+                    message:"Configuration dependency error occurred, contact support.",
+                    innerException: failedOperationConfigurationException);
+
+            this.datetimeBrokerMock.Setup(broker => 
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(dbUpdateException);
+
+            // when
+            ValueTask<Configuration> addConfigurationTask = 
+                this.configurationService.AddConfigurationAsync(someConfiguration);
+
+           ConfigurationDependencyException actualConfigurationDependencyException = 
+                await Assert.ThrowsAsync<ConfigurationDependencyException>(addConfigurationTask.AsTask);
+
+            // then
+            actualConfigurationDependencyException.Should()
+                .BeEquivalentTo(expectedConfigurationDependencyException);
+
+            this.datetimeBrokerMock.Verify(broker => 
+                broker.GetCurrentDateTimeOffsetAsync(), 
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker => 
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConfigurationDependencyException))), 
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker => 
+                broker.InsertConfigurationAsync(
+                    It.IsAny<Configuration>()), 
+                        Times.Never);
 
             this.datetimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
