@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
@@ -54,6 +55,60 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.loggingBrokerMock.Verify(broker => 
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedConfigurationDependencyException))), 
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker => 
+                broker.InsertConfigurationAsync(It.IsAny<Configuration>()), 
+                    Times.Never);
+
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfConfigurationAlreadyExistsAndLogItAsync()
+        {
+            // given
+            DateTimeOffset someDate = GetRandomDateTimeOffset();
+            Configuration someConfiguration = CreateRandomConfiguration(someDate);
+
+            var duplicateKeyException = 
+                new DuplicateKeyException(message: "Duplicate key error occurred");
+
+            var alreadyExistsConfigurationException = new AlreadyExistsConfigurationException(
+                message: "Configuration already exists error occurred.",
+                innerException: duplicateKeyException,
+                data: duplicateKeyException.Data
+                );
+
+            var expectedConfigurationDependencyValidationException =
+                new ConfigurationDependencyValidationException(
+                    message: "Configuration dependency validation error occurred, fix errors and try again.", 
+                    innerException: alreadyExistsConfigurationException);
+
+            this.datetimeBrokerMock.Setup(broker => 
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(duplicateKeyException);
+
+            // when
+            ValueTask<Configuration> addConfigurationTask = 
+                this.configurationService.AddConfigurationAsync(someConfiguration);
+
+            ConfigurationDependencyValidationException actualConfigurationDependencyValidationException =
+                await Assert.ThrowsAsync<ConfigurationDependencyValidationException>(addConfigurationTask.AsTask);
+
+            // then
+            actualConfigurationDependencyValidationException.Should()
+                .BeEquivalentTo(expectedConfigurationDependencyValidationException);
+
+            this.datetimeBrokerMock.Verify(broker => 
+                broker.GetCurrentDateTimeOffsetAsync(), 
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker => 
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConfigurationDependencyValidationException))), 
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker => 
