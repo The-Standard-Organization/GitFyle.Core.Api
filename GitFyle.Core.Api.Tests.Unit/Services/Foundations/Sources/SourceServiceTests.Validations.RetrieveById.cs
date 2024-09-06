@@ -8,7 +8,6 @@ using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Moq;
-using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 {
@@ -73,8 +72,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             var notFoundSourceException =
                 new NotFoundSourceException(
-                    message: $"Source not found with id: {someSourceId}",
-                    innerException: innerException.InnerException.As<Xeption>());
+                    message: $"Source not found with id: {someSourceId}");
 
             var expectedSourceValidationException =
                 new SourceValidationException(
@@ -84,7 +82,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectSourceByIdAsync(someSourceId))
                     .ReturnsAsync(nullSource);
-        
+
             // when
             ValueTask<Source> retrieveSourceByIdTask =
                 this.sourceService.RetrieveSourceByIdAsync(someSourceId);
