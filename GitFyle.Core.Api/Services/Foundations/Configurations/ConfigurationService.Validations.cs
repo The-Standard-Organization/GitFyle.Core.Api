@@ -29,18 +29,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                     createdBy: configuration.CreatedBy,
                     updatedBy: configuration.UpdatedBy,
                     createdByName: nameof(configuration.CreatedBy)),
+
                     Parameter: nameof(configuration.UpdatedBy)),
 
                 (Rule: await IsDatesNotSameAsync(
                     createdDate: configuration.CreatedDate,
                     updatedDate: configuration.UpdatedDate,
-                    createdDateName: nameof(configuration.CreatedDate)
-                    ),
+                    createdDateName: nameof(configuration.CreatedDate)),
+
                     Parameter: nameof(configuration.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate))
-
-                );
+                (Rule: await IsNotRecentAsync(configuration.CreatedDate),
+                Parameter: nameof(configuration.CreatedDate)));
         }
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
@@ -86,11 +86,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 Message = $"Date is not same as {createdDateName}"
             };
 
-        private static async ValueTask<dynamic> IsValuesNotSameAsync(string createdBy, string updatedBy, string createdByName) => new
-        {
-            Condition = createdBy != updatedBy,
-            Message = $"Text is not same as {createdByName}"
-        };
+        private static async ValueTask<dynamic> IsValuesNotSameAsync(
+            string createdBy,
+            string updatedBy,
+            string createdByName) => new
+            {
+                Condition = createdBy != updatedBy,
+                Message = $"Text is not same as {createdByName}"
+            };
 
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
         {
