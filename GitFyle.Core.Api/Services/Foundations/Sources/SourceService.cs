@@ -43,7 +43,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             Source maybeSource =
                 await this.storageBroker.SelectSourceByIdAsync(sourceId);
 
-            await ValidateStorageSourceOnAddAsync(maybeSource, sourceId);
+            await ValidateStorageSourceAsync(maybeSource, sourceId);
 
             return maybeSource;
         });
