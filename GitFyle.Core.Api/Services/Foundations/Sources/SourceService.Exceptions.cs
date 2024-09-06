@@ -32,6 +32,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidSourceException);
             }
+            catch (NotFoundSourceException notFoundSourceException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundSourceException);
+            }
             catch (SqlException sqlException)
             {
                 var failedStorageSourceException = new FailedStorageSourceException(
