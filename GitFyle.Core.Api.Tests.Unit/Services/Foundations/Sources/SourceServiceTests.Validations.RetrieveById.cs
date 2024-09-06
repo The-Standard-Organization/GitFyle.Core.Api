@@ -73,8 +73,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             var notFoundSourceException =
                 new NotFoundSourceException(
-                    message: $"Source not found with id: {someSourceId}",
-                    innerException: innerException.InnerException.As<Xeption>());
+                    message: $"Source not found with id: {someSourceId}");
 
             var expectedSourceValidationException =
                 new SourceValidationException(

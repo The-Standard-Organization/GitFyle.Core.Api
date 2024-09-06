@@ -12,9 +12,5 @@ namespace GitFyle.Core.Api.Models.Foundations.Sources.Exceptions
         public NotFoundSourceException(string message)
             : base(message)
         { }
-
-        public NotFoundSourceException(string message, Xeption innerException)
-            : base(message, innerException)
-        { }
     }
 }
