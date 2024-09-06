@@ -85,7 +85,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
-                .OnProperty(address => address.Url).Use(new RandomUrl().GetValue())
+                .OnProperty(source => source.Url).Use(new RandomUrl().GetValue())
                 .OnProperty(source => source.CreatedBy).Use(someUser)
                 .OnProperty(source => source.UpdatedBy).Use(someUser)
                 .OnProperty(source => source.Repositories).IgnoreIt()
