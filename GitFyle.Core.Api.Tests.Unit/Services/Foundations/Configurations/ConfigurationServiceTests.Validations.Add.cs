@@ -60,6 +60,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         public async Task ShouldThrowValidationExceptionOnAddIfConfigurationIsInvalidAndLogItAsync(string invalidString)
         {
             // given
+
+            DateTimeOffset randomDateTimeOffset = default;
             Configuration invalidConfiguration = new Configuration
             {
                 Id = Guid.Empty,
@@ -68,8 +70,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 Type = invalidString,
                 CreatedBy = invalidString,
                 UpdatedBy = invalidString,
-                CreatedDate = default,
-                UpdatedDate = default
+                CreatedDate = randomDateTimeOffset,
+                UpdatedDate = randomDateTimeOffset
             };
 
             var invalidConfigurationException =
@@ -123,7 +125,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(default(DateTimeOffset));
+                    .ReturnsAsync(randomDateTimeOffset);
 
             // when
             ValueTask<Configuration> addConfigurationTask =
@@ -171,15 +173,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             InvalidConfigurationException invalidConfigurationException =
                 new InvalidConfigurationException("Configuration is invalid, fix the errors and try again.");
 
-            invalidConfigurationException.AddData(key: nameof(Configuration.UpdatedBy),
+            invalidConfigurationException.AddData(
+                key: nameof(Configuration.UpdatedBy),
                 values: $"Text is not same as {nameof(Configuration.CreatedBy)}");
 
-            invalidConfigurationException.AddData(key: nameof(Configuration.UpdatedDate),
+            invalidConfigurationException.AddData(
+                key: nameof(Configuration.UpdatedDate),
                 values: $"Date is not same as {nameof(Configuration.CreatedDate)}");
 
-            var expectedConfigurationValidationException = new ConfigurationValidationException(
-                message: "Configuration validation error occurred, fix the errors and try again.",
-                innerException: invalidConfigurationException);
+            var expectedConfigurationValidationException = 
+                new ConfigurationValidationException(
+                    message: "Configuration validation error occurred, fix the errors and try again.",
+                    innerException: invalidConfigurationException);
 
             this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -190,7 +195,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 this.configurationService.AddConfigurationAsync(invalidConfiguration);
 
             ConfigurationValidationException actualConfigurationValidationException =
-                await Assert.ThrowsAsync<ConfigurationValidationException>(addConfigurationTask.AsTask);
+                await Assert.ThrowsAsync<ConfigurationValidationException>(
+                    addConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should()
