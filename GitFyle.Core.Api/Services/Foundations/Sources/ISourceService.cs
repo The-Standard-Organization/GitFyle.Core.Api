@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 
@@ -12,5 +13,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
     {
         ValueTask<Source> AddSourceAsync(Source source);
         ValueTask<Source> RetrieveSourceByIdAsync(Guid sourceId);
+        ValueTask<IQueryable<Source>> RetrieveAllSourcesAsync();
     }
 }

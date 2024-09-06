@@ -26,8 +26,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: await IsInvalidUrlAsync(source.Url), Parameter: nameof(Source.Url)),
 
                 (Rule: await IsValuesNotSameAsync(
-                    createBy: source.UpdatedBy,
-                    updatedBy: source.CreatedBy,
+                    createBy: source.CreatedBy,
+                    updatedBy: source.UpdatedBy,
                     createdByName: nameof(Source.CreatedBy)),
 
                 Parameter: nameof(Source.UpdatedBy)),

@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
@@ -47,5 +48,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
             return maybeSource;
         });
+
+        public ValueTask<IQueryable<Source>> RetrieveAllSourcesAsync() =>
+        TryCatch(async () => await this.storageBroker.SelectAllSourcesAsync());
     }
 }
