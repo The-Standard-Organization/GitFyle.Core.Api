@@ -252,5 +252,63 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageSourceDoesNotExistAndLogItAsync()
+        {
+            //given
+            int randomNegative = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Source randomSource = CreateRandomSource(randomDateTimeOffset);
+            Source nonExistingSource = randomSource;
+            nonExistingSource.CreatedDate = randomDateTimeOffset.AddMinutes(randomNegative);
+            Source nullSource = null;
+
+            var notFoundSourceException =
+                new NotFoundSourceException(
+                    message: $"Source not found with id: {nonExistingSource.Id}");
+
+            var expectedSourceValidationException =
+                new SourceValidationException(
+                    message: "Source validation error occurred, fix errors and try again.",
+                    innerException: notFoundSourceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectSourceByIdAsync(nonExistingSource.Id))
+                    .ReturnsAsync(nullSource);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Source> modifySourceTask =
+                this.sourceService.ModifySourceAsync(nonExistingSource);
+
+            SourceValidationException actualSourceValidationException =
+                await Assert.ThrowsAsync<SourceValidationException>(
+                    modifySourceTask.AsTask);
+
+            // then
+            actualSourceValidationException.Should().BeEquivalentTo(
+                expectedSourceValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectSourceByIdAsync(nonExistingSource.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedSourceValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
