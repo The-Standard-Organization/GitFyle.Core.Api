@@ -51,5 +51,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
         public ValueTask<IQueryable<Source>> RetrieveAllSourcesAsync() =>
         TryCatch(async () => await this.storageBroker.SelectAllSourcesAsync());
+
+        public async ValueTask<Source> ModifySourceAsync(Source source) =>
+            throw new NotImplementedException();
     }
 }
