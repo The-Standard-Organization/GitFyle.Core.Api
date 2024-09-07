@@ -61,9 +61,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                     secondDate: source.CreatedDate,
                     secondDateName: nameof(Source.CreatedDate)),
 
-                Parameter: nameof(Source.CreatedDate)),
+                Parameter: nameof(Source.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(source.CreatedDate), Parameter: nameof(Source.CreatedDate)));
+                (Rule: await IsNotRecentAsync(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)));
         }
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)

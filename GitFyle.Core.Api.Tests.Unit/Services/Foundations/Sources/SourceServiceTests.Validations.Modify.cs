@@ -66,7 +66,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 Name = invalidString,
                 Url = invalidString,
                 UpdatedBy = invalidString,
-                UpdatedDate = default,
             };
 
             var invalidSourceException = new InvalidSourceException(
@@ -94,15 +93,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             invalidSourceException.AddData(
                 key: nameof(Source.CreatedDate),
-                values:
-                [
-                    "Date is invalid",
-                    $"Date is the same as {nameof(Source.CreatedDate)}"
-                ]);
+                values: "Date is invalid");
 
             invalidSourceException.AddData(
                 key: nameof(Source.UpdatedDate),
-                values: "Date is invalid");
+                values:
+                    new[]
+                    {
+                        "Date is invalid",
+                        $"Date is the same as {nameof(Source.CreatedDate)}"
+                    });
 
             var expectedSourceValidationException =
                 new SourceValidationException(
