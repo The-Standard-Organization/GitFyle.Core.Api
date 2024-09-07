@@ -60,8 +60,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 broker.UpdateSourceAsync(inputSource),
                     Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

@@ -42,6 +42,30 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: await IsNotRecentAsync(source.CreatedDate), Parameter: nameof(Source.CreatedDate)));
         }
 
+        private async ValueTask ValidateSourceOnModifyAsync(Source source)
+        {
+            ValidateSourceIsNotNull(source);
+
+            Validate(
+                (Rule: await IsInvalidAsync(source.Id), Parameter: nameof(Source.Id)),
+                (Rule: await IsInvalidAsync(source.Name), Parameter: nameof(Source.Name)),
+                (Rule: await IsInvalidAsync(source.CreatedBy), Parameter: nameof(Source.CreatedBy)),
+                (Rule: await IsInvalidAsync(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
+                (Rule: await IsInvalidAsync(source.CreatedDate), Parameter: nameof(Source.CreatedDate)),
+                (Rule: await IsInvalidAsync(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
+                (Rule: await IsInvalidLengthAsync(source.Name, 255), Parameter: nameof(Source.Name)),
+                (Rule: await IsInvalidUrlAsync(source.Url), Parameter: nameof(Source.Url)),
+
+                (Rule: await IsDatesSame(
+                    firstDate: source.UpdatedDate,
+                    secondDate: source.CreatedDate,
+                    secondDateName: nameof(Source.CreatedDate)),
+
+                Parameter: nameof(Source.CreatedDate)),
+
+                (Rule: await IsNotRecentAsync(source.CreatedDate), Parameter: nameof(Source.CreatedDate)));
+        }
+
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
         {
             var (isNotRecent, startDate, endDate) = await IsDateNotRecentAsync(date);
@@ -105,6 +129,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             Condition = await IsValidUrlAsync(url) is false,
             Message = "Url is invalid"
         };
+
+        private static async ValueTask<dynamic> IsDatesSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
+            };
 
         private static async ValueTask<dynamic> IsDatesNotSameAsync(
             DateTimeOffset createdDate,
