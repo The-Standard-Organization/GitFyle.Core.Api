@@ -9,6 +9,7 @@ namespace GitFyle.Core.Api.Models.Foundations.Sources.Exceptions
     public class SourceServiceException : Xeption
     {
         public SourceServiceException(string message, Xeption innerException)
-            : base(message, innerException) { }
+            : base(message, innerException)
+        { }
     }
 }
