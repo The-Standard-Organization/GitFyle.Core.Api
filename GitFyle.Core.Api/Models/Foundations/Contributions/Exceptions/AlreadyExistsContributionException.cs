@@ -10,13 +10,8 @@ namespace GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions
 {
     public class AlreadyExistsContributionException : Xeption
     {
-        public AlreadyExistsContributionException(
-            string message,
-            Exception innerException,
-            IDictionary data)
-                : base(message,
-                  innerException,
-                  data)
+        public AlreadyExistsContributionException(string message, Exception innerException, IDictionary data)
+             : base(message, innerException, data)
         { }
     }
 }
