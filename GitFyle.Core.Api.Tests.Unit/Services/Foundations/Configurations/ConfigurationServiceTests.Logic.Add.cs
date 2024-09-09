@@ -18,6 +18,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         {
             //given
             DateTimeOffset randomDate = GetRandomDateTimeOffset();
+
             Configuration randomConfiguration =
                 CreateRandomConfiguration(randomDate);
 
