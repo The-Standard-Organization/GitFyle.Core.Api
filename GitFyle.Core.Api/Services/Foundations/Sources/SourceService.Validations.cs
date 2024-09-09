@@ -26,8 +26,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: await IsInvalidUrlAsync(source.Url), Parameter: nameof(Source.Url)),
 
                 (Rule: await IsValuesNotSameAsync(
-                    createBy: source.UpdatedBy,
-                    updatedBy: source.CreatedBy,
+                    createBy: source.CreatedBy,
+                    updatedBy: source.UpdatedBy,
                     createdByName: nameof(Source.CreatedBy)),
 
                 Parameter: nameof(Source.UpdatedBy)),
@@ -138,12 +138,24 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
             return uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps;
         }
+        
+        private static async ValueTask ValidateSourceIdAsync(Guid sourceId) =>
+            Validate((Rule: await IsInvalidAsync(sourceId), Parameter: nameof(Source.Id)));
 
         private static void ValidateSourceIsNotNull(Source source)
         {
             if (source is null)
             {
                 throw new NullSourceException(message: "Source is null");
+            }
+        }
+
+        private static async ValueTask ValidateStorageSourceAsync(Source maybeSource, Guid id)
+        {
+            if (maybeSource is null)
+            {
+                throw new NotFoundSourceException(
+                    message: $"Source not found with id: { id }");
             }
         }
 

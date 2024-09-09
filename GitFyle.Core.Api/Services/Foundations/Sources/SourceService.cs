@@ -2,6 +2,8 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
@@ -33,5 +35,21 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
             return await this.storageBroker.InsertSourceAsync(source);
         });
+
+        public ValueTask<Source> RetrieveSourceByIdAsync(Guid sourceId) =>
+        TryCatch(async () =>
+        {
+            await ValidateSourceIdAsync(sourceId);
+
+            Source maybeSource =
+                await this.storageBroker.SelectSourceByIdAsync(sourceId);
+
+            await ValidateStorageSourceAsync(maybeSource, sourceId);
+
+            return maybeSource;
+        });
+
+        public ValueTask<IQueryable<Source>> RetrieveAllSourcesAsync() =>
+        TryCatch(async () => await this.storageBroker.SelectAllSourcesAsync());
     }
 }
