@@ -25,17 +25,17 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: await IsInvalidLengthAsync(source.Name, 255), Parameter: nameof(Source.Name)),
                 (Rule: await IsInvalidUrlAsync(source.Url), Parameter: nameof(Source.Url)),
 
-                (Rule: await IsValuesNotSameAsync(
-                    createBy: source.CreatedBy,
-                    updatedBy: source.UpdatedBy,
+                (Rule: await IsNotSameAsync(
+                    createBy: source.UpdatedBy,
+                    updatedBy: source.CreatedBy,
                     createdByName: nameof(Source.CreatedBy)),
 
                 Parameter: nameof(Source.UpdatedBy)),
 
-                (Rule: await IsDatesNotSameAsync(
-                    createdDate: source.CreatedDate,
-                    updatedDate: source.UpdatedDate,
-                    nameof(Source.CreatedDate)),
+                (Rule: await IsNotSameAsync(
+                    firstDate: source.UpdatedDate,
+                    secondDate: source.CreatedDate,
+                    secondDateName: nameof(Source.CreatedDate)),
 
                 Parameter: nameof(Source.UpdatedDate)),
 
@@ -56,7 +56,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: await IsInvalidLengthAsync(source.Name, 255), Parameter: nameof(Source.Name)),
                 (Rule: await IsInvalidUrlAsync(source.Url), Parameter: nameof(Source.Url)),
 
-                (Rule: await IsDatesSame(
+                (Rule: await IsSameAsync(
                     firstDate: source.UpdatedDate,
                     secondDate: source.CreatedDate,
                     secondDateName: nameof(Source.CreatedDate)),
@@ -130,7 +130,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             Message = "Url is invalid"
         };
 
-        private static async ValueTask<dynamic> IsDatesSame(
+        private static async ValueTask<dynamic> IsSameAsync(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
             string secondDateName) => new
@@ -139,16 +139,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 Message = $"Date is the same as {secondDateName}"
             };
 
-        private static async ValueTask<dynamic> IsDatesNotSameAsync(
-            DateTimeOffset createdDate,
-            DateTimeOffset updatedDate,
-            string createdDateName) => new
+        private static async ValueTask<dynamic> IsNotSameAsync(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
             {
-                Condition = createdDate != updatedDate,
-                Message = $"Date is not the same as {createdDateName}"
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
             };
 
-        private static async ValueTask<dynamic> IsValuesNotSameAsync(
+        private static async ValueTask<dynamic> IsNotSameAsync(
             string createBy,
             string updatedBy,
             string createdByName) => new
