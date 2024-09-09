@@ -17,21 +17,23 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         public async Task ShouldModifySourceAsync()
         {
             //given
-            int randomInPastMinute = GetRandomNegativeNumber();
-            DateTimeOffset randomDate = GetRandomDateTimeOffset();
+            int randomInThePastMinute = GetRandomNegativeNumber();
+            DateTimeOffset randomDateOffset = GetRandomDateTimeOffset();
+            DateTimeOffset randomInTheFutureMinute = randomDateOffset.AddMinutes(1);
 
-            Source randomSource = CreateRandomModifySource(
-                randomDate.AddMinutes(randomInPastMinute));
+            Source randomModifySource =
+                CreateRandomModifySource(randomDateOffset.AddMinutes(randomInThePastMinute));
 
-            Source inputSource = randomSource;
-            inputSource.UpdatedDate = randomDate;
-            Source storageSource = inputSource.DeepClone();
-            Source updatedSource = inputSource;
+            Source inputSource = randomModifySource.DeepClone();
+            inputSource.UpdatedDate = randomInTheFutureMinute;
+            Source storageSource = randomModifySource.DeepClone();
+            storageSource.UpdatedDate = randomDateOffset;
+            Source updatedSource = inputSource.DeepClone();
             Source expectedSource = updatedSource.DeepClone();
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(randomDate);
+                    .ReturnsAsync(randomInTheFutureMinute);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectSourceByIdAsync(inputSource.Id))

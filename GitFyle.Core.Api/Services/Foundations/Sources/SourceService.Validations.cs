@@ -203,12 +203,12 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
                 Parameter: nameof(Source.CreatedDate)),
 
-                (Rule: await IsNotSameAsync(
-                    firstDate: inputSource.UpdatedDate,
-                    secondDate: storageSource.UpdatedDate,
-                    secondDateName: nameof(Source.UpdatedDate)),
+                //(Rule: await IsNotSameAsync(
+                //    firstDate: inputSource.UpdatedDate,
+                //    secondDate: storageSource.UpdatedDate,
+                //    secondDateName: nameof(Source.UpdatedDate)),
 
-                Parameter: nameof(Source.UpdatedDate)),
+                //Parameter: nameof(Source.UpdatedDate)),
 
                 (Rule: await IsSameAsync(
                     firstDate: inputSource.UpdatedDate,

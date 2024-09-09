@@ -332,10 +332,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 key: nameof(Source.CreatedDate),
                 values: $"Date is not the same as {nameof(Source.CreatedDate)}");
 
-            invalidSourceException.AddData(
-                key: nameof(Source.UpdatedDate),
-                values: $"Date is not the same as {nameof(Source.UpdatedDate)}");
-
             var expectedSourceValidationException = new SourceValidationException(
                 message: "Source validation error occurred, fix errors and try again.",
                 innerException: invalidSourceException);
