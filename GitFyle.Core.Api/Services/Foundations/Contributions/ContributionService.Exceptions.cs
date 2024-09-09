@@ -82,8 +82,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return contributionValidationException;
         }
 
-        private async ValueTask<ContributionDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
-        Xeption exception)
+        private async ValueTask<ContributionDependencyException> 
+            CreateAndLogCriticalDependencyExceptionAsync(
+                Xeption exception)
         {
             var contributionDependencyException = new ContributionDependencyException(
                 message: "Contribution dependency error occurred, contact support.",
@@ -94,8 +95,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return contributionDependencyException;
         }
 
-        private async ValueTask<ContributionDependencyValidationException> CreateAndLogDependencyValidationExceptionAsync(
-        Xeption exception)
+        private async ValueTask<ContributionDependencyValidationException> 
+            CreateAndLogDependencyValidationExceptionAsync(
+                Xeption exception)
         {
             var contributionDependencyValidationException = new ContributionDependencyValidationException(
                 message: "Contribution dependency validation error occurred, fix errors and try again.",
@@ -106,8 +108,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return contributionDependencyValidationException;
         }
 
-        private async ValueTask<ContributionDependencyException> CreateAndLogDependencyExceptionAsync(
-          Xeption exception)
+        private async ValueTask<ContributionDependencyException> 
+            CreateAndLogDependencyExceptionAsync(
+                Xeption exception)
         {
             var contributionDependencyException = new ContributionDependencyException(
                 message: "Contribution dependency error occurred, contact support.",
@@ -118,8 +121,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return contributionDependencyException;
         }
 
-        private async ValueTask<ContributionServiceException> CreateAndLogServiceExceptionAsync(
-          Xeption exception)
+        private async ValueTask<ContributionServiceException> 
+            CreateAndLogServiceExceptionAsync(
+                Xeption exception)
         {
             var contributionServiceException = new ContributionServiceException(
                 message: "Service error occurred, contact support.",
