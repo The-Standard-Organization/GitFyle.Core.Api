@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Data;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
@@ -203,6 +204,13 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 Parameter: nameof(Source.CreatedDate)),
 
                 (Rule: await IsNotSameAsync(
+                    firstDate: inputSource.UpdatedDate,
+                    secondDate: storageSource.UpdatedDate,
+                    secondDateName: nameof(Source.UpdatedDate)),
+
+                Parameter: nameof(Source.UpdatedDate)),
+
+                (Rule: await IsSameAsync(
                     firstDate: inputSource.UpdatedDate,
                     secondDate: storageSource.UpdatedDate,
                     secondDateName: nameof(Source.UpdatedDate)),
