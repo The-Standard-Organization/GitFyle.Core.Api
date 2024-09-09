@@ -81,8 +81,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 new AlreadyExistsConfigurationException(
                     message: "Configuration already exists error occurred.",
                     innerException: duplicateKeyException,
-                    data: duplicateKeyException.Data
-                );
+                    data: duplicateKeyException.Data);
 
             var expectedConfigurationDependencyValidationException =
                 new ConfigurationDependencyValidationException(
