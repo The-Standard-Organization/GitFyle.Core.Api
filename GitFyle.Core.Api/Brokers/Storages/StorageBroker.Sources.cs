@@ -14,8 +14,8 @@ namespace GitFyle.Core.Api.Brokers.Storages
     {
         public DbSet<Source> Sources { get; set; }
 
-        public ValueTask<Source> InsertSourceAsync(Source source) =>
-            InsertAsync(source);
+        public async ValueTask<Source> InsertSourceAsync(Source source) =>
+            await InsertAsync(source);
 
         public async ValueTask<IQueryable<Source>> SelectAllSourcesAsync() =>
             await SelectAllAsync<Source>();
