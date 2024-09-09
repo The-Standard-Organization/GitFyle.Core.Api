@@ -25,14 +25,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 (Rule: await IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
                 (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
 
-                (Rule: await IsValuesNotSameAsync(
+                (Rule: await IsNotSameAsync(
                     createdBy: configuration.CreatedBy,
                     updatedBy: configuration.UpdatedBy,
                     createdByName: nameof(configuration.CreatedBy)),
 
                     Parameter: nameof(configuration.UpdatedBy)),
 
-                (Rule: await IsDatesNotSameAsync(
+                (Rule: await IsNotSameAsync(
                     createdDate: configuration.CreatedDate,
                     updatedDate: configuration.UpdatedDate,
                     createdDateName: nameof(configuration.CreatedDate)),
@@ -76,7 +76,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             return (isNotRecent, startDate, endDate);
         }
 
-        private static async ValueTask<dynamic> IsDatesNotSameAsync(
+        private static async ValueTask<dynamic> IsNotSameAsync(
             DateTimeOffset createdDate,
             DateTimeOffset updatedDate,
             string createdDateName
@@ -86,7 +86,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 Message = $"Date is not same as {createdDateName}"
             };
 
-        private static async ValueTask<dynamic> IsValuesNotSameAsync(
+        private static async ValueTask<dynamic> IsNotSameAsync(
             string createdBy,
             string updatedBy,
             string createdByName) => new
