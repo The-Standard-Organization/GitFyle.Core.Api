@@ -82,7 +82,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             return configurationServiceException;
         }
 
-        private async ValueTask<ConfigurationDependencyException> CreateAndLogDependencyExceptionAsync(Xeption exception)
+        private async ValueTask<ConfigurationDependencyException> 
+            CreateAndLogDependencyExceptionAsync(Xeption exception)
         {
             var configurationDependencyException =
                 new ConfigurationDependencyException(
@@ -94,8 +95,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             return configurationDependencyException;
         }
 
-        private async ValueTask<ConfigurationDependencyValidationException> CreateAndLogDependencyValidationExceptionAsync(
-            Xeption exception)
+        private async ValueTask<ConfigurationDependencyValidationException>
+            CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
         {
             var configurationDependencyValidationException =
                 new ConfigurationDependencyValidationException(
@@ -107,8 +108,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             return configurationDependencyValidationException;
         }
 
-        private async ValueTask<ConfigurationDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
-            Xeption exception)
+        private async ValueTask<ConfigurationDependencyException>
+            CreateAndLogCriticalDependencyExceptionAsync(Xeption exception)
         {
             var configurationDependencyException =
                 new ConfigurationDependencyException(
@@ -120,8 +121,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             return configurationDependencyException;
         }
 
-        private async ValueTask<ConfigurationValidationException> CreateAndLogValidationExceptionAsync(
-            Xeption innerException)
+        private async ValueTask<ConfigurationValidationException>
+            CreateAndLogValidationExceptionAsync(Xeption innerException)
         {
             var configurationValidationException =
                 new ConfigurationValidationException(
