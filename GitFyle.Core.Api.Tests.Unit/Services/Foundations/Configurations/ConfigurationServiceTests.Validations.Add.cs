@@ -60,8 +60,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         public async Task ShouldThrowValidationExceptionOnAddIfConfigurationIsInvalidAndLogItAsync(string invalidString)
         {
             // given
-
             DateTimeOffset randomDateTimeOffset = default;
+
             Configuration invalidConfiguration = new Configuration
             {
                 Id = Guid.Empty,
