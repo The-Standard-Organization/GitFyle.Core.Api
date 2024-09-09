@@ -192,6 +192,24 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             }
         }
 
+        private static async ValueTask ValidateAgainstStorageSourceOnModifyAsync(Source inputSource, Source storageSource)
+        {
+            Validate(
+                (Rule: await IsNotSameAsync(
+                    firstDate: inputSource.CreatedDate,
+                    secondDate: storageSource.CreatedDate,
+                    secondDateName: nameof(Source.CreatedDate)),
+
+                Parameter: nameof(Source.CreatedDate)),
+
+                (Rule: await IsNotSameAsync(
+                    firstDate: inputSource.UpdatedDate,
+                    secondDate: storageSource.UpdatedDate,
+                    secondDateName: nameof(Source.UpdatedDate)),
+
+                Parameter: nameof(Source.UpdatedDate)));
+        }
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidSourceException = new InvalidSourceException(

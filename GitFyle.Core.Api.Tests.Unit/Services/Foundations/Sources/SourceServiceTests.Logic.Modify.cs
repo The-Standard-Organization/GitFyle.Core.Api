@@ -23,9 +23,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             Source randomSource = CreateRandomModifySource(
                 randomDate.AddMinutes(randomInPastMinute));
 
-            Source inputSource = randomSource.DeepClone();
+            Source inputSource = randomSource;
             inputSource.UpdatedDate = randomDate;
-            Source storageSource = randomSource;
+            Source storageSource = inputSource.DeepClone();
             Source updatedSource = inputSource;
             Source expectedSource = updatedSource.DeepClone();
 
