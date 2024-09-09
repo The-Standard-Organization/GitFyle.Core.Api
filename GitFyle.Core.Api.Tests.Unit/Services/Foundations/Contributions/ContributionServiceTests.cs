@@ -37,7 +37,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         }
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(
-         Xeption expectedException)
+            Xeption expectedException)
         {
             return actualException =>
                 actualException.SameExceptionAs(expectedException);

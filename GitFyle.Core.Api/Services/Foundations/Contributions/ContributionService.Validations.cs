@@ -82,7 +82,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         }
 
         private async ValueTask<(bool IsNotRecent, DateTimeOffset StartDate, DateTimeOffset EndDate)>
-          IsDateNotRecentAsync(DateTimeOffset date)
+            IsDateNotRecentAsync(DateTimeOffset date)
         {
             int pastSeconds = 60;
             int futureSeconds = 0;
@@ -153,6 +153,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 Condition = createBy != updatedBy,
                 Message = $"Text is not the same as {createdByName}"
             };
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidContributionException = new InvalidContributionException(
