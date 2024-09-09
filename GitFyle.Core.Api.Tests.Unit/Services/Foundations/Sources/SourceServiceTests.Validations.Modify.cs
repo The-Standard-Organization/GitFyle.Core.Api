@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using FluentAssertions;
+using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Moq;
@@ -308,6 +309,72 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageCreatedDateNotSameAsCreatedDateAndLogItAsync()
+        {
+            //given
+            int randomMinutes = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Source randomSource = CreateRandomModifySource(randomDateTimeOffset);
+            Source invalidSource = randomSource;
+            Source storedSource = randomSource.DeepClone();
+            storedSource.CreatedDate = storedSource.CreatedDate.AddMinutes(randomMinutes);
+            storedSource.UpdatedDate = storedSource.UpdatedDate.AddMinutes(randomMinutes);
+            Guid SourceId = invalidSource.Id;
+
+            var invalidSourceException = new InvalidSourceException(
+                message: "Source is invalid, fix the errors and try again.");
+
+            invalidSourceException.AddData(
+                key: nameof(Source.CreatedDate),
+                values: $"Date is not the same as {nameof(Source.CreatedDate)}");
+
+            invalidSourceException.AddData(
+                key: nameof(Source.UpdatedDate),
+                values: $"Date is not the same as {nameof(Source.UpdatedDate)}");
+
+            var expectedSourceValidationException = new SourceValidationException(
+                message: "Source validation error occurred, fix errors and try again.",
+                innerException: invalidSourceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectSourceByIdAsync(SourceId))
+                    .ReturnsAsync(storedSource);
+
+            // when
+            ValueTask<Source> modifySourceTask =
+                this.sourceService.ModifySourceAsync(invalidSource);
+
+            SourceValidationException actualSourceValidationException =
+                await Assert.ThrowsAsync<SourceValidationException>(
+                    modifySourceTask.AsTask);
+
+            // then
+            actualSourceValidationException.Should().BeEquivalentTo(
+                expectedSourceValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectSourceByIdAsync(invalidSource.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedSourceValidationException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
