@@ -52,14 +52,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 (Rule: await IsInvalidAsync(contribution.UpdatedWhen), 
                     Parameter: nameof(Contribution.UpdatedWhen)),
 
-                (Rule: await IsValuesNotSameAsync(
+                (Rule: await IsNotSameAsync(
                     createBy: contribution.CreatedBy,
                     updatedBy: contribution.UpdatedBy,
                     createdByName: nameof(Contribution.CreatedBy)),
 
                 Parameter: nameof(Contribution.UpdatedBy)),
 
-                (Rule: await IsDatesNotSameAsync(
+                (Rule: await IsNotSameAsync(
                     createdDate: contribution.CreatedWhen,
                             updatedDate: contribution.UpdatedWhen,
                             nameof(Contribution.CreatedWhen)),
@@ -136,7 +136,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
 
-        private static async ValueTask<dynamic> IsDatesNotSameAsync(
+        private static async ValueTask<dynamic> IsNotSameAsync(
            DateTimeOffset createdDate,
            DateTimeOffset updatedDate,
            string createdDateName) => new
@@ -145,7 +145,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                Message = $"Date is not the same as {createdDateName}"
            };
 
-        private static async ValueTask<dynamic> IsValuesNotSameAsync(
+        private static async ValueTask<dynamic> IsNotSameAsync(
             string createBy,
             string updatedBy,
             string createdByName) => new
