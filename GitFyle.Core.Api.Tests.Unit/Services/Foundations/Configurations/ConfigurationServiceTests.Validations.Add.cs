@@ -80,43 +80,35 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.Id),
-                values: "Id is invalid."
-                );
+                values: "Id is invalid.");
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.Name),
-                values: "Text is required."
-                );
+                values: "Text is required.");
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.Type),
-                values: "Text is required."
-                );
+                values: "Text is required.");
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.Value),
-                values: "Text is required."
-                );
+                values: "Text is required.");
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.CreatedBy),
-                values: "Text is required."
-                );
+                values: "Text is required.");
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.UpdatedBy),
-                values: "Text is required."
-                );
+                values: "Text is required.");
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.CreatedDate),
-                values: "Date is invalid."
-                );
+                values: "Date is invalid.");
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.UpdatedDate),
-                values: "Date is invalid."
-                );
+                values: "Date is invalid.");
 
             var expectedConfigurationValidationException =
                 new ConfigurationValidationException(
