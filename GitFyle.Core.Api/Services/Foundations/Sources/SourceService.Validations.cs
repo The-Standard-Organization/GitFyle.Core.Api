@@ -27,9 +27,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: await IsInvalidUrlAsync(source.Url), Parameter: nameof(Source.Url)),
 
                 (Rule: await IsNotSameAsync(
-                    createBy: source.UpdatedBy,
-                    updatedBy: source.CreatedBy,
-                    createdByName: nameof(Source.CreatedBy)),
+                    first: source.UpdatedBy,
+                    second: source.CreatedBy,
+                    secondName: nameof(Source.CreatedBy)),
 
                 Parameter: nameof(Source.UpdatedBy)),
 
@@ -150,12 +150,12 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            string createBy,
-            string updatedBy,
-            string createdByName) => new
+            string first,
+            string second,
+            string secondName) => new
             {
-                Condition = createBy != updatedBy,
-                Message = $"Text is not the same as {createdByName}"
+                Condition = first != second,
+                Message = $"Text is not the same as {secondName}"
             };
 
         public static async ValueTask<bool> IsValidUrlAsync(string url)
