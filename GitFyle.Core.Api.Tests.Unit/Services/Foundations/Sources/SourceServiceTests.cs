@@ -82,18 +82,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 .AsQueryable();
         }
 
-        public static IEnumerable<object[]> InvalidMinuteCases()
-        {
-            int randomMoreThanMinuteFromNow = GetRandomNumber();
-            int randomMoreThanMinuteBeforeNow = GetRandomNumber();
-
-            return new List<object[]>
-            {
-                new object[] { randomMoreThanMinuteFromNow },
-                new object[] { randomMoreThanMinuteBeforeNow }
-            };
-        }
-
         private static Source CreateRandomModifySource(DateTimeOffset dateTimeOffset)
         {
             int randomDaysInThePast = GetRandomNegativeNumber();

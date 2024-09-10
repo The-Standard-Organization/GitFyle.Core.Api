@@ -194,8 +194,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         }
 
         [Theory]
-        [MemberData(nameof(InvalidMinuteCases))]
-        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(int minutes)
+        [InlineData(1)]
+        [InlineData(-61)]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(
+            int invalidSeconds)
         {
             //given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
@@ -203,7 +205,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             DateTimeOffset startDate = now.AddSeconds(-60);
             DateTimeOffset endDate = now.AddSeconds(0);
             Source randomSource = CreateRandomSource(randomDateTimeOffset);
-            randomSource.UpdatedDate = randomDateTimeOffset.AddMinutes(minutes);
+            randomSource.UpdatedDate = randomDateTimeOffset.AddSeconds(invalidSeconds);
 
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");
