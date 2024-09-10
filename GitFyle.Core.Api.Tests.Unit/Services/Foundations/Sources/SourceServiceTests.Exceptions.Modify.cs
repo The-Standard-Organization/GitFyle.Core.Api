@@ -132,5 +132,69 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        private async Task ShouldThrowDependencyValidationExceptionOnModifyIfDbConcurrencyOccursAndLogItAsync()
+        {
+            // given
+            int minutesInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+
+            Source randomSource =
+                CreateRandomSource(randomDateTimeOffset);
+
+            randomSource.CreatedDate =
+                randomDateTimeOffset.AddMinutes(minutesInPast);
+
+            var dbUpdateConcurrencyException =
+                new DbUpdateConcurrencyException();
+
+            var lockedSourceException =
+                new LockedSourceException(
+                    message: "Locked Source record error occurred, please try again.",
+                    innerException: dbUpdateConcurrencyException);
+
+            var expectedSourceDependencyValidationException =
+                new SourceDependencyValidationException(
+                    message: "Source dependency validation occurred, fix and try again.",
+                    innerException: lockedSourceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectSourceByIdAsync(randomSource.Id))
+                    .ThrowsAsync(dbUpdateConcurrencyException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Source> modifySourceTask =
+                this.sourceService.ModifySourceAsync(randomSource);
+
+            SourceDependencyValidationException actualSourceDependencyValidationException =
+                await Assert.ThrowsAsync<SourceDependencyValidationException>(
+                    modifySourceTask.AsTask);
+
+            // then
+            actualSourceDependencyValidationException.Should().BeEquivalentTo(
+                expectedSourceDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectSourceByIdAsync(randomSource.Id),
+                    Times.Once());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedSourceDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
