@@ -16,7 +16,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
     public partial class SourceServiceTests
     {
         [Fact]
-        private async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
+        public async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
         {
             // given
             Source someSource = CreateRandomSource();
@@ -71,7 +71,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         }
 
         [Fact]
-        private async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
         {
             // given
             int minutesInPast = GetRandomNegativeNumber();
@@ -134,7 +134,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         }
 
         [Fact]
-        private async Task ShouldThrowServiceExceptionOnModifyIfServiceErrorOccursAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnModifyIfServiceErrorOccursAndLogItAsync()
         {
             // given
             int minutesInPast = GetRandomNegativeNumber();
