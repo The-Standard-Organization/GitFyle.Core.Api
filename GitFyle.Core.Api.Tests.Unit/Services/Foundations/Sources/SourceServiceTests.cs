@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
@@ -44,7 +45,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 actualException.SameExceptionAs(expectedException);
         }
 
-        private SqlException CreateSqlException()
+        private static SqlException CreateSqlException()
         {
             return (SqlException)RuntimeHelpers.GetUninitializedObject(
                 type: typeof(SqlException));
@@ -65,6 +66,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
         private static Source CreateRandomSource() =>
             CreateRandomSource(dateTimeOffset: GetRandomDateTimeOffset());
 
@@ -76,6 +80,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             return CreateSourceFiller(GetRandomDateTimeOffset())
                 .Create(GetRandomNumber())
                 .AsQueryable();
+        }
+
+        private static Source CreateRandomModifySource(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInThePast = GetRandomNegativeNumber();
+            Source randomSource = CreateRandomSource(dateTimeOffset);
+
+            randomSource.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
+
+            return randomSource;
         }
 
         private static Filler<Source> CreateSourceFiller(DateTimeOffset dateTimeOffset)
