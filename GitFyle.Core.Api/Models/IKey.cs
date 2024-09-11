@@ -2,14 +2,10 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using Xeptions;
-
-namespace GitFyle.Core.Api.Models.Foundations.Sources.Exceptions
+namespace GitFyle.Core.Api.Models
 {
-    public class SourceServiceException : Xeption
+    public interface IKey
     {
-        public SourceServiceException(string message, Xeption innerException)
-            : base(message, innerException)
-        { }
+
     }
 }

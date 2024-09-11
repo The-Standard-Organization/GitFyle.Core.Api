@@ -9,7 +9,7 @@ using GitFyle.Core.Api.Models.Foundations.Repositories;
 
 namespace GitFyle.Core.Api.Models.Foundations.Sources
 {
-    public class Source
+    public class Source : IKey, IAudit
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

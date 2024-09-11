@@ -9,7 +9,7 @@ using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Models.Foundations.Contributors
 {
-    public class Contributor
+    public class Contributor : IKey, IAudit
     {
         public Guid Id { get; set; }
         public string ExternalId { get; set; }
@@ -20,6 +20,10 @@ namespace GitFyle.Core.Api.Models.Foundations.Contributors
         public string AvatarUrl { get; set; }
         public DateTimeOffset ExternalCreatedAt { get; set; }
         public DateTimeOffset ExternalUpdatedAt { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
+        public string UpdatedBy { get; set; }
+        public DateTimeOffset UpdatedDate { get; set; }
         public Source Source { get; set; }
         public IEnumerable<Contribution> Contributions { get; set; }
     }
