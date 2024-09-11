@@ -374,7 +374,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnModifyIfStorageCreatedDateNotSameAsCreatedDateAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageCreatedInfoNotSameAsModifyInfoAndLogItAsync()
         {
             //given
             int randomMinutes = GetRandomNegativeNumber();
@@ -382,12 +382,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             Source randomSource = CreateRandomModifySource(randomDateTimeOffset);
             Source invalidSource = randomSource;
             Source storedSource = randomSource.DeepClone();
+            storedSource.CreatedBy = GetRandomString();
             storedSource.CreatedDate = storedSource.CreatedDate.AddMinutes(randomMinutes);
             storedSource.UpdatedDate = storedSource.UpdatedDate.AddMinutes(randomMinutes);
             Guid SourceId = invalidSource.Id;
 
             var invalidSourceException = new InvalidSourceException(
                 message: "Source is invalid, fix the errors and try again.");
+
+            invalidSourceException.AddData(
+                key: nameof(Source.CreatedBy),
+                values: $"Text is not the same as {nameof(Source.CreatedBy)}");
 
             invalidSourceException.AddData(
                 key: nameof(Source.CreatedDate),

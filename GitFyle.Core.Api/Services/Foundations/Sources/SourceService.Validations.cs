@@ -198,6 +198,13 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
         {
             Validate(
                 (Rule: await IsNotSameAsync(
+                    first: inputSource.CreatedBy,
+                    second: storageSource.CreatedBy,
+                    secondName: nameof(Source.CreatedBy)),
+
+                Parameter: nameof(Source.CreatedBy)),
+
+                (Rule: await IsNotSameAsync(
                     firstDate: inputSource.CreatedDate,
                     secondDate: storageSource.CreatedDate,
                     secondDateName: nameof(Source.CreatedDate)),
