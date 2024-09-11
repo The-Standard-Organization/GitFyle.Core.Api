@@ -137,13 +137,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         private async Task ShouldThrowDependencyValidationExceptionOnModifyIfDbUpdateConcurrencyOccursAndLogItAsync()
         {
             // given
-            int minutesInPast = GetRandomNegativeNumber();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-
-            Source randomSource =
-                CreateRandomModifySource(randomDateTimeOffset);
-
-            randomSource.CreatedDate = randomDateTimeOffset.AddMinutes(minutesInPast);
+            Source randomSource = CreateRandomSource(randomDateTimeOffset);
 
             var dbUpdateConcurrencyException =
                 new DbUpdateConcurrencyException();
@@ -158,13 +153,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                     message: "Source dependency validation error occurred, fix errors and try again.",
                     innerException: lockedSourceException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectSourceByIdAsync(randomSource.Id))
-                    .ThrowsAsync(dbUpdateConcurrencyException);
-
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(randomDateTimeOffset);
+                    .ThrowsAsync(dbUpdateConcurrencyException);
 
             // when
             ValueTask<Source> modifySourceTask =
@@ -178,10 +169,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             actualSourceDependencyValidationException.Should().BeEquivalentTo(
                 expectedSourceDependencyValidationException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectSourceByIdAsync(randomSource.Id),
-                    Times.Once());
-
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
@@ -191,9 +178,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                     expectedSourceDependencyValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectSourceByIdAsync(randomSource.Id),
+                    Times.Never());
+
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
