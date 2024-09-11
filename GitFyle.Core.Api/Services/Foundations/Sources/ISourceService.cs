@@ -15,5 +15,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
         ValueTask<Source> RetrieveSourceByIdAsync(Guid sourceId);
         ValueTask<IQueryable<Source>> RetrieveAllSourcesAsync();
         ValueTask<Source> ModifySourceAsync(Source source);
+        ValueTask<Source> RemoveSourceByIdAsync(Guid sourceId);
     }
 }

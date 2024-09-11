@@ -65,5 +65,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
             return await this.storageBroker.UpdateSourceAsync(source);
         });
+
+        public ValueTask<Source> RemoveSourceByIdAsync(Guid sourceId) =>
+            throw new NotImplementedException();
     }
 }
