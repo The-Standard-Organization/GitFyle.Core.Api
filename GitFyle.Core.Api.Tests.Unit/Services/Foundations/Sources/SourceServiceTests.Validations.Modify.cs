@@ -374,7 +374,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnModifyIfStorageCreatedInfoNotSameAsModifyInfoAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnModifyIfCreatedAuditInfoHasChangedAndLogItAsync()
         {
             //given
             int randomMinutes = GetRandomNegativeNumber();
