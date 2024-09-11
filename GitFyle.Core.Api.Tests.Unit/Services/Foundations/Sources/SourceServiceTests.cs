@@ -3,6 +3,8 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using GitFyle.Core.Api.Brokers.DateTimes;
@@ -43,7 +45,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 actualException.SameExceptionAs(expectedException);
         }
 
-        private SqlException CreateSqlException()
+        private static SqlException CreateSqlException()
         {
             return (SqlException)RuntimeHelpers.GetUninitializedObject(
                 type: typeof(SqlException));
@@ -64,22 +66,42 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
         private static Source CreateRandomSource() =>
             CreateRandomSource(dateTimeOffset: GetRandomDateTimeOffset());
 
         private static Source CreateRandomSource(DateTimeOffset dateTimeOffset) =>
             CreateSourceFiller(dateTimeOffset).Create();
 
+        private static IQueryable<Source> CreateRandomSources()
+        {
+            return CreateSourceFiller(GetRandomDateTimeOffset())
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
+
+        private static Source CreateRandomModifySource(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInThePast = GetRandomNegativeNumber();
+            Source randomSource = CreateRandomSource(dateTimeOffset);
+
+            randomSource.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
+
+            return randomSource;
+        }
+
         private static Filler<Source> CreateSourceFiller(DateTimeOffset dateTimeOffset)
         {
-            string user = Guid.NewGuid().ToString();
+            string someUser = Guid.NewGuid().ToString();
             var filler = new Filler<Source>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
-                .OnProperty(address => address.Url).Use(new RandomUrl().GetValue())
-                .OnProperty(address => address.CreatedBy).Use(user)
-                .OnProperty(address => address.UpdatedBy).Use(user)
+                .OnProperty(source => source.Url).Use(new RandomUrl().GetValue())
+                .OnProperty(source => source.CreatedBy).Use(someUser)
+                .OnProperty(source => source.UpdatedBy).Use(someUser)
                 .OnProperty(source => source.Repositories).IgnoreIt()
                 .OnProperty(source => source.Contributors).IgnoreIt();
 
