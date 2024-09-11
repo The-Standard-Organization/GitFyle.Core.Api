@@ -2,13 +2,14 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Models.Foundations.Sources.Exceptions
 {
-    public class SourceDependencyValidationException : Xeption
+    public class LockedSourceException : Xeption
     {
-        public SourceDependencyValidationException(string message, Xeption innerException)
+        public LockedSourceException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }
