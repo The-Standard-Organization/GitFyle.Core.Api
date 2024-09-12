@@ -71,9 +71,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 ContributionTypeId = Guid.Empty,
                 Title = invalidString,
                 ExternalId = invalidString,
-                ExternalCreatedAt = default,
-                ExternalMergedAt = default,
-                ExternalUpdatedAt = default,
+                CreatedDate = default,
+                UpdatedDate = default,
+                CreatedBy = invalidString,
+                UpdatedBy = invalidString,
             };
 
             var invalidContributionException = new InvalidContributionException(
