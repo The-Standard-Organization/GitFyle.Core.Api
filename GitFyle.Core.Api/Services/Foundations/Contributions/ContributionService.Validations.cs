@@ -46,11 +46,11 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 (Rule: await IsInvalidAsync(contribution.ContributionTypeId), 
                     Parameter: nameof(Contribution.ContributionTypeId)),
 
-                (Rule: await IsInvalidAsync(contribution.CreatedWhen), 
-                    Parameter: nameof(Contribution.CreatedWhen)),
+                (Rule: await IsInvalidAsync(contribution.CreatedDate), 
+                    Parameter: nameof(Contribution.CreatedDate)),
 
-                (Rule: await IsInvalidAsync(contribution.UpdatedWhen), 
-                    Parameter: nameof(Contribution.UpdatedWhen)),
+                (Rule: await IsInvalidAsync(contribution.UpdatedDate), 
+                    Parameter: nameof(Contribution.UpdatedDate)),
 
                 (Rule: await IsNotSameAsync(
                     first: contribution.CreatedBy,
@@ -60,14 +60,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 Parameter: nameof(Contribution.UpdatedBy)),
 
                 (Rule: await IsNotSameAsync(
-                            firstDate: contribution.CreatedWhen,
-                            secondDate: contribution.UpdatedWhen,
-                            nameof(Contribution.CreatedWhen)),
+                            firstDate: contribution.CreatedDate,
+                            secondDate: contribution.UpdatedDate,
+                            nameof(Contribution.CreatedDate)),
 
-                Parameter: nameof(Contribution.UpdatedWhen)),
+                Parameter: nameof(Contribution.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(contribution.CreatedWhen), 
-                    Parameter: nameof(Contribution.CreatedWhen)));
+                (Rule: await IsNotRecentAsync(contribution.CreatedDate), 
+                    Parameter: nameof(Contribution.CreatedDate)));
         }
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
