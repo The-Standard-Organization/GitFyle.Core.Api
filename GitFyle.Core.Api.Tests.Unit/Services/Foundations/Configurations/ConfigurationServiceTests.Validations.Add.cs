@@ -67,7 +67,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 Id = Guid.Empty,
                 Name = invalidString,
                 Value = invalidString,
-                Type = invalidString,
                 CreatedBy = invalidString,
                 UpdatedBy = invalidString,
                 CreatedDate = randomDateTimeOffset,
@@ -84,10 +83,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.Name),
-                values: "Text is required.");
-
-            invalidConfigurationException.AddData(
-                key: nameof(Configuration.Type),
                 values: "Text is required.");
 
             invalidConfigurationException.AddData(
