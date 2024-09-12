@@ -36,24 +36,9 @@ namespace GitFyle.Core.Api.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-<<<<<<< HEAD
-<<<<<<< HEAD
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-=======
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
->>>>>>> main
-=======
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -118,21 +103,12 @@ namespace GitFyle.Core.Api.Migrations
                     b.Property<Guid>("ContributorId")
                         .HasColumnType("uniqueidentifier");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
-<<<<<<< HEAD
->>>>>>> main
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<DateTimeOffset>("ExternalCreatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -155,21 +131,12 @@ namespace GitFyle.Core.Api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
 
-<<<<<<< HEAD
->>>>>>> main
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.HasKey("Id");
 
                     b.HasIndex("ContributionTypeId");
@@ -191,21 +158,12 @@ namespace GitFyle.Core.Api.Migrations
                     b.Property<string>("AvatarUrl")
                         .HasColumnType("nvarchar(max)");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
-<<<<<<< HEAD
->>>>>>> main
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<string>("Email")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -228,21 +186,12 @@ namespace GitFyle.Core.Api.Migrations
                     b.Property<Guid>("SourceId")
                         .HasColumnType("uniqueidentifier");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
 
-<<<<<<< HEAD
->>>>>>> main
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -263,21 +212,12 @@ namespace GitFyle.Core.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
-<<<<<<< HEAD
->>>>>>> main
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -317,21 +257,12 @@ namespace GitFyle.Core.Api.Migrations
                     b.Property<DateTimeOffset>("TokenExpireAt")
                         .HasColumnType("datetimeoffset");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
 
-<<<<<<< HEAD
->>>>>>> main
-=======
->>>>>>> 3060af2cb51d9c913a2dc81ccaaf647ee64fa3f7
                     b.HasKey("Id");
 
                     b.HasIndex("SourceId");
