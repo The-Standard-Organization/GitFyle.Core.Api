@@ -4,6 +4,7 @@ using GitFyle.Core.Api.Brokers.Storages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GitFyle.Core.Api.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    partial class StorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20240912185441_AddInitialMigration")]
+    partial class AddInitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,18 +39,9 @@ namespace GitFyle.Core.Api.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-<<<<<<< HEAD
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-=======
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
->>>>>>> main
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -112,15 +106,12 @@ namespace GitFyle.Core.Api.Migrations
                     b.Property<Guid>("ContributorId")
                         .HasColumnType("uniqueidentifier");
 
-<<<<<<< HEAD
-=======
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
->>>>>>> main
                     b.Property<DateTimeOffset>("ExternalCreatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -143,15 +134,12 @@ namespace GitFyle.Core.Api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-<<<<<<< HEAD
-=======
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
 
->>>>>>> main
                     b.HasKey("Id");
 
                     b.HasIndex("ContributionTypeId");
@@ -173,15 +161,12 @@ namespace GitFyle.Core.Api.Migrations
                     b.Property<string>("AvatarUrl")
                         .HasColumnType("nvarchar(max)");
 
-<<<<<<< HEAD
-=======
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
->>>>>>> main
                     b.Property<string>("Email")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -204,15 +189,12 @@ namespace GitFyle.Core.Api.Migrations
                     b.Property<Guid>("SourceId")
                         .HasColumnType("uniqueidentifier");
 
-<<<<<<< HEAD
-=======
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
 
->>>>>>> main
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -233,15 +215,12 @@ namespace GitFyle.Core.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-<<<<<<< HEAD
-=======
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
->>>>>>> main
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -281,15 +260,12 @@ namespace GitFyle.Core.Api.Migrations
                     b.Property<DateTimeOffset>("TokenExpireAt")
                         .HasColumnType("datetimeoffset");
 
-<<<<<<< HEAD
-=======
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
 
->>>>>>> main
                     b.HasKey("Id");
 
                     b.HasIndex("SourceId");
