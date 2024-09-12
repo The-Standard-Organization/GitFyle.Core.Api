@@ -53,15 +53,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                     Parameter: nameof(Contribution.UpdatedWhen)),
 
                 (Rule: await IsNotSameAsync(
-                    createBy: contribution.CreatedBy,
-                    updatedBy: contribution.UpdatedBy,
-                    createdByName: nameof(Contribution.CreatedBy)),
+                    first: contribution.CreatedBy,
+                    second: contribution.UpdatedBy,
+                    secondName: nameof(Contribution.CreatedBy)),
 
                 Parameter: nameof(Contribution.UpdatedBy)),
 
                 (Rule: await IsNotSameAsync(
-                    createdDate: contribution.CreatedWhen,
-                            updatedDate: contribution.UpdatedWhen,
+                            firstDate: contribution.CreatedWhen,
+                            secondDate: contribution.UpdatedWhen,
                             nameof(Contribution.CreatedWhen)),
 
                 Parameter: nameof(Contribution.UpdatedWhen)),
@@ -137,21 +137,21 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             (text ?? string.Empty).Length > maxLength;
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-           DateTimeOffset createdDate,
-           DateTimeOffset updatedDate,
-           string createdDateName) => new
+           DateTimeOffset firstDate,
+           DateTimeOffset secondDate,
+           string secondDateName) => new
            {
-               Condition = createdDate != updatedDate,
-               Message = $"Date is not the same as {createdDateName}"
+               Condition = firstDate != secondDate,
+               Message = $"Date is not the same as {secondDateName}"
            };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            string createBy,
-            string updatedBy,
-            string createdByName) => new
+            string first,
+            string second,
+            string secondName) => new
             {
-                Condition = createBy != updatedBy,
-                Message = $"Text is not the same as {createdByName}"
+                Condition = first != second,
+                Message = $"Text is not the same as {secondName}"
             };
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
