@@ -18,7 +18,7 @@ namespace GitFyle.Core.Api.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<DateTimeOffset>(
-                name: "CreatedWhen",
+                name: "CreatedDate",
                 table: "Contributions",
                 type: "datetimeoffset",
                 nullable: false,
@@ -31,7 +31,7 @@ namespace GitFyle.Core.Api.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<DateTimeOffset>(
-                name: "UpdatedWhen",
+                name: "UpdatedDate",
                 table: "Contributions",
                 type: "datetimeoffset",
                 nullable: false,
@@ -46,7 +46,7 @@ namespace GitFyle.Core.Api.Migrations
                 table: "Contributions");
 
             migrationBuilder.DropColumn(
-                name: "CreatedWhen",
+                name: "CreatedDate",
                 table: "Contributions");
 
             migrationBuilder.DropColumn(
@@ -54,7 +54,7 @@ namespace GitFyle.Core.Api.Migrations
                 table: "Contributions");
 
             migrationBuilder.DropColumn(
-                name: "UpdatedWhen",
+                name: "UpdatedDate",
                 table: "Contributions");
         }
     }

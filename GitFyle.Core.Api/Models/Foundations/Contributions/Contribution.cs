@@ -21,9 +21,9 @@ namespace GitFyle.Core.Api.Models.Foundations.Contributions
         public DateTimeOffset ExternalUpdatedAt { get; set; }
         public DateTimeOffset ExternalMergedAt { get; set; }
         public string CreatedBy { get; set; }
-        public DateTimeOffset CreatedWhen { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
-        public DateTimeOffset UpdatedWhen { get; set; }
+        public DateTimeOffset UpdatedDate { get; set; }
         public ContributionType ContributionType { get; set; }
         public Contributor Contributor { get; set; }
         public Repository Repository { get; set; }

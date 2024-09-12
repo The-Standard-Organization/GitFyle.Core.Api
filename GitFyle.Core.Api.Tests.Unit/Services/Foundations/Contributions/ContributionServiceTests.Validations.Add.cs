@@ -71,9 +71,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 ContributionTypeId = Guid.Empty,
                 Title = invalidString,
                 ExternalId = invalidString,
-                ExternalCreatedAt = default,
-                ExternalMergedAt = default,
-                ExternalUpdatedAt = default,
+                CreatedDate = default,
+                UpdatedDate = default,
+                CreatedBy = invalidString,
+                UpdatedBy = invalidString,
             };
 
             var invalidContributionException = new InvalidContributionException(
@@ -112,11 +113,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 values: "Text is required");
 
             invalidContributionException.AddData(
-                key: nameof(Contribution.CreatedWhen),
+                key: nameof(Contribution.CreatedDate),
                 values: "Date is invalid");
 
             invalidContributionException.AddData(
-                key: nameof(Contribution.UpdatedWhen),
+                key: nameof(Contribution.UpdatedDate),
                 values: "Date is invalid");
 
             var expectedContributionValidationException =
@@ -228,8 +229,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             Contribution invalidContribution = randomContribution;
             invalidContribution.CreatedBy = GetRandomString();
             invalidContribution.UpdatedBy = GetRandomString();
-            invalidContribution.CreatedWhen = now;
-            invalidContribution.UpdatedWhen = GetRandomDateTimeOffset();
+            invalidContribution.CreatedDate = now;
+            invalidContribution.UpdatedDate = GetRandomDateTimeOffset();
 
             var invalidContributionException = new InvalidContributionException(
                 message: "Contribution is invalid, fix the errors and try again.");
@@ -239,8 +240,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 values: $"Text is not the same as {nameof(Contribution.CreatedBy)}");
 
             invalidContributionException.AddData(
-                key: nameof(Contribution.UpdatedWhen),
-                values: $"Date is not the same as {nameof(Contribution.CreatedWhen)}");
+                key: nameof(Contribution.UpdatedDate),
+                values: $"Date is not the same as {nameof(Contribution.CreatedDate)}");
 
             var expectedContributionValidationException =
                 new ContributionValidationException(
@@ -300,14 +301,14 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             DateTimeOffset invalidDate =
                 now.AddSeconds(invalidSeconds);
 
-            invalidContribution.CreatedWhen = invalidDate;
-            invalidContribution.UpdatedWhen = invalidDate;
+            invalidContribution.CreatedDate = invalidDate;
+            invalidContribution.UpdatedDate = invalidDate;
 
             var invalidContributionException = new InvalidContributionException(
                 message: "Contribution is invalid, fix the errors and try again.");
 
             invalidContributionException.AddData(
-            key: nameof(Contribution.CreatedWhen),
+            key: nameof(Contribution.CreatedDate),
                 values:
                     $"Date is not recent. Expected a value between " +
                     $"{startDate} and {endDate} but found {invalidDate}");
