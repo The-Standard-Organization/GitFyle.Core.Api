@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Sources;
@@ -17,6 +18,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
     internal partial class SourceService
     {
         private delegate ValueTask<Source> ReturningSourceFunction();
+        private delegate ValueTask<IQueryable<Source>> ReturningSourcesFunction();
 
         private async ValueTask<Source> TryCatch(ReturningSourceFunction returningSourceFunction)
         {
@@ -31,6 +33,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             catch (InvalidSourceException invalidSourceException)
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidSourceException);
+            }
+            catch (NotFoundSourceException notFoundSourceException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundSourceException);
             }
             catch (SqlException sqlException)
             {
@@ -50,6 +56,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsSourceException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var concurrencyGemException =
+                    new LockedSourceException(
+                        message: "Locked source record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
+            }
             catch (DbUpdateException dbUpdateException)
             {
                 var failedOperationSourceException =
@@ -58,6 +73,31 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                         innerException: dbUpdateException);
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationSourceException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceSourceException =
+                    new FailedServiceSourceException(
+                        message: "Failed service source error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceSourceException);
+            }
+        }
+
+        private async ValueTask<IQueryable<Source>> TryCatch(ReturningSourcesFunction returningSourcesFunction)
+        {
+            try
+            {
+                return await returningSourcesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageSourceException = new FailedStorageSourceException(
+                    message: "Failed source storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageSourceException);
             }
             catch (Exception exception)
             {
