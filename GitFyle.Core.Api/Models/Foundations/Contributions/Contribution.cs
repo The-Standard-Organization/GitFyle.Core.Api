@@ -9,7 +9,7 @@ using GitFyle.Core.Api.Models.Foundations.Repositories;
 
 namespace GitFyle.Core.Api.Models.Foundations.Contributions
 {
-    public class Contribution
+    public class Contribution : IKey, IAudit
     {
         public Guid Id { get; set; }
         public Guid RepositoryId { get; set; }
