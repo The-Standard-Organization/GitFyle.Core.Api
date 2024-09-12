@@ -82,7 +82,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             return configurationServiceException;
         }
 
-        private async ValueTask<ConfigurationDependencyException> 
+        private async ValueTask<ConfigurationDependencyException>
             CreateAndLogDependencyExceptionAsync(Xeption exception)
         {
             var configurationDependencyException =

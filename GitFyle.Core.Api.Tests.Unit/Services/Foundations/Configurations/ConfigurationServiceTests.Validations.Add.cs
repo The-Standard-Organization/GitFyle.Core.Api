@@ -173,7 +173,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 key: nameof(Configuration.UpdatedDate),
                 values: $"Date is not same as {nameof(Configuration.CreatedDate)}");
 
-            var expectedConfigurationValidationException = 
+            var expectedConfigurationValidationException =
                 new ConfigurationValidationException(
                     message: "Configuration validation error occurred, fix the errors and try again.",
                     innerException: invalidConfigurationException);

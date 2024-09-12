@@ -9,7 +9,7 @@ namespace GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions
 {
     public class FailedStorageConfigurationException : Xeption
     {
-        public FailedStorageConfigurationException(string message, Exception innerException) 
+        public FailedStorageConfigurationException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }

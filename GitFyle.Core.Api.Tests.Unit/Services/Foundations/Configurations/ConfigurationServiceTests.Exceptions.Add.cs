@@ -77,7 +77,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             var duplicateKeyException =
                 new DuplicateKeyException(message: "Duplicate key error occurred");
 
-            var alreadyExistsConfigurationException = 
+            var alreadyExistsConfigurationException =
                 new AlreadyExistsConfigurationException(
                     message: "Configuration already exists error occurred.",
                     innerException: duplicateKeyException,
