@@ -44,21 +44,21 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             actualSourceValidationException.Should().BeEquivalentTo(
                 expectedSourceValidationException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(
                     SameExceptionAs(expectedSourceValidationException))),
                         Times.Once);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertSourceAsync(It.IsAny<Source>()),
                     Times.Never);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
