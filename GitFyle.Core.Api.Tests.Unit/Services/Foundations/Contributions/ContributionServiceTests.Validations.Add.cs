@@ -66,15 +66,15 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             var invalidContribution = new Contribution
             {
                 Id = Guid.Empty,
-                ContributorId = Guid.Empty,
                 RepositoryId = Guid.Empty,
+                ContributorId = Guid.Empty,
                 ContributionTypeId = Guid.Empty,
-                Title = invalidString,
                 ExternalId = invalidString,
-                CreatedDate = default,
-                UpdatedDate = default,
+                Title = invalidString,
                 CreatedBy = invalidString,
+                CreatedDate = default,
                 UpdatedBy = invalidString,
+                UpdatedDate = default,
             };
 
             var invalidContributionException = new InvalidContributionException(
