@@ -13,19 +13,16 @@ namespace GitFyle.Core.Api.Brokers.Storages
         {
             builder
                 .Property(configuration => configuration.Name)
-                .IsRequired();
-
-            builder
-                .Property(configuration => configuration.Value)
-                .IsRequired();
-
-            builder
-                .Property(configuration => configuration.Type)
+                .HasMaxLength(450)
                 .IsRequired();
 
             builder
                 .HasIndex(configuration => configuration.Name)
                 .IsUnique();
+
+            builder
+                .Property(configuration => configuration.Value)
+                .IsRequired();
         }
     }
 }

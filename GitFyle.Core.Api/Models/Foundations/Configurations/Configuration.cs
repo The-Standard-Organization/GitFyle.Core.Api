@@ -11,7 +11,6 @@ namespace GitFyle.Core.Api.Models.Foundations.Configurations
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Value { get; set; }
-        public string Type { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
