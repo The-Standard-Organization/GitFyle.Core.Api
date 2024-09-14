@@ -14,7 +14,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 {
     public partial class SourceServiceTests
     {
-
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfSourceIsNullAndLogItAsync()
         {

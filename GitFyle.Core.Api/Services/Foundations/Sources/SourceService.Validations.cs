@@ -3,7 +3,6 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.Data;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
@@ -20,8 +19,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: await IsInvalidAsync(source.Id), Parameter: nameof(Source.Id)),
                 (Rule: await IsInvalidAsync(source.Name), Parameter: nameof(Source.Name)),
                 (Rule: await IsInvalidAsync(source.CreatedBy), Parameter: nameof(Source.CreatedBy)),
-                (Rule: await IsInvalidAsync(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
                 (Rule: await IsInvalidAsync(source.CreatedDate), Parameter: nameof(Source.CreatedDate)),
+                (Rule: await IsInvalidAsync(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
                 (Rule: await IsInvalidAsync(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
                 (Rule: await IsInvalidLengthAsync(source.Name, 255), Parameter: nameof(Source.Name)),
                 (Rule: await IsInvalidUrlAsync(source.Url), Parameter: nameof(Source.Url)),
@@ -51,8 +50,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 (Rule: await IsInvalidAsync(source.Id), Parameter: nameof(Source.Id)),
                 (Rule: await IsInvalidAsync(source.Name), Parameter: nameof(Source.Name)),
                 (Rule: await IsInvalidAsync(source.CreatedBy), Parameter: nameof(Source.CreatedBy)),
-                (Rule: await IsInvalidAsync(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
                 (Rule: await IsInvalidAsync(source.CreatedDate), Parameter: nameof(Source.CreatedDate)),
+                (Rule: await IsInvalidAsync(source.UpdatedBy), Parameter: nameof(Source.UpdatedBy)),
                 (Rule: await IsInvalidAsync(source.UpdatedDate), Parameter: nameof(Source.UpdatedDate)),
                 (Rule: await IsInvalidLengthAsync(source.Name, 255), Parameter: nameof(Source.Name)),
                 (Rule: await IsInvalidUrlAsync(source.Url), Parameter: nameof(Source.Url)),
@@ -172,7 +171,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
 
             return uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps;
         }
-        
+
         private static async ValueTask ValidateSourceIdAsync(Guid sourceId) =>
             Validate((Rule: await IsInvalidAsync(sourceId), Parameter: nameof(Source.Id)));
 
