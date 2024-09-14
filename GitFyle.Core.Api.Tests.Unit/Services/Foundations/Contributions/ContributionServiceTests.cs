@@ -78,9 +78,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 .OnProperty(contribution => contribution.ExternalUpdatedAt).Use(dateTimeOffset)
                 .OnProperty(contribution => contribution.ExternalMergedAt).Use(dateTimeOffset)
                 .OnProperty(contribution => contribution.CreatedBy).Use(user)
-                .OnProperty(contribution => contribution.CreatedDate).Use(dateTimeOffset)
                 .OnProperty(contribution => contribution.UpdatedBy).Use(user)
-                .OnProperty(contribution => contribution.UpdatedDate).Use(dateTimeOffset)
                 .OnProperty(contribution => contribution.ContributionType).IgnoreIt()
                 .OnProperty(contribution => contribution.Contributor).IgnoreIt()
                 .OnProperty(repository => repository.Repository).IgnoreIt();
