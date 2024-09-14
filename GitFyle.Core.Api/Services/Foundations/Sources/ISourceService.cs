@@ -9,7 +9,7 @@ using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Sources
 {
-    internal interface ISourceService
+    public interface ISourceService
     {
         ValueTask<Source> AddSourceAsync(Source source);
         ValueTask<Source> RetrieveSourceByIdAsync(Guid sourceId);
