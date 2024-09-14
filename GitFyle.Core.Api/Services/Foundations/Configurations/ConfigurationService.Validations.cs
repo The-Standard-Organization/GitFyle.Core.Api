@@ -20,8 +20,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 (Rule: await IsInvalidAsync(configuration.Name), Parameter: nameof(configuration.Name)),
                 (Rule: await IsInvalidAsync(configuration.Value), Parameter: nameof(configuration.Value)),
                 (Rule: await IsInvalidAsync(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
-                (Rule: await IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
                 (Rule: await IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
+                (Rule: await IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
                 (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
 
                 (Rule: await IsNotSameAsync(
