@@ -25,16 +25,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
 
                 (Rule: await IsNotSameAsync(
-                    createdBy: configuration.CreatedBy,
-                    updatedBy: configuration.UpdatedBy,
-                    createdByName: nameof(configuration.CreatedBy)),
+                    first: configuration.CreatedBy,
+                    second: configuration.UpdatedBy,
+                    secondName: nameof(configuration.CreatedBy)),
 
                     Parameter: nameof(configuration.UpdatedBy)),
 
                 (Rule: await IsNotSameAsync(
-                    createdDate: configuration.CreatedDate,
-                    updatedDate: configuration.UpdatedDate,
-                    createdDateName: nameof(configuration.CreatedDate)),
+                    firstDate: configuration.CreatedDate,
+                    secondDate: configuration.UpdatedDate,
+                    secondDateName: nameof(configuration.CreatedDate)),
 
                     Parameter: nameof(configuration.UpdatedDate)),
 
@@ -76,22 +76,22 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         }
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            DateTimeOffset createdDate,
-            DateTimeOffset updatedDate,
-            string createdDateName
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName
             ) => new
             {
-                Condition = createdDate != updatedDate,
-                Message = $"Date is not same as {createdDateName}"
+                Condition = firstDate != secondDate,
+                Message = $"Date is not same as {secondDateName}"
             };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            string createdBy,
-            string updatedBy,
-            string createdByName) => new
+            string first,
+            string second,
+            string secondName) => new
             {
-                Condition = createdBy != updatedBy,
-                Message = $"Text is not same as {createdByName}"
+                Condition = first != second,
+                Message = $"Text is not same as {secondName}"
             };
 
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
