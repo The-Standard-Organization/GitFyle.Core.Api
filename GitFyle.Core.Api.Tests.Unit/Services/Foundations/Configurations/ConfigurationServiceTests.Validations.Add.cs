@@ -163,7 +163,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             var expectedConfigurationValidationException =
                 new ConfigurationValidationException(
-                message: "Configuration validation error occurred, fix errors and try again.",
+                message: "Configuration validation error occurred, fix the errors and try again.",
                 innerException: invalidConfigurationException);
 
             this.datetimeBrokerMock.Setup(broker => 

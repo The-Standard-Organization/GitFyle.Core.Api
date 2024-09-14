@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Configurations
 {
@@ -23,6 +24,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 (Rule: await IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
                 (Rule: await IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
                 (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
+                (Rule: await IsInvalidLengthAsync(configuration.Name, 450), Parameter: nameof(Configuration.Name)),
 
                 (Rule: await IsNotSameAsync(
                     first: configuration.CreatedBy,
@@ -41,6 +43,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 (Rule: await IsNotRecentAsync(configuration.CreatedDate),
                 Parameter: nameof(configuration.CreatedDate)));
         }
+
+        private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new
+        {
+            Condition = await IsExceedingLengthAsync(text, maxLength),
+            Message = $"Text exceed max length of {maxLength} characters"
+        };
+
+        private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) => 
+            (text ?? string.Empty).Length > maxLength;
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
         {
