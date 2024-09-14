@@ -8,9 +8,9 @@ namespace GitFyle.Core.Api.Models
 {
     public interface IAudit
     {
-        public string CreatedBy { get; set; }
-        public DateTimeOffset CreatedDate { get; set; }
-        public string UpdatedBy { get; set; }
-        public DateTimeOffset UpdatedDate { get; set; }
+        string CreatedBy { get; set; }
+        DateTimeOffset CreatedDate { get; set; }
+        string UpdatedBy { get; set; }
+        DateTimeOffset UpdatedDate { get; set; }
     }
 }
