@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
@@ -148,17 +149,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         public async Task ShouldThrowValidationExceptionOnAddIfAuditPropertiesAreNotSameAndLogItAsync()
         {
             // given
-            DateTimeOffset randomDate = GetRandomDateTimeOffset();
-            Configuration randomConfiguration = CreateRandomConfiguration(randomDate);
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            DateTimeOffset now = randomDateTime;
+            Configuration randomConfiguration = CreateRandomConfiguration(now);
             Configuration invalidConfiguration = randomConfiguration;
             invalidConfiguration.CreatedBy = GetRandomString();
             invalidConfiguration.UpdatedBy = GetRandomString();
+            invalidConfiguration.CreatedDate = now;
+            invalidConfiguration.UpdatedDate = GetRandomDateTimeOffset();
 
-            invalidConfiguration.UpdatedDate =
-                invalidConfiguration.CreatedDate.AddMinutes(1);
-
-            InvalidConfigurationException invalidConfigurationException =
-                new InvalidConfigurationException("Configuration is invalid, fix the errors and try again.");
+            InvalidConfigurationException invalidConfigurationException = new InvalidConfigurationException(
+                    message: "Configuration is invalid, fix the errors and try again.");
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.UpdatedBy),
@@ -175,7 +176,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(randomDate);
+                    .ReturnsAsync(now);
 
             // when
             ValueTask<Configuration> addConfigurationTask =
