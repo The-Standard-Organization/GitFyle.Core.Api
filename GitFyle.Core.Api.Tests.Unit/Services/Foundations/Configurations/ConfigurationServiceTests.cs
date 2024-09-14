@@ -49,6 +49,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 type: typeof(SqlException));
         }
 
+        private static string GetRandomStringWithLengthOf(int length)
+        {
+            return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
+                .GetValue();
+        }
+
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
@@ -57,6 +63,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static Configuration CreateRandomConfiguration(DateTimeOffset dateTimeOffset) =>
+            CreateConfigurationFiller(dateTimeOffset).Create();
 
         private static Configuration CreateRandomConfiguration() =>
             CreateConfigurationFiller(GetRandomDateTimeOffset()).Create();
