@@ -95,12 +95,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 values: "Text is required.");
 
             invalidConfigurationException.AddData(
-                key: nameof(Configuration.UpdatedBy),
-                values: "Text is required.");
-
-            invalidConfigurationException.AddData(
                 key: nameof(Configuration.CreatedDate),
                 values: "Date is invalid.");
+
+            invalidConfigurationException.AddData(
+                key: nameof(Configuration.UpdatedBy),
+                values: "Text is required.");
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.UpdatedDate),
@@ -214,21 +214,23 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(int invalidSeconds)
         {
             //given
-            DateTimeOffset randomDate = GetRandomDateTimeOffset();
-            DateTimeOffset now = randomDate;
+            DateTimeOffset randomDateTime = 
+                GetRandomDateTimeOffset();
+
+            DateTimeOffset now = randomDateTime;
             DateTimeOffset startDate = now.AddSeconds(-60);
             DateTimeOffset endDate = now.AddSeconds(0);
+            Configuration randomConfiguration = CreateRandomConfiguration();
+            Configuration invalidConfiguration = randomConfiguration;
 
             DateTimeOffset invalidDate =
                 now.AddSeconds(invalidSeconds);
 
-            Configuration randomConfiguration =
-                CreateRandomConfiguration(invalidDate);
+            invalidConfiguration.CreatedDate = invalidDate;
+            invalidConfiguration.UpdatedDate = invalidDate;
 
-            Configuration invalidConfiguration = randomConfiguration;
-
-            var invalidConfigurationException =
-                new InvalidConfigurationException(message: "Configuration is invalid, fix the errors and try again.");
+            var invalidConfigurationException = new InvalidConfigurationException(
+                message: "Configuration is invalid, fix the errors and try again.");
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.CreatedDate),

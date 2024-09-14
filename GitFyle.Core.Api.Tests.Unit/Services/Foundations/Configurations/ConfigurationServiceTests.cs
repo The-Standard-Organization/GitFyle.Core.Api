@@ -58,8 +58,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static Configuration CreateRandomConfiguration(DateTimeOffset dateTimeOffset) =>
-            CreateConfigurationFiller(dateTimeOffset).Create();
+        private static Configuration CreateRandomConfiguration() =>
+            CreateConfigurationFiller(GetRandomDateTimeOffset()).Create();
 
         private static Filler<Configuration> CreateConfigurationFiller(DateTimeOffset dateTimeOffset)
         {
