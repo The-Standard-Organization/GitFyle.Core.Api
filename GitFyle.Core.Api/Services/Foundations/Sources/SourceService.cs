@@ -74,6 +74,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             Source maybeSource =
                 await this.storageBroker.SelectSourceByIdAsync(sourceId);
 
+            await ValidateStorageSourceAsync(maybeSource, sourceId);
+
             return await this.storageBroker.DeleteSourceAsync(maybeSource);
         });
     }
