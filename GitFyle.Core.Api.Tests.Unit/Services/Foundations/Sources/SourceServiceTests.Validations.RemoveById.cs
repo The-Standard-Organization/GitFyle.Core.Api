@@ -61,5 +61,55 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRemoveByIdIfNotFoundAndLogItAsync()
+        {
+            //given
+            Guid someSourceId = Guid.NewGuid();
+            Source noSource = null;
+
+            var notFoundSourceException =
+                new NotFoundSourceException(
+                    message: $"Source not found with id: {someSourceId}");
+
+            var expectedSourceValidationException =
+                new SourceValidationException(
+                    message: "Source validation error occurred, fix errors and try again.",
+                    innerException: notFoundSourceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectSourceByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noSource);
+
+            //when
+            ValueTask<Source> removeSourceByIdTask =
+                this.sourceService.RemoveSourceByIdAsync(someSourceId);
+
+            SourceValidationException actualSourceValidationException =
+                await Assert.ThrowsAsync<SourceValidationException>(
+                    removeSourceByIdTask.AsTask);
+
+            //then
+            actualSourceValidationException.Should().BeEquivalentTo(
+                expectedSourceValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectSourceByIdAsync(someSourceId),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedSourceValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteSourceAsync(It.IsAny<Source>()),
+                    Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
