@@ -94,12 +94,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 values: "Text is required");
 
             invalidSourceException.AddData(
-                key: nameof(Source.UpdatedBy),
-                values: "Text is required");
-
-            invalidSourceException.AddData(
                 key: nameof(Source.CreatedDate),
                 values: "Date is invalid");
+
+            invalidSourceException.AddData(
+                key: nameof(Source.UpdatedBy),
+                values: "Text is required");
 
             invalidSourceException.AddData(
                 key: nameof(Source.UpdatedDate),
