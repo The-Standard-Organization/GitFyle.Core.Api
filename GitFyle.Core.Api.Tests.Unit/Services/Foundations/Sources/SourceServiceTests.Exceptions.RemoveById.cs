@@ -123,18 +123,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         public async Task ShouldThrowServiceExceptionOnRemoveByIdIfServiceErrorOccursAndLogItAsync()
         {
             // given
-            int minutesInPast = GetRandomNegativeNumber();
-            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-
-            Source randomSource =
-                CreateRandomSource(randomDateTimeOffset);
-
-            randomSource.CreatedDate =
-                randomDateTimeOffset.AddMinutes(minutesInPast);
-
+            Guid someSourceId = Guid.NewGuid();
             var serviceException = new Exception();
 
-            var failedServiceSourceException =
+            var failedSourceServiceException =
                 new FailedServiceSourceException(
                     message: "Failed service source error occurred, contact support.",
                     innerException: serviceException);
@@ -142,35 +134,27 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             var expectedSourceServiceException =
                 new SourceServiceException(
                     message: "Service error occurred, contact support.",
-                    innerException: failedServiceSourceException);
+                    innerException: failedSourceServiceException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectSourceByIdAsync(randomSource.Id))
+                broker.SelectSourceByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(serviceException);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(randomDateTimeOffset);
 
             // when
             ValueTask<Source> removeSourceByIdTask =
-                this.sourceService.ModifySourceAsync(randomSource);
+                this.sourceService.RemoveSourceByIdAsync(someSourceId);
 
             SourceServiceException actualSourceServiceException =
                 await Assert.ThrowsAsync<SourceServiceException>(
                     removeSourceByIdTask.AsTask);
 
             // then
-            actualSourceServiceException.Should().BeEquivalentTo(
-                expectedSourceServiceException);
+            actualSourceServiceException.Should()
+                .BeEquivalentTo(expectedSourceServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectSourceByIdAsync(It.IsAny<Guid>()),
-                    Times.Once());
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
+                        Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -178,8 +162,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                         Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
