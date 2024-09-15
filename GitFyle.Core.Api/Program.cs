@@ -6,6 +6,7 @@ using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Services.Foundations.Configurations;
+using GitFyle.Core.Api.Services.Foundations.Contributions;
 using GitFyle.Core.Api.Services.Foundations.Sources;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -61,6 +62,7 @@ namespace GitFyle.Core.Api
         {
             services.AddTransient<ISourceService, SourceService>();
             services.AddTransient<IConfigurationService, ConfigurationService>();
+            services.AddTransient<IContributionService, ContributionService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)
