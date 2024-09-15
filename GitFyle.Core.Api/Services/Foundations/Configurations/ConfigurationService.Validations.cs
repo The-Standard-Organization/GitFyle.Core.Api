@@ -89,8 +89,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         private static async ValueTask<dynamic> IsNotSameAsync(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
-            string secondDateName
-            ) => new
+            string secondDateName) => new
             {
                 Condition = firstDate != secondDate,
                 Message = $"Date is not same as {secondDateName}"
