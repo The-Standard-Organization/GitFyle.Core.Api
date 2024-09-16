@@ -182,7 +182,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             // given
             Source randomSource = CreateRandomSource();
             var serviceException = new Exception();
-            
+
             var failedServiceSourceException =
                 new FailedServiceSourceException(
                     message: "Failed service source error occurred, contact support.",

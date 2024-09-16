@@ -4,12 +4,12 @@
 
 using Xeptions;
 
-namespace GitFyle.Core.Api.Models.Foundations.Sources.Exceptions
+namespace GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions
 {
-    public class NotFoundSourceException : Xeption
+    public class ConfigurationServiceException : Xeption
     {
-        public NotFoundSourceException(string message)
-            : base(message)
+        public ConfigurationServiceException(string message, Xeption innerException)
+            : base(message, innerException)
         { }
     }
 }
