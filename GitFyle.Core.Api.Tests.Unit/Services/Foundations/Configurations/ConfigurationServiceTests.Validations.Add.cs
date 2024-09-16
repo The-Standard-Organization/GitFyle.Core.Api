@@ -281,7 +281,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             invalidConfiguration.CreatedDate = invalidDate;
             invalidConfiguration.UpdatedDate = invalidDate;
 
-            var invalidConfigurationException = new InvalidConfigurationException(
+            var invalidConfigurationException = 
+                new InvalidConfigurationException(
                 message: "Configuration is invalid, fix the errors and try again.");
 
             invalidConfigurationException.AddData(
