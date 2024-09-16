@@ -26,12 +26,8 @@ namespace GitFyle.Core.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<StorageBroker>();
-            AddProviders(builder.Services);
             AddBrokers(builder.Services);
             AddFoundationServices(builder.Services);
-            AddProcessingServices(builder.Services);
-            AddOrchestrationServices(builder.Services);
-            AddCoordinationServices(builder.Services);
 
             WebApplication webApplication =
                 builder.Build();
@@ -48,9 +44,6 @@ namespace GitFyle.Core.Api
             webApplication.Run();
         }
 
-        private static void AddProviders(IServiceCollection services)
-        { }
-
         private static void AddBrokers(IServiceCollection services)
         {
             services.AddTransient<IStorageBroker, StorageBroker>();
@@ -63,12 +56,6 @@ namespace GitFyle.Core.Api
             services.AddTransient<ISourceService, SourceService>();
             services.AddTransient<IConfigurationService, ConfigurationService>();
             services.AddTransient<IContributionService, ContributionService>();
-=========
-            services.AddTransient<IContributionService, ContributionService>();
->>>>>>>>> Temporary merge branch 2
-=========
-            services.AddTransient<IContributionService, ContributionService>();
->>>>>>>>> Temporary merge branch 2
         }
     }
 }
