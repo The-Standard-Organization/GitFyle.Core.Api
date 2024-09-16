@@ -19,7 +19,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         [Fact]
         public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
         {
-            //given
+            // given
             Configuration someConfiguration =
                 CreateRandomConfiguration(DateTimeOffset.UtcNow);
 
@@ -38,14 +38,14 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ThrowsAsync(sqlException);
 
-            //when
+            // when
             ValueTask<Configuration> addConfigurationTask =
                 this.configurationService.AddConfigurationAsync(someConfiguration);
 
             ConfigurationDependencyException actualConfigurationDependencyException =
                 await Assert.ThrowsAsync<ConfigurationDependencyException>(addConfigurationTask.AsTask);
 
-            //then
+            // then
             actualConfigurationDependencyException.Should()
                 .BeEquivalentTo(expectedConfigurationDependencyException);
 

@@ -263,7 +263,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         [InlineData(-61)]
         public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(int invalidSeconds)
         {
-            //given
+            // given
             DateTimeOffset randomDateTime = 
                 GetRandomDateTimeOffset();
 
@@ -296,14 +296,14 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(now);
 
-            //when
+            // when
             ValueTask<Configuration> addConfigurationTask =
                 this.configurationService.AddConfigurationAsync(invalidConfiguration);
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(addConfigurationTask.AsTask);
 
-            //then
+            // then
             actualConfigurationValidationException.Should()
                 .BeEquivalentTo(expectedConfigurationValidationException);
 

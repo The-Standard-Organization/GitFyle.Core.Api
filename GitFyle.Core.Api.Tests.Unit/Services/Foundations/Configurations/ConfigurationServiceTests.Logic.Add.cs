@@ -16,7 +16,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         [Fact]
         public async Task ShouldAddConfigurationAsync()
         {
-            //given
+            // given
             DateTimeOffset randomDate = GetRandomDateTimeOffset();
 
             Configuration randomConfiguration =
@@ -33,11 +33,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 broker.InsertConfigurationAsync(inputConfiguration))
                     .ReturnsAsync(expectedConfiguration);
 
-            //when
+            // when
             Configuration actualConfiguration =
                 await this.configurationService.AddConfigurationAsync(inputConfiguration);
 
-            //then
+            // then
             actualConfiguration.Should().BeEquivalentTo(expectedConfiguration);
 
             this.datetimeBrokerMock.Verify(broker =>
