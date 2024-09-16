@@ -27,11 +27,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         }
 
         public ValueTask<Configuration> AddConfigurationAsync(Configuration configuration) =>
-            TryCatch(async () =>
-            {
-                await ValidateConfigurationOnAdd(configuration);
-
-                return await this.storageBroker.InsertConfigurationAsync(configuration);
-            });
+        TryCatch(async () =>
+        {
+            await ValidateConfigurationOnAdd(configuration);
+            return await this.storageBroker.InsertConfigurationAsync(configuration);
+        });
     }
 }
