@@ -30,9 +30,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     message: "Failed configuration storage exception, contact support.",
                     innerException: sqlException);
 
-            var expectedConfigurationDependencyException = new ConfigurationDependencyException(
-                message: "Configuration dependency error occurred, contact support.",
-                innerException: failedStorageConfigurationException);
+            var expectedConfigurationDependencyException = 
+                new ConfigurationDependencyException(
+                    message: "Configuration dependency error occurred, contact support.",
+                    innerException: failedStorageConfigurationException);
 
             this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -128,7 +129,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             DateTimeOffset someDate = GetRandomDateTimeOffset();
             Configuration someConfiguration = CreateRandomConfiguration(someDate);
             var dbUpdateException = new DbUpdateException();
-
 
             var failedOperationConfigurationException =
                 new FailedOperationConfigurationException(
