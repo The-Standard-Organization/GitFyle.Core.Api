@@ -2,8 +2,10 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -53,6 +55,56 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             this.datetimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceErrorOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Exception serviceError = new Exception();
+
+            var failedServiceConfigurationException =
+                new FailedServiceConfigurationException(
+                    message: "Failed service configuration error occurred, contact support.",
+                    innerException: serviceError);
+
+            var expectedConfigurationServiceException = 
+                new ConfigurationServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceConfigurationException);
+
+            this.storageBrokerMock.Setup(broker => 
+                broker.SelectAllConfigurationsAsync())
+                    .ThrowsAsync(serviceError);
+
+            // when
+            ValueTask<IQueryable<Configuration>> retrieveAllConfigurationTask =
+                this.configurationService.RetrieveAllConfigurationsAsync();
+
+            ConfigurationServiceException actualConfigurationServiceException =
+                await Assert.ThrowsAsync<ConfigurationServiceException>(
+                    testCode: retrieveAllConfigurationTask.AsTask);
+
+            // then
+            actualConfigurationServiceException.Should()
+                .BeEquivalentTo(expectedConfigurationServiceException);
+
+            this.storageBrokerMock.Verify(broker => 
+                broker.SelectAllConfigurationsAsync(), 
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker => 
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConfigurationServiceException))), 
+                        Times.Once);
+
+            this.datetimeBrokerMock.Verify(broker => 
+                broker.GetCurrentDateTimeOffsetAsync(), 
                     Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
