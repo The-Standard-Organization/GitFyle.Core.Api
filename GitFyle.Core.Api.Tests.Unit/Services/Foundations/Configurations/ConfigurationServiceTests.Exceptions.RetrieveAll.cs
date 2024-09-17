@@ -39,10 +39,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             ValueTask<IQueryable<Configuration>> retrieveAllConfigurationsTask =
                 this.configurationService.RetrieveAllConfigurationsAsync();
 
-            // then
             ConfigurationDependencyException actualConfigurationDependencyException =
                 await Assert.ThrowsAsync<ConfigurationDependencyException>(
                     testCode: retrieveAllConfigurationsTask.AsTask);
+
+            // then
+            actualConfigurationDependencyException.Should().BeEquivalentTo(
+                expectedConfigurationDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllConfigurationsAsync(),
@@ -91,8 +94,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     testCode: retrieveAllConfigurationTask.AsTask);
 
             // then
-            actualConfigurationServiceException.Should()
-                .BeEquivalentTo(expectedConfigurationServiceException);
+            actualConfigurationServiceException.Should().BeEquivalentTo(
+                expectedConfigurationServiceException);
 
             this.storageBrokerMock.Verify(broker => 
                 broker.SelectAllConfigurationsAsync(), 
