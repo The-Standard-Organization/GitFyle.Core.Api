@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Xeptions;
@@ -35,7 +34,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageConfigurationException);
             }
-            catch (Exception exception) 
+            catch (Exception exception)
             {
                 var failedServiceConfigurationException =
                     new FailedServiceConfigurationException(

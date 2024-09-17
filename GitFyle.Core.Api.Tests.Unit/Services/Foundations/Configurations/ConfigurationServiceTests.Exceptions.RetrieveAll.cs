@@ -76,12 +76,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     message: "Failed service configuration error occurred, contact support.",
                     innerException: serviceError);
 
-            var expectedConfigurationServiceException = 
+            var expectedConfigurationServiceException =
                 new ConfigurationServiceException(
                     message: "Service error occurred, contact support.",
                     innerException: failedServiceConfigurationException);
 
-            this.storageBrokerMock.Setup(broker => 
+            this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllConfigurationsAsync())
                     .ThrowsAsync(serviceError);
 
@@ -97,17 +97,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationServiceException.Should().BeEquivalentTo(
                 expectedConfigurationServiceException);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.SelectAllConfigurationsAsync(), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllConfigurationsAsync(),
                     Times.Once);
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationServiceException))), 
+                    expectedConfigurationServiceException))),
                         Times.Once);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
