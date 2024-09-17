@@ -2,10 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
@@ -22,7 +19,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             // given
             SqlException sqlException = CreateSqlException();
 
-            var failedStorageConfigurationException = 
+            var failedStorageConfigurationException =
                 new FailedStorageConfigurationException(
                     message: "Failed configuration storage error occurred, contact support.",
                     innerException: sqlException);
@@ -32,12 +29,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     message: "Configuration dependency error occurred, contact support.",
                     innerException: failedStorageConfigurationException);
 
-            this.storageBrokerMock.Setup(broker => 
+            this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllConfigurationsAsync())
                     .ThrowsAsync(sqlException);
 
             // when
-            ValueTask<IQueryable<Configuration>> retrieveAllConfigurationsTask = 
+            ValueTask<IQueryable<Configuration>> retrieveAllConfigurationsTask =
                 this.configurationService.RetrieveAllConfigurationsAsync();
 
             // then
@@ -45,17 +42,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 await Assert.ThrowsAsync<ConfigurationDependencyException>(
                     testCode: retrieveAllConfigurationsTask.AsTask);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.SelectAllConfigurationsAsync(), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllConfigurationsAsync(),
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationDependencyException))), 
+                    expectedConfigurationDependencyException))),
                         Times.Once);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

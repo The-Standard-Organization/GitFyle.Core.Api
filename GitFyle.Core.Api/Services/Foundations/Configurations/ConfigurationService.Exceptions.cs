@@ -29,7 +29,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             {
                 var failedStorageConfigurationException =
                     new FailedStorageConfigurationException(
-                        message:"Failed configuration storage error occurred, contact support.",
+                        message: "Failed configuration storage error occurred, contact support.",
                         innerException: sqlException);
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageConfigurationException);
