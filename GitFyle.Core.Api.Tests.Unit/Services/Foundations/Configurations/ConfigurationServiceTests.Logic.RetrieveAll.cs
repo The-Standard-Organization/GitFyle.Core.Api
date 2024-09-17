@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
@@ -19,19 +16,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             IQueryable<Configuration> storageConfigurations = randomConfigurations;
             IQueryable<Configuration> expectedConfigurations = storageConfigurations;
 
-            this.storageBrokerMock.Setup(broker => 
+            this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllConfigurationsAsync())
                     .ReturnsAsync(storageConfigurations);
 
             // when
-            IQueryable<Configuration> actualConfigurations = 
+            IQueryable<Configuration> actualConfigurations =
                 await this.configurationService.RetrieveAllConfigurationsAsync();
 
             // then
             actualConfigurations.Should().BeEquivalentTo(expectedConfigurations);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.SelectAllConfigurationsAsync(), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllConfigurationsAsync(),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

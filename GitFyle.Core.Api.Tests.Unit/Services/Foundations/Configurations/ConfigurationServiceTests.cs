@@ -76,7 +76,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             return CreateConfigurationFiller(GetRandomDateTimeOffset())
                 .Create(GetRandomNumber())
                 .AsQueryable();
-        }            
+        }
 
         private static Filler<Configuration> CreateConfigurationFiller(DateTimeOffset dateTimeOffset)
         {
