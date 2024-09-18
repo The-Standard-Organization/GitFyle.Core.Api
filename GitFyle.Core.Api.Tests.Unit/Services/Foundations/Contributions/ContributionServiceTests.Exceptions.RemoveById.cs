@@ -2,14 +2,14 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
-using Microsoft.Data.SqlClient;
-using Moq;
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using System;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 {
@@ -113,6 +113,53 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRemoveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid someContributionId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedContributionServiceException =
+                new FailedServiceContributionException(
+                    message: "Failed service contribution error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedContributionServiceException =
+                new ContributionServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedContributionServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributionByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Contribution> removeContributionByIdTask =
+                this.contributionService.RemoveContributionByIdAsync(someContributionId);
+
+            ContributionServiceException actualContributionServiceException =
+                await Assert.ThrowsAsync<ContributionServiceException>(
+                    removeContributionByIdTask.AsTask);
+
+            // then
+            actualContributionServiceException.Should()
+                .BeEquivalentTo(expectedContributionServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributionByIdAsync(It.IsAny<Guid>()),
+                        Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionServiceException))),
+                        Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
