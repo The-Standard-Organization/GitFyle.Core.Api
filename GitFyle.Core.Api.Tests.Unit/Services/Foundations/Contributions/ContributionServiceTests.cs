@@ -61,11 +61,24 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private static int GetRandomNegativeNumber() =>
+           -1 * new IntRange(min: 2, max: 10).GetValue();
+
         private static Contribution CreateRandomContribution() =>
             CreateRandomContribution(dateTimeOffset: GetRandomDateTimeOffset());
 
         private static Contribution CreateRandomContribution(DateTimeOffset dateTimeOffset) =>
             CreateContributionFiller(dateTimeOffset).Create();
+
+        private static Contribution CreateRandomModifyContribution(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInThePast = GetRandomNegativeNumber();
+            Contribution randomContribution = CreateRandomContribution(dateTimeOffset);
+
+            randomContribution.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
+
+            return randomContribution;
+        }
 
         private static Filler<Contribution> CreateContributionFiller(DateTimeOffset dateTimeOffset)
         {

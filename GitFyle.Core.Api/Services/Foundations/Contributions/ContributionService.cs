@@ -32,6 +32,11 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             await ValidateContributionOnAddAsync(contribution);
 
             return await this.storageBroker.InsertContributionAsync(contribution);
-        });      
+        });
+
+        public ValueTask<Contribution> ModifyContributionAsync(Contribution contribution)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
