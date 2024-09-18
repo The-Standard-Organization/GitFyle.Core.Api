@@ -8,6 +8,8 @@ using FluentAssertions;
 using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
@@ -461,6 +463,67 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageUpdatedDateSameAsUpdatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Contribution randomContribution = CreateRandomModifyContribution(randomDateTimeOffset);
+            Contribution invalidContribution = randomContribution;
+
+            Contribution storageContribution = randomContribution.DeepClone();
+            invalidContribution.UpdatedDate = storageContribution.UpdatedDate;
+
+            var invalidContributionException = new InvalidContributionException(
+                message: "Contribution is invalid, fix the errors and try again.");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.UpdatedDate),
+                values: $"Date is the same as {nameof(Contribution.UpdatedDate)}");
+
+            var expectedContributionValidationException =
+                new ContributionValidationException(
+                    message: "Contribution validation error occurred, fix errors and try again.",
+                    innerException: invalidContributionException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributionByIdAsync(invalidContribution.Id))
+                .ReturnsAsync(storageContribution);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Contribution> modifyContributionTask =
+                this.contributionService.ModifyContributionAsync(invalidContribution);
+
+            ContributionValidationException actualContributionValidationException =
+               await Assert.ThrowsAsync<ContributionValidationException>(
+                   modifyContributionTask.AsTask);
+
+            // then
+            actualContributionValidationException.Should().BeEquivalentTo(
+                expectedContributionValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributionByIdAsync(invalidContribution.Id),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
