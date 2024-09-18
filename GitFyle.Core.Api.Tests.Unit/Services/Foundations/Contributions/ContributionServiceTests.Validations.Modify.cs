@@ -274,5 +274,68 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(-61)]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(
+         int invalidSeconds)
+        {
+            //given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            DateTimeOffset now = randomDateTimeOffset;
+            DateTimeOffset startDate = now.AddSeconds(-60);
+            DateTimeOffset endDate = now.AddSeconds(0);
+            Contribution randomContribution = CreateRandomContribution(randomDateTimeOffset);
+            randomContribution.UpdatedDate = randomDateTimeOffset.AddSeconds(invalidSeconds);
+
+            var invalidContributionException = new InvalidContributionException(
+                message: "Contribution is invalid, fix the errors and try again.");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.UpdatedDate),
+                values:
+                [
+                    $"Date is not recent." +
+                    $" Expected a value between {startDate} and {endDate} but found {randomContribution.UpdatedDate}"
+                ]);
+
+            var expectedContributionValidationException = new ContributionValidationException(
+                message: "Contribution validation error occurred, fix errors and try again.",
+                innerException: invalidContributionException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Contribution> modifyContributionTask =
+                this.contributionService.ModifyContributionAsync(randomContribution);
+
+            ContributionValidationException actualContributionValidationException =
+                await Assert.ThrowsAsync<ContributionValidationException>(
+                    modifyContributionTask.AsTask);
+
+            // then
+            actualContributionValidationException.Should().BeEquivalentTo(
+                expectedContributionValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedContributionValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributionByIdAsync(It.IsAny<Guid>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
