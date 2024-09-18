@@ -8,6 +8,7 @@ using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Contributions
 {
@@ -35,9 +36,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return await this.storageBroker.InsertContributionAsync(contribution);
         });
 
-        public ValueTask<Contribution> RetrieveContributionByIdAsync(Guid contributionId)
+        public ValueTask<Contribution> RetrieveContributionByIdAsync(Guid contributionId) =>
+        TryCatch(async () =>
         {
-            throw new NotImplementedException();
-        }
+            await ValidateContributionIdAsync(contributionId);
+            Contribution maybeContribution =
+                await this.storageBroker.SelectContributionByIdAsync(contributionId);
+
+            await ValidateStorageContributionAsync(maybeContribution, contributionId);
+
+            return maybeContribution;
+        });
     }
 }
