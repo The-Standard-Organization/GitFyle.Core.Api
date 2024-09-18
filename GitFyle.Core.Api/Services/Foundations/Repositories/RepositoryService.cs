@@ -26,7 +26,12 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Repository> AddRepositoryAsync(Repository repository) =>
-            await this.storageBroker.InsertRepositoryAsync(repository);
+        public ValueTask<Repository> AddRepositoryAsync(Repository repository) =>
+        TryCatch(async () =>
+        {
+            ValidateRepositoryOnAdd(repository);
+
+            return await this.storageBroker.InsertRepositoryAsync(repository);
+        });
     }
 }
