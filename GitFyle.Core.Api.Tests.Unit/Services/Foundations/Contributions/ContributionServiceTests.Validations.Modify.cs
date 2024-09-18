@@ -157,5 +157,69 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfContributionHasInvalidLengthPropertiesAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            var invalidContribution = CreateRandomContribution(dateTimeOffset: randomDateTimeOffset);
+            invalidContribution.Title = GetRandomStringWithLengthOf(256);
+            invalidContribution.ExternalId = GetRandomStringWithLengthOf(256);
+
+            var invalidContributionException =
+                new InvalidContributionException(
+                    message: "Contribution is invalid, fix the errors and try again.");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.Title),
+                values: $"Text exceed max length of {invalidContribution.Title.Length - 1} characters");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.ExternalId),
+                values: $"Text exceed max length of {invalidContribution.ExternalId.Length - 1} characters");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.UpdatedDate),
+                values: $"Date is the same as {nameof(Contribution.CreatedDate)}");
+
+            var expectedContributionValidationException =
+                new ContributionValidationException(
+                    message: "Contribution validation error occurred, fix errors and try again.",
+                    innerException: invalidContributionException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Contribution> modifyContributionTask =
+                this.contributionService.ModifyContributionAsync(invalidContribution);
+
+            ContributionValidationException actualContributionValidationException =
+                await Assert.ThrowsAsync<ContributionValidationException>(
+                    modifyContributionTask.AsTask);
+
+            // then
+            actualContributionValidationException.Should()
+                .BeEquivalentTo(expectedContributionValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributionAsync(It.IsAny<Contribution>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
