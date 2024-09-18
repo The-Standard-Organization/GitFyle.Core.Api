@@ -59,5 +59,56 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            //given
+            var someContributionId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedServiceContributionException =
+                new FailedServiceContributionException(
+                    message: "Failed service contribution error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedContributionServiceException =
+                new ContributionServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceContributionException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributionByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            //when
+            ValueTask<Contribution> retrieveContributionByIdTask =
+                this.contributionService.RetrieveContributionByIdAsync(someContributionId);
+
+            ContributionServiceException actualContributionServiceException =
+                await Assert.ThrowsAsync<ContributionServiceException>(
+                    retrieveContributionByIdTask.AsTask);
+
+            //then
+            actualContributionServiceException.Should().BeEquivalentTo(
+                expectedContributionServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributionByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+            broker.LogErrorAsync(It.Is(SameExceptionAs(
+                expectedContributionServiceException))),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
