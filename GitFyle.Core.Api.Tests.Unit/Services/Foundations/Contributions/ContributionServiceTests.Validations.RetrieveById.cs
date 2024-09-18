@@ -61,5 +61,52 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfContributionIdNotFoundAndLogitAsync()
+        {
+            //given
+            var someContributionId = Guid.NewGuid();
+            Contribution nullContribution = null;
+            var innerException = new Exception();
+
+            var notFoundContributionException =
+                new NotFoundContributionException(
+                    message: $"Contribution not found with id: {someContributionId}");
+
+            var expectedContributionValidationException =
+                new ContributionValidationException(
+                    message: "Contribution validation error occurred, fix errors and try again.",
+                    innerException: notFoundContributionException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributionByIdAsync(someContributionId))
+                    .ReturnsAsync(nullContribution);
+
+            // when
+            ValueTask<Contribution> retrieveContributionByIdTask =
+                this.contributionService.RetrieveContributionByIdAsync(someContributionId);
+
+            ContributionValidationException actualContributionValidationException =
+                await Assert.ThrowsAsync<ContributionValidationException>(
+                    retrieveContributionByIdTask.AsTask);
+
+            // then
+            actualContributionValidationException.Should().BeEquivalentTo(
+                expectedContributionValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributionByIdAsync(someContributionId),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
