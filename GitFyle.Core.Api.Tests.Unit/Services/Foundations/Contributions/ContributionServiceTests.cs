@@ -3,11 +3,13 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Services.Foundations.Contributions;
 using Microsoft.Data.SqlClient;
@@ -61,8 +63,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
         private static Contribution CreateRandomContribution() =>
             CreateRandomContribution(dateTimeOffset: GetRandomDateTimeOffset());
+
+        private static IQueryable<Contribution> CreateRandomContributions()
+        {
+            return CreateContributionFiller(GetRandomDateTimeOffset())
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
 
         private static Contribution CreateRandomContribution(DateTimeOffset dateTimeOffset) =>
             CreateContributionFiller(dateTimeOffset).Create();
