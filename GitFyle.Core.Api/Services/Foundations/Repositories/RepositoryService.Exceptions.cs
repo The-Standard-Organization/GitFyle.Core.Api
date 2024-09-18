@@ -21,18 +21,22 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             }
             catch (NullRepositoryException nullRepositoryException)
             {
-                throw CreateAndLogValidationException(nullRepositoryException);
+                throw await CreateAndLogValidationException(nullRepositoryException);
+            }
+            catch (InvalidRepositoryException invalidRepositoryException)
+            {
+                throw await CreateAndLogValidationException(invalidRepositoryException);
             }
         }
 
-        private RepositoryValidationException CreateAndLogValidationException(
+        private async ValueTask<RepositoryValidationException> CreateAndLogValidationException(
             Xeption exception)
         {
             var RepositoryValidationException = new RepositoryValidationException(
                 message: "Repository validation error occurred, fix errors and try again.",
                 innerException: exception);
 
-            this.loggingBroker.LogErrorAsync(RepositoryValidationException);
+            await this.loggingBroker.LogErrorAsync(RepositoryValidationException);
 
             return RepositoryValidationException;
         }

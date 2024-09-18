@@ -29,7 +29,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         public ValueTask<Repository> AddRepositoryAsync(Repository repository) =>
         TryCatch(async () =>
         {
-            ValidateRepositoryOnAdd(repository);
+            await ValidateRepositoryOnAddAsync(repository);
 
             return await this.storageBroker.InsertRepositoryAsync(repository);
         });

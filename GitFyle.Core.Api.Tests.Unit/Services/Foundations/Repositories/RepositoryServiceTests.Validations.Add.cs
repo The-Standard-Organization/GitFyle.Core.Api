@@ -152,10 +152,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                     message: "Repository validation error occurred, fix errors and try again.",
                     innerException: invalidRepositoryException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(GetRandomDateTimeOffset());
-
             // when
             ValueTask<Repository> addRepositoryTask =
                 this.repositoryService.AddRepositoryAsync(invalidRepository);
@@ -168,10 +164,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             actualRepositoryValidationException.Should().BeEquivalentTo(
                 expectedRepositoryValidationException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(
                     SameExceptionAs(expectedRepositoryValidationException))),
@@ -181,9 +173,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                 broker.InsertRepositoryAsync(It.IsAny<Repository>()),
                     Times.Never);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
+
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
