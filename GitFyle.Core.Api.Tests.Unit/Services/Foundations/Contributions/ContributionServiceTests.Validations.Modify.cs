@@ -337,5 +337,63 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageContributionDoesNotExistAndLogItAsync()
+        {
+            //given
+            int randomNegative = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Contribution randomContribution = CreateRandomContribution(randomDateTimeOffset);
+            Contribution nonExistingContribution = randomContribution;
+            nonExistingContribution.CreatedDate = randomDateTimeOffset.AddMinutes(randomNegative);
+            Contribution nullContribution = null;
+
+            var notFoundContributionException =
+                new NotFoundContributionException(
+                    message: $"Contribution not found with id: {nonExistingContribution.Id}");
+
+            var expectedContributionValidationException =
+                new ContributionValidationException(
+                    message: "Contribution validation error occurred, fix errors and try again.",
+                    innerException: notFoundContributionException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributionByIdAsync(nonExistingContribution.Id))
+                    .ReturnsAsync(nullContribution);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Contribution> modifyContributionTask =
+                this.contributionService.ModifyContributionAsync(nonExistingContribution);
+
+            ContributionValidationException actualContributionValidationException =
+                await Assert.ThrowsAsync<ContributionValidationException>(
+                    modifyContributionTask.AsTask);
+
+            // then
+            actualContributionValidationException.Should().BeEquivalentTo(
+                expectedContributionValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributionByIdAsync(nonExistingContribution.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
