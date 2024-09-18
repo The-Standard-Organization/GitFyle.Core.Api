@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq.Expressions;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
@@ -10,6 +11,7 @@ using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Services.Foundations.Repositories;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 {
@@ -30,6 +32,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                 storageBroker: this.storageBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
+        }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(
+            Xeption expectedException)
+        {
+            return actualException =>
+                actualException.SameExceptionAs(expectedException);
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
