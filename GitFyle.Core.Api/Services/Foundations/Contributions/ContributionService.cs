@@ -2,7 +2,6 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
@@ -36,9 +35,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return await this.storageBroker.InsertContributionAsync(contribution);
         });  
         
-        public ValueTask<IQueryable<Contribution>> RetrieveAllContributionsAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask<IQueryable<Contribution>> RetrieveAllContributionsAsync() =>
+        TryCatch(async () => await this.storageBroker.SelectAllContributionsAsync());
     }
 }
