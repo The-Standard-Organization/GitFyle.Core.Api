@@ -5,7 +5,6 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using Moq;
@@ -52,6 +51,111 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnModifyIfContributionIsInvalidAndLogItAsync(
+                string invalidString)
+        {
+            //given
+            var invalidContribution = new Contribution
+            {
+                Id = Guid.Empty,
+                RepositoryId = Guid.Empty,
+                ContributorId = Guid.Empty,
+                ContributionTypeId = Guid.Empty,
+                ExternalId = invalidString,
+                Title = invalidString,
+                CreatedBy = invalidString,
+                CreatedDate = default,
+                UpdatedBy = invalidString,
+                UpdatedDate = default,
+            };
+
+            var invalidContributionException = new InvalidContributionException(
+                message: "Contribution is invalid, fix the errors and try again.");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.Id),
+                values: "Id is invalid");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.ContributorId),
+                values: "Id is invalid");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.RepositoryId),
+                values: "Id is invalid");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.ContributionTypeId),
+                values: "Id is invalid");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.ExternalId),
+                values: "Text is required");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.Title),
+                values: "Text is required");
+
+            invalidContributionException.AddData(
+               key: nameof(Contribution.CreatedBy),
+               values: "Text is required");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.UpdatedBy),
+                values: "Text is required");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.CreatedDate),
+                values: "Date is invalid");
+
+            invalidContributionException.AddData(
+                key: nameof(Contribution.UpdatedDate),
+                values:
+                    new[]
+                    {
+                        "Date is invalid",
+                        $"Date is the same as {nameof(Contribution.CreatedDate)}"
+                    });
+
+            var expectedContributionValidationException =
+                new ContributionValidationException(
+                    message: "Contribution validation error occurred, fix errors and try again.",
+                    innerException: invalidContributionException);
+
+            // when
+            ValueTask<Contribution> modifyContributionTask =
+                this.contributionService.ModifyContributionAsync(invalidContribution);
+
+            ContributionValidationException actualContributionValidationException =
+                await Assert.ThrowsAsync<ContributionValidationException>(
+                    modifyContributionTask.AsTask);
+
+            // then
+            actualContributionValidationException.Should().BeEquivalentTo(
+                expectedContributionValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedContributionValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributionAsync(It.IsAny<Contribution>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
