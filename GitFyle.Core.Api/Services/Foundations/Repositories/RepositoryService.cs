@@ -27,6 +27,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         }
 
         public async ValueTask<Repository> AddRepositoryAsync(Repository repository) =>
-            throw new System.NotImplementedException();
+            await this.storageBroker.InsertRepositoryAsync(repository);
     }
 }
