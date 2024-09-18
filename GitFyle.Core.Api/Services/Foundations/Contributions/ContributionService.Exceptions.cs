@@ -32,6 +32,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidContributionException);
             }
+            catch (NotFoundContributionException notFoundContributionException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundContributionException);
+            }
             catch (SqlException sqlException)
             {
                 var failedStorageContributionException = new FailedStorageContributionException(
