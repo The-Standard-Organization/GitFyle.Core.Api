@@ -34,9 +34,17 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return await this.storageBroker.InsertContributionAsync(contribution);
         });
 
-        public ValueTask<Contribution> ModifyContributionAsync(Contribution contribution)
+        public ValueTask<Contribution> ModifyContributionAsync(Contribution contribution) =>
+        TryCatch(async () =>
         {
-            throw new System.NotImplementedException();
-        }
+            await ValidateContributionOnModifyAsync(contribution);
+            Contribution maybeContribution =
+                await this.storageBroker.SelectContributionByIdAsync(contribution.Id);
+
+            await ValidateStorageContributionAsync(maybeContribution, contribution.Id);
+            await ValidateAgainstStorageContributionOnModifyAsync(contribution, maybeContribution);
+
+            return await this.storageBroker.UpdateContributionAsync(contribution);
+        });
     }
 }
