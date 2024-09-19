@@ -4,7 +4,6 @@
 
 using System;
 using System.Threading.Tasks;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 
@@ -22,8 +21,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 (Rule: await IsInvalidAsync(repository.Owner), Parameter: nameof(Repository.Owner)),
                 (Rule: await IsInvalidAsync(repository.ExternalId), Parameter: nameof(Repository.ExternalId)),
                 (Rule: await IsInvalidAsync(repository.SourceId), Parameter: nameof(Repository.SourceId)),
-                (Rule: await IsInvalidAsync(repository.IsOrganization), Parameter: nameof(Repository.IsOrganization)),
-                (Rule: await IsInvalidAsync(repository.IsPrivate), Parameter: nameof(Repository.IsPrivate)),
                 (Rule: await IsInvalidAsync(repository.Token), Parameter: nameof(Repository.Token)),
                 (Rule: await IsInvalidAsync(repository.TokenExpireAt), Parameter: nameof(Repository.TokenExpireAt)),
                 (Rule: await IsInvalidAsync(repository.Description), Parameter: nameof(Repository.Description)),
@@ -40,7 +37,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 (Rule: await IsInvalidAsync(repository.UpdatedDate), Parameter: nameof(Repository.UpdatedDate)),
                 (Rule: await IsInvalidLengthAsync(repository.Name, 255), Parameter: nameof(Repository.Name)),
                 (Rule: await IsInvalidLengthAsync(repository.Owner, 255), Parameter: nameof(Repository.Owner)),
-                
+
                 (Rule: await IsInvalidLengthAsync(repository.ExternalId, 255),
                     Parameter: nameof(Repository.ExternalId)));
         }
@@ -61,12 +58,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         {
             Condition = date == default,
             Message = "Date is invalid"
-        };
-
-        private static async ValueTask<dynamic> IsInvalidAsync(bool value) => new
-        {
-            Condition = value == default,
-            Message = "Value is invalid"
         };
 
         private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new

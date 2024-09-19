@@ -67,8 +67,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                 Owner = invalidString,
                 ExternalId = invalidString,
                 SourceId = Guid.Empty,
-                IsOrganization = default,
-                IsPrivate = default,
                 Token = invalidString,
                 TokenExpireAt = default,
                 Description = invalidString,
@@ -102,14 +100,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             invalidRepositoryException.AddData(
                 key: nameof(Repository.SourceId),
                 values: "Id is invalid");
-
-            invalidRepositoryException.AddData(
-                key: nameof(Repository.IsOrganization),
-                values: "Value is invalid");
-
-            invalidRepositoryException.AddData(
-                key: nameof(Repository.IsPrivate),
-                values: "Value is invalid");
 
             invalidRepositoryException.AddData(
                 key: nameof(Repository.Token),
@@ -188,8 +178,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             var invalidRepository = CreateRandomRepository(randomDateTimeOffset);
-            invalidRepository.IsOrganization = true;
-            invalidRepository.IsPrivate = true;
             invalidRepository.Name = GetRandomStringWithLengthOf(256);
             invalidRepository.Owner = GetRandomStringWithLengthOf(256);
             invalidRepository.ExternalId = GetRandomStringWithLengthOf(256);

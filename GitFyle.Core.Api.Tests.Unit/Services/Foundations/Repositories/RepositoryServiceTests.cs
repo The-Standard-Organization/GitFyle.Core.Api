@@ -59,15 +59,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
         private static Filler<Repository> CreateRepositoryFiller(DateTimeOffset dateTimeOffset)
         {
             string someUser = Guid.NewGuid().ToString();
-            bool someBoolean = GetRandomBoolean();
             var filler = new Filler<Repository>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(GetRandomDateTimeOffset())
                 .OnProperty(repository => repository.CreatedBy).Use(someUser)
                 .OnProperty(repository => repository.UpdatedBy).Use(someUser)
-                .OnProperty(repository => repository.IsOrganization).Use(someBoolean)
-                .OnProperty(repository => repository.IsPrivate).Use(someBoolean)
                 .OnProperty(repository => repository.Source).IgnoreIt()
                 .OnProperty(repository => repository.Contributions).IgnoreIt();
 
