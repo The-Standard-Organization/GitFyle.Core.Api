@@ -47,6 +47,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                 .GetValue();
         }
 
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
