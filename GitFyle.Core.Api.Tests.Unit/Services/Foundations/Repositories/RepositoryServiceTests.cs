@@ -56,6 +56,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
         private static bool GetRandomBoolean() =>
             Randomizer<bool>.Create();
 
+        private static Repository CreateRandomRepository() =>
+            CreateRandomRepository(dateTimeOffset: GetRandomDateTimeOffset());
+
         private static Repository CreateRandomRepository(DateTimeOffset dateTimeOffset) =>
             CreateRepositoryFiller(dateTimeOffset).Create();
 
