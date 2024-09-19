@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Repositories
 {
@@ -39,7 +40,21 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 (Rule: await IsInvalidLengthAsync(repository.Owner, 255), Parameter: nameof(Repository.Owner)),
 
                 (Rule: await IsInvalidLengthAsync(repository.ExternalId, 255),
-                    Parameter: nameof(Repository.ExternalId)));
+                    Parameter: nameof(Repository.ExternalId)),
+
+                (Rule: await IsNotSameAsync(
+                    first: repository.UpdatedBy,
+                    second: repository.CreatedBy,
+                    secondName: nameof(Repository.CreatedBy)),
+
+                Parameter: nameof(Repository.UpdatedBy)),
+            
+                (Rule: await IsNotSameAsync(
+                    firstDate: repository.UpdatedDate,
+                    secondDate: repository.CreatedDate,
+                    secondDateName: nameof(Repository.CreatedDate)),
+
+                Parameter: nameof(Repository.UpdatedDate)));
         }
 
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
@@ -68,6 +83,24 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
         private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
+
+        private static async ValueTask<dynamic> IsNotSameAsync(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
+
+        private static async ValueTask<dynamic> IsNotSameAsync(
+            string first,
+            string second,
+            string secondName) => new
+            {
+                Condition = first != second,
+                Message = $"Text is not the same as {secondName}"
+            };
 
         private static void ValidateRepositoryIsNotNull(Repository repository)
         {
