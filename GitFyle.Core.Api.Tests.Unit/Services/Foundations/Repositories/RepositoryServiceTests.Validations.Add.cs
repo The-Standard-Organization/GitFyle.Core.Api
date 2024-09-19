@@ -188,6 +188,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             var invalidRepository = CreateRandomRepository(randomDateTimeOffset);
+            invalidRepository.IsOrganization = true;
+            invalidRepository.IsPrivate = true;
             invalidRepository.Name = GetRandomStringWithLengthOf(256);
             invalidRepository.Owner = GetRandomStringWithLengthOf(256);
             invalidRepository.ExternalId = GetRandomStringWithLengthOf(256);
@@ -231,7 +233,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

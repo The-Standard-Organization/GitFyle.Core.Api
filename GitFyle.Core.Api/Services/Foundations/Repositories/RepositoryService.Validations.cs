@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 
@@ -36,7 +37,12 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 (Rule: await IsInvalidAsync(repository.CreatedBy), Parameter: nameof(Repository.CreatedBy)),
                 (Rule: await IsInvalidAsync(repository.CreatedDate), Parameter: nameof(Repository.CreatedDate)),
                 (Rule: await IsInvalidAsync(repository.UpdatedBy), Parameter: nameof(Repository.UpdatedBy)),
-                (Rule: await IsInvalidAsync(repository.UpdatedDate), Parameter: nameof(Repository.UpdatedDate)));
+                (Rule: await IsInvalidAsync(repository.UpdatedDate), Parameter: nameof(Repository.UpdatedDate)),
+                (Rule: await IsInvalidLengthAsync(repository.Name, 255), Parameter: nameof(Repository.Name)),
+                (Rule: await IsInvalidLengthAsync(repository.Owner, 255), Parameter: nameof(Repository.Owner)),
+                
+                (Rule: await IsInvalidLengthAsync(repository.ExternalId, 255),
+                    Parameter: nameof(Repository.ExternalId)));
         }
 
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
@@ -62,6 +68,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             Condition = value == default,
             Message = "Value is invalid"
         };
+
+        private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new
+        {
+            Condition = await IsExceedingLengthAsync(text, maxLength),
+            Message = $"Text exceeds max length of {maxLength} characters"
+        };
+
+        private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
+            (text ?? string.Empty).Length > maxLength;
 
         private static void ValidateRepositoryIsNotNull(Repository repository)
         {
