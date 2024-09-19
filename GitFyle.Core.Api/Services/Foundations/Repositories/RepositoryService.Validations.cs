@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Data;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
@@ -54,7 +55,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                     secondDate: repository.CreatedDate,
                     secondDateName: nameof(Repository.CreatedDate)),
 
-                Parameter: nameof(Repository.UpdatedDate)));
+                Parameter: nameof(Repository.UpdatedDate)),
+                
+                (Rule: await IsNotRecentAsync(repository.CreatedDate), Parameter: nameof(Repository.CreatedDate)));
         }
 
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
@@ -101,6 +104,37 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 Condition = first != second,
                 Message = $"Text is not the same as {secondName}"
             };
+
+        private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
+        {
+            var (isNotRecent, startDate, endDate) = await IsDateNotRecentAsync(date);
+
+            return new
+            {
+                Condition = isNotRecent,
+                Message = $"Date is not recent. Expected a value between {startDate} and {endDate} but found {date}"
+            };
+        }
+
+        private async ValueTask<(bool IsNotRecent, DateTimeOffset StartDate, DateTimeOffset EndDate)>
+            IsDateNotRecentAsync(DateTimeOffset date)
+        {
+            int pastSeconds = 60;
+            int futureSeconds = 0;
+            DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+            if (currentDateTime == default)
+            {
+                return (false, default, default);
+            }
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            DateTimeOffset startDate = currentDateTime.AddSeconds(-pastSeconds);
+            DateTimeOffset endDate = currentDateTime.AddSeconds(futureSeconds);
+            bool isNotRecent = timeDifference.TotalSeconds is > 60 or < 0;
+
+            return (isNotRecent, startDate, endDate);
+        }
 
         private static void ValidateRepositoryIsNotNull(Repository repository)
         {
