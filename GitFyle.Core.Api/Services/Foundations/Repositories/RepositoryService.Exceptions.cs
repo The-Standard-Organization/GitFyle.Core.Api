@@ -8,6 +8,7 @@ using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Repositories
@@ -48,6 +49,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsRepositoryException);
             }
+            catch (DbUpdateException dbUpdateException)
+            {
+                var failedOperationRepositoryException =
+                    new FailedOperationRepositoryException(
+                        message: "Failed operation repository error occurred, contact support.",
+                        innerException: dbUpdateException);
+
+                throw await CreateAndLogDependencyExceptionAsync(failedOperationRepositoryException);
+            }
         }
 
         private async ValueTask<RepositoryValidationException> CreateAndLogValidationException(
@@ -73,8 +83,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             return repositoryDependencyException;
         }
 
-        private async ValueTask<RepositoryDependencyValidationException> CreateAndLogDependencyValidationExceptionAsync(
-            Xeption exception)
+        private async ValueTask<RepositoryDependencyValidationException>
+            CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
         {
             var RepositoryDependencyValidationException = new RepositoryDependencyValidationException(
                 message: "Repository dependency validation error occurred, fix errors and try again.",
@@ -83,6 +93,17 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             await this.loggingBroker.LogErrorAsync(RepositoryDependencyValidationException);
 
             return RepositoryDependencyValidationException;
+        }
+
+        private async ValueTask<RepositoryDependencyException> CreateAndLogDependencyExceptionAsync(Xeption exception)
+        {
+            var RepositoryDependencyException = new RepositoryDependencyException(
+                message: "Repository dependency error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(RepositoryDependencyException);
+
+            return RepositoryDependencyException;
         }
     }
 }

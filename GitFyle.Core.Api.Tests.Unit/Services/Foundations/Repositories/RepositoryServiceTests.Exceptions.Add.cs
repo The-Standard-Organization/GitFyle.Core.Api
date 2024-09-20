@@ -132,7 +132,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             var failedOperationRepositoryException =
                 new FailedOperationRepositoryException(
-                    message: "Failed operation repository  error occurred, contact support.",
+                    message: "Failed operation repository error occurred, contact support.",
                     innerException: dbUpdateException);
 
             var expectedRepositoryDependencyException =
