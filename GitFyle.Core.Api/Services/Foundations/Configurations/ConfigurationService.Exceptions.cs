@@ -19,7 +19,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         private delegate ValueTask<Configuration> ReturningConfigurationFunction();
         private delegate ValueTask<IQueryable<Configuration>> ReturningConfigurationsFunction();
 
-        private async ValueTask<IQueryable<Configuration>> TryCatch(ReturningConfigurationsFunction returningConfigurationsFunction)
+        private async ValueTask<IQueryable<Configuration>> TryCatch(
+            ReturningConfigurationsFunction returningConfigurationsFunction)
         {
             try
             {
