@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -37,6 +38,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageRepositoryException);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsRepositoryException =
+                    new AlreadyExistsRepositoryException(
+                        message: "Repository already exists error occurred.",
+                        innerException: duplicateKeyException,
+                        data: duplicateKeyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsRepositoryException);
+            }
         }
 
         private async ValueTask<RepositoryValidationException> CreateAndLogValidationException(
@@ -60,6 +71,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             await this.loggingBroker.LogCriticalAsync(repositoryDependencyException);
 
             return repositoryDependencyException;
+        }
+
+        private async ValueTask<RepositoryDependencyValidationException> CreateAndLogDependencyValidationExceptionAsync(
+            Xeption exception)
+        {
+            var RepositoryDependencyValidationException = new RepositoryDependencyValidationException(
+                message: "Repository dependency validation error occurred, fix errors and try again.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(RepositoryDependencyValidationException);
+
+            return RepositoryDependencyValidationException;
         }
     }
 }
