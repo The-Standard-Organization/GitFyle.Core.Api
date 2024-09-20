@@ -39,17 +39,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             // then
             actualRepository.Should().BeEquivalentTo(expectedRepository);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertRepositoryAsync(inputRepository),
                     Times.Once);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Never);
-
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

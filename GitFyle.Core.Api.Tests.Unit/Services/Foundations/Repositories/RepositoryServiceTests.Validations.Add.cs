@@ -60,6 +60,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
         public async Task ShouldThrowValidationExceptionOnAddIfRepositoryIsInvalidAndLogItAsync(string invalidString)
         {
             //given
+            DateTimeOffset randomDateTimeOffset = default;
+
             var invalidRepository = new Repository
             {
                 Id = Guid.Empty,
@@ -142,6 +144,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                     message: "Repository validation error occurred, fix errors and try again.",
                     innerException: invalidRepositoryException);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
             // when
             ValueTask<Repository> addRepositoryTask =
                 this.repositoryService.AddRepositoryAsync(invalidRepository);
@@ -154,6 +160,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             actualRepositoryValidationException.Should().BeEquivalentTo(
                 expectedRepositoryValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(
                     SameExceptionAs(expectedRepositoryValidationException))),
@@ -163,13 +173,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                 broker.InsertRepositoryAsync(It.IsAny<Repository>()),
                     Times.Never);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Never);
-
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -221,7 +227,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Never);
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -266,6 +272,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                     message: "Repository validation error occurred, fix errors and try again.",
                     innerException: invalidRepositoryException);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(now);
+
             // when
             ValueTask<Repository> addRepositoryTask =
                 this.repositoryService.AddRepositoryAsync(invalidRepository);
@@ -278,6 +288,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             actualRepositoryValidationException.Should().BeEquivalentTo(
                 expectedRepositoryValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(
                     SameExceptionAs(expectedRepositoryValidationException))),
@@ -285,10 +299,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertRepositoryAsync(It.IsAny<Repository>()),
-                    Times.Never);
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
