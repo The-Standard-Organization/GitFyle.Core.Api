@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using GitFyle.Core.Api.Brokers.DateTimes;
@@ -69,6 +70,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
         private static Configuration CreateRandomConfiguration() =>
             CreateConfigurationFiller(GetRandomDateTimeOffset()).Create();
+
+        private static IQueryable<Configuration> CreateRandomConfigurations()
+        {
+            return CreateConfigurationFiller(GetRandomDateTimeOffset())
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
 
         private static Filler<Configuration> CreateConfigurationFiller(DateTimeOffset dateTimeOffset)
         {

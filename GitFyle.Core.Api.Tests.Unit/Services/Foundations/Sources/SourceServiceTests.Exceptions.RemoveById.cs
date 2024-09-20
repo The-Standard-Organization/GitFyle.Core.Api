@@ -2,14 +2,14 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
-using Microsoft.Data.SqlClient;
-using Moq;
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using System;
+using GitFyle.Core.Api.Models.Foundations.Sources;
+using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 {
