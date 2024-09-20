@@ -74,7 +74,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             }
         }
 
-        private async ValueTask<IQueryable<Contribution>> TryCatch(ReturningContributionsFunction returningContributionsFunction)
+        private async ValueTask<IQueryable<Contribution>> TryCatch(
+                ReturningContributionsFunction returningContributionsFunction)
         {
             try
             {
