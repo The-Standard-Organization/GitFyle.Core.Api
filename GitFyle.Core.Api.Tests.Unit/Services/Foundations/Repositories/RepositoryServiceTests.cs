@@ -4,11 +4,13 @@
 
 using System;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Services.Foundations.Repositories;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
@@ -39,6 +41,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
         {
             return actualException =>
                 actualException.SameExceptionAs(expectedException);
+        }
+
+        private static SqlException CreateSqlException()
+        {
+            return (SqlException)RuntimeHelpers.GetUninitializedObject(
+                type: typeof(SqlException));
         }
 
         private static string GetRandomStringWithLengthOf(int length)
