@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
@@ -54,6 +55,62 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedRepositoryDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertRepositoryAsync(It.IsAny<Repository>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfRepositoryAlreadyExistsAndLogItAsync()
+        {
+            // given
+            Repository someRepository = CreateRandomRepository();
+
+            var duplicateKeyException =
+                new DuplicateKeyException(
+                    message: "Duplicate key error occurred");
+
+            var alreadyExistsRepositoryException =
+                new AlreadyExistsRepositoryException(
+                    message: "Repository already exists error occurred.",
+                    innerException: duplicateKeyException,
+                    data: duplicateKeyException.Data);
+
+            var expectedRepositoryDependencyValidationException =
+                new RepositoryDependencyValidationException(
+                    message: "Repository dependency validation error occurred, fix errors and try again.",
+                    innerException: alreadyExistsRepositoryException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(duplicateKeyException);
+
+            // when
+            ValueTask<Repository> addRepositoryTask =
+                this.repositoryService.AddRepositoryAsync(
+                    someRepository);
+
+            RepositoryDependencyValidationException actualRepositoryDependencyValidationException =
+                await Assert.ThrowsAsync<RepositoryDependencyValidationException>(
+                    testCode: addRepositoryTask.AsTask);
+
+            // then
+            actualRepositoryDependencyValidationException.Should().BeEquivalentTo(
+                expectedRepositoryDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedRepositoryDependencyValidationException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
