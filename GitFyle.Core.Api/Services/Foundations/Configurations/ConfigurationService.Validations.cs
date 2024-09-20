@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Configurations
 {
@@ -50,7 +49,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             Message = $"Text exceed max length of {maxLength} characters"
         };
 
-        private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) => 
+        private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
