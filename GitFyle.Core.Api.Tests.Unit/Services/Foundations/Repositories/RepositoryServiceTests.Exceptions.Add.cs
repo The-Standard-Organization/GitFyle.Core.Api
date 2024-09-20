@@ -22,7 +22,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             var failedStorageRepositoryException =
                 new FailedStorageRepositoryException(
-                    message: "Failed Repository storage error occurred, contact support.",
+                    message: "Failed storage repository error occurred, contact support.",
                     innerException: sqlException);
 
             var expectedRepositoryDependencyException =

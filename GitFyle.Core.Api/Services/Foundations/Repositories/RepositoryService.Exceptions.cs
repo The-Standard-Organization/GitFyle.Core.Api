@@ -2,9 +2,11 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
+using Microsoft.Data.SqlClient;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Repositories
@@ -27,6 +29,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             {
                 throw await CreateAndLogValidationException(invalidRepositoryException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedStorageRepositoryException = new FailedStorageRepositoryException(
+                    message: "Failed storage repository error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageRepositoryException);
+            }
         }
 
         private async ValueTask<RepositoryValidationException> CreateAndLogValidationException(
@@ -39,6 +49,17 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             await this.loggingBroker.LogErrorAsync(RepositoryValidationException);
 
             return RepositoryValidationException;
+        }
+
+        private async Task<Exception> CreateAndLogCriticalDependencyExceptionAsync(Xeption exception)
+        {
+            var repositoryDependencyException = new RepositoryDependencyException(
+                message: "Repository dependency error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogCriticalAsync(repositoryDependencyException);
+
+            return repositoryDependencyException;
         }
     }
 }
