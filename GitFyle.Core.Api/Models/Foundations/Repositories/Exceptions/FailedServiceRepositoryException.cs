@@ -5,7 +5,7 @@
 using System;
 using Xeptions;
 
-namespace GitFyle.Core.Api.Models.Foundations.Repositorys.Exceptions
+namespace GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions
 {
     public class FailedServiceRepositoryException : Xeption
     {

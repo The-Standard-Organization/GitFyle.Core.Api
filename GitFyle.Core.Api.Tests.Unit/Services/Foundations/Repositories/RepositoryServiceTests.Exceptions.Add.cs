@@ -8,8 +8,6 @@ using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Repositorys.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Repositorys;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
