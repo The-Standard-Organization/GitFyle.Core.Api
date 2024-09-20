@@ -158,7 +158,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                         key: parameter,
                         value: rule.Message);
                 }
-
             }
 
             invalidRepositoryException.ThrowIfContainsErrors();
