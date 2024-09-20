@@ -8,6 +8,7 @@ using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
@@ -111,6 +112,58 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedRepositoryDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertRepositoryAsync(It.IsAny<Repository>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDependencyErrorOccurredAndLogItAsync()
+        {
+            // given
+            Repository someRepository = CreateRandomRepository();
+            var dbUpdateException = new DbUpdateException();
+
+            var failedOperationRepositoryException =
+                new FailedOperationRepositoryException(
+                    message: "Failed operation repository  error occurred, contact support.",
+                    innerException: dbUpdateException);
+
+            var expectedRepositoryDependencyException =
+                new RepositoryDependencyException(
+                    message: "Repository dependency error occurred, contact support.",
+                    innerException: failedOperationRepositoryException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(dbUpdateException);
+
+            // when
+            ValueTask<Repository> addRepositoryTask =
+                this.repositoryService.AddRepositoryAsync(
+                    someRepository);
+
+            RepositoryDependencyException actualRepositoryDependencyException =
+                await Assert.ThrowsAsync<RepositoryDependencyException>(
+                    testCode: addRepositoryTask.AsTask);
+
+            // then
+            actualRepositoryDependencyException.Should().BeEquivalentTo(
+                expectedRepositoryDependencyException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedRepositoryDependencyException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
