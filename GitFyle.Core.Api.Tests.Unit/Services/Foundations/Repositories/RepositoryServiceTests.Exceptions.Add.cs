@@ -2,11 +2,14 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Repositorys.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Repositorys;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -164,6 +167,58 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedRepositoryDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertRepositoryAsync(It.IsAny<Repository>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccurredAndLogItAsync()
+        {
+            // given
+            Repository randomRepository = CreateRandomRepository();
+            var serviceException = new Exception();
+
+            var failedServiceRepositoryException =
+                new FailedServiceRepositoryException(
+                    message: "Failed service Repository error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedRepositoryServiceException =
+                new RepositoryServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceRepositoryException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Repository> addRepositoryTask =
+                this.repositoryService.AddRepositoryAsync(
+                    randomRepository);
+
+            RepositoryServiceException actualRepositoryServiceException =
+                await Assert.ThrowsAsync<RepositoryServiceException>(
+                    testCode: addRepositoryTask.AsTask);
+
+            // then
+            actualRepositoryServiceException.Should().BeEquivalentTo(
+                expectedRepositoryServiceException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedRepositoryServiceException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
