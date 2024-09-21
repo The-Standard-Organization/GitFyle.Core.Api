@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
+using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;

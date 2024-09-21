@@ -9,6 +9,7 @@ using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
+using GitFyle.Core.Api.Services.Foundations.Repositories;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;
