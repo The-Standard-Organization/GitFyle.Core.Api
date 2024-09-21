@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
@@ -34,6 +35,11 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
             return await this.storageBroker.InsertConfigurationAsync(configuration);
         });
+
+        public ValueTask<Configuration> RetrieveConfigurationByIdAsync(Guid configurationId)
+        {
+            throw new NotImplementedException();
+        }
 
         public ValueTask<IQueryable<Configuration>> RetrieveAllConfigurationsAsync() =>
         TryCatch(async () => await this.storageBroker.SelectAllConfigurationsAsync());
