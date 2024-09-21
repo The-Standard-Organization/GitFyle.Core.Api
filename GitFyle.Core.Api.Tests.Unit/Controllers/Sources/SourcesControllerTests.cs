@@ -45,6 +45,23 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
             };
         }
 
+        public static TheoryData ServerExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = CreateRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new SourceDependencyException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new SourceServiceException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
         private static Source CreateRandomSource() =>
             CreateSourceFiller().Create();
 
