@@ -9,15 +9,15 @@ using GitFyle.Core.Api.Services.Foundations.Sources;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 
-namespace GitFyle.Core.Api.Controllers
+namespace GitFyle.Core.Api.Controllers.Sources
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SourcesController : RESTFulController
+    public class SourceController : RESTFulController
     {
         private readonly ISourceService sourceService;
 
-        public SourcesController(ISourceService sourceService) =>
+        public SourceController(ISourceService sourceService) =>
             this.sourceService = sourceService;
 
         [HttpPost]
@@ -26,7 +26,7 @@ namespace GitFyle.Core.Api.Controllers
             try
             {
                 Source addedSource =
-                    await this.sourceService.AddSourceAsync(source);
+                    await sourceService.AddSourceAsync(source);
 
                 return Created(addedSource);
             }
