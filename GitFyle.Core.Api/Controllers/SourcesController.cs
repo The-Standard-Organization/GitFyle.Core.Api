@@ -9,15 +9,15 @@ using GitFyle.Core.Api.Services.Foundations.Sources;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 
-namespace GitFyle.Core.Api.Controllers.Sources
+namespace GitFyle.Core.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SourceController : RESTFulController
+    public class SourcesController : RESTFulController
     {
         private readonly ISourceService sourceService;
 
-        public SourceController(ISourceService sourceService) =>
+        public SourcesController(ISourceService sourceService) =>
             this.sourceService = sourceService;
 
         [HttpPost]
