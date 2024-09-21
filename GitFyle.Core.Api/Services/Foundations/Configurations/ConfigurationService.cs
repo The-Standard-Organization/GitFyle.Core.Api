@@ -36,10 +36,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             return await this.storageBroker.InsertConfigurationAsync(configuration);
         });
 
-        public ValueTask<Configuration> RetrieveConfigurationByIdAsync(Guid configurationId)
-        {
-            throw new NotImplementedException();
-        }
+        public async ValueTask<Configuration> RetrieveConfigurationByIdAsync(Guid configurationId) =>
+            await this.storageBroker.SelectConfigurationByIdAsync(configurationId);
+
 
         public ValueTask<IQueryable<Configuration>> RetrieveAllConfigurationsAsync() =>
         TryCatch(async () => await this.storageBroker.SelectAllConfigurationsAsync());
