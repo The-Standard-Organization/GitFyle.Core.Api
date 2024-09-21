@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
-using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
