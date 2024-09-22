@@ -3,11 +3,9 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.Data;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Repositories
 {
@@ -49,14 +47,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                     secondName: nameof(Repository.CreatedBy)),
 
                 Parameter: nameof(Repository.UpdatedBy)),
-            
+
                 (Rule: await IsNotSameAsync(
                     firstDate: repository.UpdatedDate,
                     secondDate: repository.CreatedDate,
                     secondDateName: nameof(Repository.CreatedDate)),
 
                 Parameter: nameof(Repository.UpdatedDate)),
-                
+
                 (Rule: await IsNotRecentAsync(repository.CreatedDate), Parameter: nameof(Repository.CreatedDate)));
         }
 

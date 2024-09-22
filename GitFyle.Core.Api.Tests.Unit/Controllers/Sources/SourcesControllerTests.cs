@@ -5,13 +5,12 @@
 using System;
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Sources;
+using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Sources;
 using Moq;
-using Tynamix.ObjectFiller;
 using RESTFulSense.Controllers;
-using Microsoft.AspNetCore.Mvc;
+using Tynamix.ObjectFiller;
 using Xeptions;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
 {
@@ -66,7 +65,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
             CreateSourceFiller().Create();
 
         private static string CreateRandomString() =>
-            new MnemonicString().GetValue();    
+            new MnemonicString().GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
