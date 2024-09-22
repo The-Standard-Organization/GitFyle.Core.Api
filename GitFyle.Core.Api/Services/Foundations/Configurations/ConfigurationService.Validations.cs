@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
@@ -42,6 +43,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 (Rule: await IsNotRecentAsync(configuration.CreatedDate),
                 Parameter: nameof(configuration.CreatedDate)));
         }
+
+        private static async ValueTask ValidateConfigurationIdAsync(Guid configurationId) =>
+            Validate((Rule: await IsInvalidAsync(configurationId), Parameter: nameof(Configuration.Id)));
 
         private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new
         {

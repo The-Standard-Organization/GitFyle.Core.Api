@@ -1,4 +1,8 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +26,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             this.storageBrokerMock.Setup(broker => 
             broker.SelectConfigurationByIdAsync(randomConfiguration.Id))
-                .ReturnsAsync(expectedConfiguration);
+                .ReturnsAsync(storageConfiguration);
 
             // when
             Configuration actualConfiguration = 
