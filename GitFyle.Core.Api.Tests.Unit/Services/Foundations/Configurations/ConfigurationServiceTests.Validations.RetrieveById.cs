@@ -60,5 +60,52 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.datetimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfConfigurationIdNotFoundAndLogItAsync()
+        {
+            // given
+            Guid someConfigurationId = Guid.NewGuid();
+            Configuration nullConfiguration = null;
+            var innerException = new Exception();
+
+            var notFoundConfigurationException =
+                new NotFoundConfigurationException(
+                    message: $"Configuration not found with id: {someConfigurationId}");
+
+            var expectedConfigurationValidationException =
+                new ConfigurationValidationException(
+                    message: "Configuration validation error occurred, fix the errors and try again.",
+                    innerException: notFoundConfigurationException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConfigurationByIdAsync(someConfigurationId))
+                    .ReturnsAsync(nullConfiguration);
+
+            // when
+            ValueTask<Configuration> retrieveConfigurationByIdTask =
+                this.configurationService.RetrieveConfigurationByIdAsync(someConfigurationId);
+
+            ConfigurationValidationException actualConfigurationValidationException =
+                await Assert.ThrowsAsync<ConfigurationValidationException>(
+                    retrieveConfigurationByIdTask.AsTask);
+
+            // then
+            actualConfigurationValidationException.Should().BeEquivalentTo(
+                expectedConfigurationValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConfigurationByIdAsync(someConfigurationId),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConfigurationValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
