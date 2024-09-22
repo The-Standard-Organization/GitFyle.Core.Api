@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
 using Moq;
 using RESTFulSense.Clients.Extensions;
 using RESTFulSense.Models;
@@ -89,7 +88,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
             var someInnerException = new Exception();
             string someMessage = CreateRandomString();
 
-            var alreadyExistsSourceException = 
+            var alreadyExistsSourceException =
                 new AlreadyExistsSourceException(
                     message: someMessage,
                     innerException: someInnerException,
