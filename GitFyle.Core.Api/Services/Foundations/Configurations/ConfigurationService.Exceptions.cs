@@ -60,6 +60,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidationConfigurationException);
             }
+            catch (NotFoundConfigurationException notFoundConfigurationException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundConfigurationException);
+            }
             catch (SqlException sqlException)
             {
                 var failedStorageConfigurationException =

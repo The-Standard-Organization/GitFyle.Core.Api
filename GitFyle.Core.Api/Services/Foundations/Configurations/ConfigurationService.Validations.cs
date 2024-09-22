@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Data;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
@@ -45,6 +46,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
         private static async ValueTask ValidateConfigurationIdAsync(Guid configurationId) =>
             Validate((Rule: await IsInvalidAsync(configurationId), Parameter: nameof(Configuration.Id)));
+
+        private static async ValueTask ValidateStorageConfigurationAsync(Configuration configuration, Guid id)
+        {
+            if (configuration is null)
+            {
+                throw new NotFoundConfigurationException(
+                    message: $"Configuration not found with id: {id}");
+            }
+        }
 
         private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new
         {

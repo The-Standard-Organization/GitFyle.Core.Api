@@ -41,7 +41,12 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         {
             await ValidateConfigurationIdAsync(configurationId);
 
-            return await this.storageBroker.SelectConfigurationByIdAsync(configurationId);
+            Configuration maybeConfiguration = 
+                await this.storageBroker.SelectConfigurationByIdAsync(configurationId);
+
+            await ValidateStorageConfigurationAsync(maybeConfiguration, configurationId);
+
+            return maybeConfiguration;
         });
 
         public ValueTask<IQueryable<Configuration>> RetrieveAllConfigurationsAsync() =>

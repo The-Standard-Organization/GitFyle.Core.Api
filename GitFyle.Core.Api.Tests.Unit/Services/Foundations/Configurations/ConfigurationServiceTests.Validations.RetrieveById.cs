@@ -67,7 +67,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             // given
             Guid someConfigurationId = Guid.NewGuid();
             Configuration nullConfiguration = null;
-            var innerException = new Exception();
 
             var notFoundConfigurationException =
                 new NotFoundConfigurationException(
