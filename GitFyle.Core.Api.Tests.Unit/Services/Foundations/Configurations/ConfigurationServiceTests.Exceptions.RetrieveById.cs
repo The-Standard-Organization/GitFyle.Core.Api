@@ -66,5 +66,56 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.datetimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid someConfigurationId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedServiceConfigurationException =
+                new FailedServiceConfigurationException(
+                    message: "Failed service configuration error occurred, contact support.", 
+                    innerException: serviceException);
+
+            var expectedConfigurationServiceException = 
+                new ConfigurationServiceException(
+                    message:"Service error occurred, contact support.",
+                    innerException: failedServiceConfigurationException);
+
+            this.storageBrokerMock.Setup(broker => 
+                broker.SelectConfigurationByIdAsync(someConfigurationId))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Configuration> retrieveConfigurationByIdTask = 
+                this.configurationService.RetrieveConfigurationByIdAsync(
+                    someConfigurationId);
+
+            ConfigurationServiceException actualConfigurationServiceException =
+                await Assert.ThrowsAsync<ConfigurationServiceException>(
+                    retrieveConfigurationByIdTask.AsTask);
+            // then
+            actualConfigurationServiceException.Should().BeEquivalentTo(
+                expectedConfigurationServiceException);
+
+            this.storageBrokerMock.Verify(broker => 
+                broker.SelectConfigurationByIdAsync(someConfigurationId),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker => 
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConfigurationServiceException))), 
+                        Times.Once);
+
+            this.datetimeBrokerMock.Verify(broker => 
+                broker.GetCurrentDateTimeOffsetAsync(), 
+                    Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
