@@ -27,7 +27,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             var failedStorageConfigurationException =
                 new FailedStorageConfigurationException(
-                    message: "Failed configuration storage exception, contact support.",
+                    message: "Failed configuration storage error occurred, contact support.",
                     innerException: sqlException);
 
             var expectedConfigurationDependencyException =
