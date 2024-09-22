@@ -26,7 +26,7 @@ namespace GitFyle.Core.Api.Controllers
             try
             {
                 Source addedSource =
-                    await this.sourceService.AddSourceAsync(source);
+                    await sourceService.AddSourceAsync(source);
 
                 return Created(addedSource);
             }
