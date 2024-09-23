@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
@@ -16,6 +17,34 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
     internal partial class ConfigurationService
     {
         private delegate ValueTask<Configuration> ReturningConfigurationFunction();
+        private delegate ValueTask<IQueryable<Configuration>> ReturningConfigurationsFunction();
+
+        private async ValueTask<IQueryable<Configuration>> TryCatch(
+            ReturningConfigurationsFunction returningConfigurationsFunction)
+        {
+            try
+            {
+                return await returningConfigurationsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageConfigurationException =
+                    new FailedStorageConfigurationException(
+                        message: "Failed configuration storage error occurred, contact support.",
+                        innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageConfigurationException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceConfigurationException =
+                    new FailedServiceConfigurationException(
+                        message: "Failed service configuration error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceConfigurationException);
+            }
+        }
 
         private async ValueTask<Configuration> TryCatch(ReturningConfigurationFunction returningConfigurationFunction)
         {
@@ -31,11 +60,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidationConfigurationException);
             }
+            catch (NotFoundConfigurationException notFoundConfigurationException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundConfigurationException);
+            }
             catch (SqlException sqlException)
             {
                 var failedStorageConfigurationException =
                     new FailedStorageConfigurationException(
-                        message: "Failed configuration storage exception, contact support.",
+                        message: "Failed configuration storage error occurred, contact support.",
                         innerException: sqlException);
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageConfigurationException);

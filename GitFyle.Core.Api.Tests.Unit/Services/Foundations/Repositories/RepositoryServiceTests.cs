@@ -3,38 +3,37 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
-using GitFyle.Core.Api.Models.Foundations.Configurations;
-using GitFyle.Core.Api.Services.Foundations.Configurations;
+using GitFyle.Core.Api.Models.Foundations.Repositories;
+using GitFyle.Core.Api.Services.Foundations.Repositories;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
+namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 {
-    public partial class ConfigurationServiceTests
+    public partial class RepositoryServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
-        private readonly Mock<IDateTimeBroker> datetimeBrokerMock;
-        private readonly ConfigurationService configurationService;
+        private readonly RepositoryService repositoryService;
 
-        public ConfigurationServiceTests()
+        public RepositoryServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
-            this.datetimeBrokerMock = new Mock<IDateTimeBroker>();
 
-            this.configurationService = new ConfigurationService(
+            this.repositoryService = new RepositoryService(
                 storageBroker: this.storageBrokerMock.Object,
-                loggingBroker: this.loggingBrokerMock.Object,
-                dateTimeBroker: this.datetimeBrokerMock.Object);
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
+                loggingBroker: this.loggingBrokerMock.Object);
         }
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(
@@ -44,7 +43,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 actualException.SameExceptionAs(expectedException);
         }
 
-        private SqlException CreateSqlException()
+        private static SqlException CreateSqlException()
         {
             return (SqlException)RuntimeHelpers.GetUninitializedObject(
                 type: typeof(SqlException));
@@ -59,34 +58,29 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
-        private static int GetRandomNumber() =>
-            new IntRange(min: 2, max: 10).GetValue();
-
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static Configuration CreateRandomConfiguration(DateTimeOffset dateTimeOffset) =>
-            CreateConfigurationFiller(dateTimeOffset).Create();
+        private static bool GetRandomBoolean() =>
+            Randomizer<bool>.Create();
 
-        private static Configuration CreateRandomConfiguration() =>
-            CreateConfigurationFiller(GetRandomDateTimeOffset()).Create();
+        private static Repository CreateRandomRepository() =>
+            CreateRandomRepository(dateTimeOffset: GetRandomDateTimeOffset());
 
-        private static IQueryable<Configuration> CreateRandomConfigurations()
+        private static Repository CreateRandomRepository(DateTimeOffset dateTimeOffset) =>
+            CreateRepositoryFiller(dateTimeOffset).Create();
+
+        private static Filler<Repository> CreateRepositoryFiller(DateTimeOffset dateTimeOffset)
         {
-            return CreateConfigurationFiller(GetRandomDateTimeOffset())
-                .Create(GetRandomNumber())
-                .AsQueryable();
-        }
-
-        private static Filler<Configuration> CreateConfigurationFiller(DateTimeOffset dateTimeOffset)
-        {
-            var filler = new Filler<Configuration>();
-            string user = Guid.NewGuid().ToString();
+            string someUser = Guid.NewGuid().ToString();
+            var filler = new Filler<Repository>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
-                .OnProperty(configuration => configuration.CreatedBy).Use(user)
-                .OnProperty(configuration => configuration.UpdatedBy).Use(user);
+                .OnProperty(repository => repository.CreatedBy).Use(someUser)
+                .OnProperty(repository => repository.UpdatedBy).Use(someUser)
+                .OnProperty(repository => repository.Source).IgnoreIt()
+                .OnProperty(repository => repository.Contributions).IgnoreIt();
 
             return filler;
         }

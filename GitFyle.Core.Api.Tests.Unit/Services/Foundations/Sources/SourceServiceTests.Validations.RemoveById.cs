@@ -2,12 +2,12 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using Moq;
-using System.Threading.Tasks;
 using System;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
+using System.Threading.Tasks;
 using FluentAssertions;
+using GitFyle.Core.Api.Models.Foundations.Sources;
+using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
+using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 {
