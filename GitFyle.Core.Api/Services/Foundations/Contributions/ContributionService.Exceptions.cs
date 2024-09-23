@@ -95,7 +95,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return contributionValidationException;
         }
 
-        private async ValueTask<ContributionDependencyException> 
+        private async ValueTask<ContributionDependencyException>
             CreateAndLogCriticalDependencyExceptionAsync(
                 Xeption exception)
         {
@@ -108,7 +108,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return contributionDependencyException;
         }
 
-        private async ValueTask<ContributionDependencyValidationException> 
+        private async ValueTask<ContributionDependencyValidationException>
             CreateAndLogDependencyValidationExceptionAsync(
                 Xeption exception)
         {
@@ -121,7 +121,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return contributionDependencyValidationException;
         }
 
-        private async ValueTask<ContributionDependencyException> 
+        private async ValueTask<ContributionDependencyException>
             CreateAndLogDependencyExceptionAsync(
                 Xeption exception)
         {
@@ -134,7 +134,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             return contributionDependencyException;
         }
 
-        private async ValueTask<ContributionServiceException> 
+        private async ValueTask<ContributionServiceException>
             CreateAndLogServiceExceptionAsync(
                 Xeption exception)
         {

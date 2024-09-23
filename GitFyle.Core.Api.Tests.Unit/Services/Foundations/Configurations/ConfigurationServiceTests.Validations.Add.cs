@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
@@ -153,7 +152,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             var invalidConfiguration = CreateRandomConfiguration(randomDateTimeOffset);
             invalidConfiguration.Name = GetRandomStringWithLengthOf(451);
 
-            var invalidConfigurationException = 
+            var invalidConfigurationException =
                 new InvalidConfigurationException(
                 message: "Configuration is invalid, fix the errors and try again.");
 
@@ -166,12 +165,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 message: "Configuration validation error occurred, fix the errors and try again.",
                 innerException: invalidConfigurationException);
 
-            this.datetimeBrokerMock.Setup(broker => 
+            this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
             // when
-            ValueTask<Configuration> addConfigurationTask = 
+            ValueTask<Configuration> addConfigurationTask =
                 this.configurationService.AddConfigurationAsync(invalidConfiguration);
 
             ConfigurationValidationException actualConfigurationValidationException =
@@ -182,13 +181,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationValidationException.Should()
                 .BeEquivalentTo(expectedConfigurationValidationException);
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationValidationException))), 
+                    expectedConfigurationValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.InsertConfigurationAsync(It.IsAny<Configuration>()), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertConfigurationAsync(It.IsAny<Configuration>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -209,7 +208,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             invalidConfiguration.CreatedDate = now;
             invalidConfiguration.UpdatedDate = GetRandomDateTimeOffset();
 
-            InvalidConfigurationException invalidConfigurationException = 
+            InvalidConfigurationException invalidConfigurationException =
                 new InvalidConfigurationException(
                     message: "Configuration is invalid, fix the errors and try again.");
 
@@ -266,7 +265,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(int invalidSeconds)
         {
             // given
-            DateTimeOffset randomDateTime = 
+            DateTimeOffset randomDateTime =
                 GetRandomDateTimeOffset();
 
             DateTimeOffset now = randomDateTime;
@@ -281,7 +280,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             invalidConfiguration.CreatedDate = invalidDate;
             invalidConfiguration.UpdatedDate = invalidDate;
 
-            var invalidConfigurationException = 
+            var invalidConfigurationException =
                 new InvalidConfigurationException(
                 message: "Configuration is invalid, fix the errors and try again.");
 
