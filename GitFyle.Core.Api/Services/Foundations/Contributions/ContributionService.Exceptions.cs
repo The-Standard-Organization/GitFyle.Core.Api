@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
-using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
