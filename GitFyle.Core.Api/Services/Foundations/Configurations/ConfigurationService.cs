@@ -51,5 +51,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
         public ValueTask<IQueryable<Configuration>> RetrieveAllConfigurationsAsync() =>
         TryCatch(async () => await this.storageBroker.SelectAllConfigurationsAsync());
+
+        public ValueTask<Configuration> ModifyConfigurationAsync(Configuration configuration)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
