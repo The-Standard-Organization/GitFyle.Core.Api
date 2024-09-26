@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
@@ -17,6 +18,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
     internal partial class ContributionService
     {
         private delegate ValueTask<Contribution> ReturningContributionFunction();
+        private delegate ValueTask<IQueryable<Contribution>> ReturningContributionsFunction();
 
         private async ValueTask<Contribution> TryCatch(ReturningContributionFunction returningContributionFunction)
         {
@@ -62,6 +64,32 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                         innerException: dbUpdateException);
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationContributionException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceContributionException =
+                    new FailedServiceContributionException(
+                        message: "Failed service contribution error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceContributionException);
+            }
+        }
+
+        private async ValueTask<IQueryable<Contribution>> TryCatch(
+                ReturningContributionsFunction returningContributionsFunction)
+        {
+            try
+            {
+                return await returningContributionsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageContributionException = new FailedStorageContributionException(
+                    message: "Failed contribution storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageContributionException);
             }
             catch (Exception exception)
             {
