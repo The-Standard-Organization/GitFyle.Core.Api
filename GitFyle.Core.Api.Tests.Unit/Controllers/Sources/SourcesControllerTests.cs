@@ -27,7 +27,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
                 sourceService: this.sourceServiceMock.Object);
         }
 
-        public static TheoryData ValidationExceptions()
+        public static TheoryData<Xeption> ValidationExceptions()
         {
             var someInnerException = new Xeption();
             string someMessage = CreateRandomString();
@@ -44,7 +44,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
             };
         }
 
-        public static TheoryData ServerExceptions()
+        public static TheoryData<Xeption> ServerExceptions()
         {
             var someInnerException = new Xeption();
             string someMessage = CreateRandomString();
