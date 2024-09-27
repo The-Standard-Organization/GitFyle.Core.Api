@@ -63,7 +63,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         [Fact]
         public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
         {
-            //given
+            // given
             var someContributionId = Guid.NewGuid();
             var serviceException = new Exception();
 
@@ -81,7 +81,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 broker.SelectContributionByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(serviceException);
 
-            //when
+            // when
             ValueTask<Contribution> retrieveContributionByIdTask =
                 this.contributionService.RetrieveContributionByIdAsync(someContributionId);
 
@@ -89,7 +89,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 await Assert.ThrowsAsync<ContributionServiceException>(
                     retrieveContributionByIdTask.AsTask);
 
-            //then
+            // then
             actualContributionServiceException.Should().BeEquivalentTo(
                 expectedContributionServiceException);
 

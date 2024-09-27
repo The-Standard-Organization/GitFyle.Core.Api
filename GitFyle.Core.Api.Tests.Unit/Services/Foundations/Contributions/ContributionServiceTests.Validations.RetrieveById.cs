@@ -65,7 +65,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         [Fact]
         public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfContributionIdNotFoundAndLogitAsync()
         {
-            //given
+            // given
             var someContributionId = Guid.NewGuid();
             Contribution nullContribution = null;
             var innerException = new Exception();
