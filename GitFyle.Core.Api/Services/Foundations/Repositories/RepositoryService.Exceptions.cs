@@ -87,6 +87,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageRepositoryException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceRepositoryException =
+                    new FailedServiceRepositoryException(
+                        message: "Failed service repository error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
+            }
         }
 
         private async ValueTask<RepositoryValidationException> CreateAndLogValidationException(
