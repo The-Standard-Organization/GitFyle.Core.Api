@@ -31,7 +31,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                     innerException: failedStorageRepositoryException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllSourcesAsync())
+                broker.SelectAllRepositoriesAsync())
                     .ThrowsAsync(sqlException);
 
             // when
@@ -47,7 +47,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                 expectedRepositoryDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllSourcesAsync(),
+                broker.SelectAllRepositoriesAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

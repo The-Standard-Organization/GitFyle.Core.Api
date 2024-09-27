@@ -3,10 +3,12 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Xeptions;
@@ -16,6 +18,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
     internal partial class RepositoryService
     {
         private delegate ValueTask<Repository> ReturningRepositoryFunction();
+        private delegate ValueTask<IQueryable<Repository>> ReturningRepositoriesFunction();
 
         private async ValueTask<Repository> TryCatch(ReturningRepositoryFunction returningRepositoryFunction)
         {
@@ -66,6 +69,23 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
+            }
+        }
+
+        private async ValueTask<IQueryable<Repository>> TryCatch(
+            ReturningRepositoriesFunction returningRepositoriesunction)
+        {
+            try
+            {
+                return await returningRepositoriesunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageRepositoryException = new FailedStorageRepositoryException(
+                    message: "Failed repository storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageRepositoryException);
             }
         }
 
