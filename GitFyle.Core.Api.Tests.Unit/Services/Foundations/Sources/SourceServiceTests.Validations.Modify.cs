@@ -17,7 +17,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfSourceIsNullAndLogItAsync()
         {
-            //given
+            // given
             Source nullSource = null;
 
             var nullSourceException =
@@ -60,12 +60,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         [InlineData(" ")]
         public async Task ShouldThrowValidationExceptionOnModifyIfSourceIsInvalidAndLogItAsync(string invalidString)
         {
-            //given
+            // given
             var invalidSource = new Source
             {
+                Id = Guid.Empty,
                 Name = invalidString,
                 Url = invalidString,
+                CreatedBy = invalidString,
+                CreatedDate = default,
                 UpdatedBy = invalidString,
+                UpdatedDate = default
             };
 
             var invalidSourceException = new InvalidSourceException(
@@ -201,7 +205,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
         {
-            //given
+            // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             Source randomSource = CreateRandomSource(randomDateTimeOffset);
             Source invalidSource = randomSource;
@@ -257,7 +261,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(
             int invalidSeconds)
         {
-            //given
+            // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             DateTimeOffset now = randomDateTimeOffset;
             DateTimeOffset startDate = now.AddSeconds(-60);
@@ -317,7 +321,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfStorageSourceDoesNotExistAndLogItAsync()
         {
-            //given
+            // given
             int randomNegative = GetRandomNegativeNumber();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             Source randomSource = CreateRandomSource(randomDateTimeOffset);
@@ -375,7 +379,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfCreatedAuditInfoHasChangedAndLogItAsync()
         {
-            //given
+            // given
             int randomMinutes = GetRandomNegativeNumber();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             Source randomSource = CreateRandomModifySource(randomDateTimeOffset);
