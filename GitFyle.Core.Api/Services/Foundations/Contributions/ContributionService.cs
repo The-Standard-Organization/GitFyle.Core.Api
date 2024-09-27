@@ -43,6 +43,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         TryCatch(async () =>
         {
             await ValidateContributionIdAsync(contributionId);
+
             Contribution maybeContribution =
                 await this.storageBroker.SelectContributionByIdAsync(contributionId);
 
