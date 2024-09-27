@@ -2,6 +2,8 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
@@ -32,6 +34,22 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             await ValidateContributionOnAddAsync(contribution);
 
             return await this.storageBroker.InsertContributionAsync(contribution);
+        });  
+        
+        public ValueTask<IQueryable<Contribution>> RetrieveAllContributionsAsync() =>
+        TryCatch(async () => await this.storageBroker.SelectAllContributionsAsync());
+
+        public ValueTask<Contribution> RetrieveContributionByIdAsync(Guid contributionId) =>
+        TryCatch(async () =>
+        {
+            await ValidateContributionIdAsync(contributionId);
+
+            Contribution maybeContribution =
+                await this.storageBroker.SelectContributionByIdAsync(contributionId);
+
+            await ValidateStorageContributionAsync(maybeContribution, contributionId);
+
+            return maybeContribution;
         });
     }
 }
