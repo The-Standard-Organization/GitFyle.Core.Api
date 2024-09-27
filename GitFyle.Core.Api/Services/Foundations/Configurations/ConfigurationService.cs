@@ -41,7 +41,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         {
             await ValidateConfigurationIdAsync(configurationId);
 
-            Configuration maybeConfiguration = 
+            Configuration maybeConfiguration =
                 await this.storageBroker.SelectConfigurationByIdAsync(configurationId);
 
             await ValidateStorageConfigurationAsync(maybeConfiguration, configurationId);
@@ -54,7 +54,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
         public async ValueTask<Configuration> ModifyConfigurationAsync(Configuration configuration)
         {
-            Configuration maybeConfiguration = 
+            Configuration maybeConfiguration =
                 await this.storageBroker.SelectConfigurationByIdAsync(configuration.Id);
 
             return await this.storageBroker.UpdateConfigurationAsync(configuration);

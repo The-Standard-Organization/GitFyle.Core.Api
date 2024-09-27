@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -27,11 +24,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             Configuration updatedConfiguration = inputConfiguration.DeepClone();
             Configuration expectedConfiguration = updatedConfiguration.DeepClone();
 
-            this.storageBrokerMock.Setup(broker => 
+            this.storageBrokerMock.Setup(broker =>
                 broker.SelectConfigurationByIdAsync(inputConfiguration.Id))
                     .ReturnsAsync(storageConfiguration);
 
-            this.storageBrokerMock.Setup(broker => 
+            this.storageBrokerMock.Setup(broker =>
                 broker.UpdateConfigurationAsync(inputConfiguration))
                     .ReturnsAsync(updatedConfiguration);
 
@@ -42,12 +39,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             // then
             actualConfiguration.Should().BeEquivalentTo(expectedConfiguration);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.SelectConfigurationByIdAsync(inputConfiguration.Id), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConfigurationByIdAsync(inputConfiguration.Id),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.UpdateConfigurationAsync(inputConfiguration), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateConfigurationAsync(inputConfiguration),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
