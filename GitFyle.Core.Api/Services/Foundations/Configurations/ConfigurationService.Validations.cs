@@ -43,6 +43,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 Parameter: nameof(configuration.CreatedDate)));
         }
 
+        private async ValueTask ValidateConfigurationOnModify(Configuration configuration)
+        {
+            ValidateConfigurationIsNotNull(configuration);
+        }
         private static async ValueTask ValidateConfigurationIdAsync(Guid configurationId) =>
             Validate((Rule: await IsInvalidAsync(configurationId), Parameter: nameof(Configuration.Id)));
 

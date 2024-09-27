@@ -18,14 +18,14 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             // given
             Configuration nullConfiguration = null;
 
-            var invalidConfigurationException = 
-                new InvalidConfigurationException(
+            var nullConfigurationException = 
+                new NullConfigurationException(
                     message: "Configuration is null");
 
             ConfigurationValidationException expectedConfigurationValidationException =
                 new ConfigurationValidationException(
                     message: "Configuration validation error occurred, fix the errors and try again.",
-                    innerException: invalidConfigurationException);
+                    innerException: nullConfigurationException);
 
             // when
             ValueTask<Configuration> addConfigurationTask = 
