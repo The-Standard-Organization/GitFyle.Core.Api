@@ -160,6 +160,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     message: "Configuration validation error occurred, fix the errors and try again.",
                     innerException: invalidConfigurationException);
 
+            this.datetimeBrokerMock.Setup(broker => 
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
             // when
             ValueTask<Configuration> modifyConfigurationTask =
                 this.configurationService.ModifyConfigurationAsync(invalidConfiguration);
@@ -172,6 +176,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationValidationException.Should()
                 .BeEquivalentTo(expectedConfigurationValidationException);
 
+            this.datetimeBrokerMock.Verify(broker => 
+                broker.GetCurrentDateTimeOffsetAsync(), 
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedConfigurationValidationException))),
@@ -181,9 +189,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 broker.UpdateConfigurationAsync(It.IsAny<Configuration>()),
                     Times.Never);
 
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.datetimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Theory]
