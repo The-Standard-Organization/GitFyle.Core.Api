@@ -207,7 +207,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.UpdatedDate),
                 values: $"Date is not recent." +
-                $"Expected a value between {startDate} and {endDate} but found {randomConfiguration.UpdatedDate}");
+                $" Expected a value between {startDate} and {endDate} but found {randomConfiguration.UpdatedDate}");
 
             var expectedConfigurationValidationException =
                 new ConfigurationValidationException(
