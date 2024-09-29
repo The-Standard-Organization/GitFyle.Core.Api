@@ -60,7 +60,9 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                     firstDate: configuration.UpdatedDate,
                     secondDate: configuration.CreatedDate,
                     secondDateName: nameof(Configuration.CreatedDate)),
-                    Parameter: nameof(configuration.UpdatedDate)));
+                    Parameter: nameof(configuration.UpdatedDate)),
+
+                (Rule: await IsInvalidLengthAsync(configuration.Name, 450), Parameter: nameof(Configuration.Name)));
         }
         private static async ValueTask ValidateConfigurationIdAsync(Guid configurationId) =>
             Validate((Rule: await IsInvalidAsync(configurationId), Parameter: nameof(Configuration.Id)));
