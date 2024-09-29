@@ -2,10 +2,10 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
-using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Repositories
 {
@@ -13,5 +13,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
     {
         ValueTask<Repository> AddRepositoryAsync(Repository repository);
         ValueTask<IQueryable<Repository>> RetrieveAllRepositoriesAsync();
+        ValueTask<Repository> RetrieveRepositoryByIdAsync(Guid repositoryId);
     }
 }

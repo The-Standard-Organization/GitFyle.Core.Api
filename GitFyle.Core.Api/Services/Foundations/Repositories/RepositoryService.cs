@@ -38,5 +38,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
         public ValueTask<IQueryable<Repository>> RetrieveAllRepositoriesAsync() =>
         TryCatch(async () => await this.storageBroker.SelectAllRepositoriesAsync());
+
+        public ValueTask<Repository> RetrieveRepositoryByIdAsync(Guid repositoryId) =>
+            throw new NotImplementedException();
     }
 }
