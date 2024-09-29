@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Configurations
 {
@@ -77,6 +78,25 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 throw new NotFoundConfigurationException(
                     message: $"Configuration not found with id: {id}");
             }
+        }
+
+        private static async ValueTask ValidateAgainstStorageConfigurationOnModifyAsync(
+            Configuration inputConfiguration, Configuration storageConfiguration)
+        {
+            Validate(
+                (Rule: await IsNotSameAsync(
+                    first: inputConfiguration.CreatedBy,
+                    second: storageConfiguration.CreatedBy,
+                    secondName: nameof(Configuration.CreatedBy)),
+
+                Parameter: nameof(Configuration.CreatedBy)),
+
+                (Rule: await IsNotSameAsync(
+                    firstDate: inputConfiguration.CreatedDate,
+                    secondDate: storageConfiguration.CreatedDate,
+                    secondDateName: nameof(Configuration.CreatedDate)),
+
+                Parameter: nameof(Configuration.CreatedDate)));
         }
 
         private static async ValueTask<dynamic> IsSameAsync(

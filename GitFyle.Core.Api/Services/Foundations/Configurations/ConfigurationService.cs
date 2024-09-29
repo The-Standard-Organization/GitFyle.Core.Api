@@ -9,6 +9,7 @@ using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
+using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Configurations
 {
@@ -61,6 +62,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 await this.storageBroker.SelectConfigurationByIdAsync(configuration.Id);
 
             await ValidateStorageConfigurationAsync(maybeConfiguration, configuration.Id);
+            await ValidateAgainstStorageConfigurationOnModifyAsync(configuration, maybeConfiguration);
 
             return await this.storageBroker.UpdateConfigurationAsync(configuration);
         });
