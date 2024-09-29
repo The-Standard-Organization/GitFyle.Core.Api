@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources;
+using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Moq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
@@ -258,6 +260,64 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.datetimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageConfigurationDoesNotExistAndLogItAsync()
+        {
+            // given
+            int randomNegative = CreateRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Configuration randomConfiguration = CreateRandomConfiguration(randomDateTimeOffset);
+            Configuration nonExistingConfiguration = randomConfiguration;
+            nonExistingConfiguration.CreatedDate = randomDateTimeOffset.AddMinutes(randomNegative);
+            Configuration nullConfiguration = null;
+
+            var notFoundConfigurationException =
+                new NotFoundConfigurationException(
+                    message: $"Configuration not found with id: {nonExistingConfiguration.Id}");
+
+            var expectedConfigurationValidationException =
+                new ConfigurationValidationException(
+                    message: "Configuration validation error occurred, fix the errors and try again.",
+                    innerException: notFoundConfigurationException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConfigurationByIdAsync(nonExistingConfiguration.Id))
+                    .ReturnsAsync(nullConfiguration);
+
+            this.datetimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Configuration> modifyConfigurationTask =
+                this.configurationService.ModifyConfigurationAsync(nonExistingConfiguration);
+
+            ConfigurationValidationException actualConfigurationValidationException =
+                await Assert.ThrowsAsync<ConfigurationValidationException>(
+                    modifyConfigurationTask.AsTask);
+
+            // then
+            actualConfigurationValidationException.Should()
+                .BeEquivalentTo(expectedConfigurationValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConfigurationByIdAsync(nonExistingConfiguration.Id),
+                    Times.Once);
+
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConfigurationValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
