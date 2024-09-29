@@ -282,13 +282,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     message: "Configuration validation error occurred, fix the errors and try again.",
                     innerException: notFoundConfigurationException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectConfigurationByIdAsync(nonExistingConfiguration.Id))
-                    .ReturnsAsync(nullConfiguration);
-
             this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConfigurationByIdAsync(nonExistingConfiguration.Id))
+                    .ReturnsAsync(nullConfiguration);
 
             // when
             ValueTask<Configuration> modifyConfigurationTask =
@@ -302,12 +302,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationValidationException.Should()
                 .BeEquivalentTo(expectedConfigurationValidationException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectConfigurationByIdAsync(nonExistingConfiguration.Id),
-                    Times.Once);
-
             this.datetimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConfigurationByIdAsync(nonExistingConfiguration.Id),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -315,8 +315,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     expectedConfigurationValidationException))),
                     Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.datetimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
