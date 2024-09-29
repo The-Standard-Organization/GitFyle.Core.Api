@@ -28,15 +28,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             }
             catch (NullRepositoryException nullRepositoryException)
             {
-                throw await CreateAndLogValidationException(nullRepositoryException);
+                throw await CreateAndLogValidationExceptionAsync(nullRepositoryException);
             }
             catch (InvalidRepositoryException invalidRepositoryException)
             {
-                throw await CreateAndLogValidationException(invalidRepositoryException);
+                throw await CreateAndLogValidationExceptionAsync(invalidRepositoryException);
             }
             catch (NotFoundRepositoryException notFoundRepositoryException)
             {
-                throw await CreateAndLogValidationException(notFoundRepositoryException);
+                throw await CreateAndLogValidationExceptionAsync(notFoundRepositoryException);
             }
             catch (SqlException sqlException)
             {
@@ -102,7 +102,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             }
         }
 
-        private async ValueTask<RepositoryValidationException> CreateAndLogValidationException(
+        private async ValueTask<RepositoryValidationException> CreateAndLogValidationExceptionAsync(
             Xeption exception)
         {
             var RepositoryValidationException = new RepositoryValidationException(
