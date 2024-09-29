@@ -146,6 +146,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             }
         }
 
+        private static async ValueTask ValidateStorageRepositoryAsync(Repository maybeRepository, Guid repositoryId)
+        {
+            if (maybeRepository is null)
+            {
+                throw new NotFoundRepositoryException(
+                    message: $"Repository not found with id: {repositoryId}");
+            }
+        }
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidRepositoryException =

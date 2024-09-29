@@ -34,6 +34,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             {
                 throw await CreateAndLogValidationException(invalidRepositoryException);
             }
+            catch (NotFoundRepositoryException notFoundRepositoryException)
+            {
+                throw await CreateAndLogValidationException(notFoundRepositoryException);
+            }
             catch (SqlException sqlException)
             {
                 var failedStorageRepositoryException = new FailedStorageRepositoryException(

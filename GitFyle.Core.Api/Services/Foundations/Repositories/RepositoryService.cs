@@ -47,6 +47,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             Repository maybeRepository =
                 await this.storageBroker.SelectRepositoryByIdAsync(repositoryId);
 
+            await ValidateStorageRepositoryAsync(maybeRepository, repositoryId);
+
             return maybeRepository;
         });
     }
