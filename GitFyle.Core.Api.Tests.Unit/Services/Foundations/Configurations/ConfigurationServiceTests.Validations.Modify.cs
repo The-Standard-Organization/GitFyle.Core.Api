@@ -404,7 +404,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.UpdatedDate),
-                values: $"Date is the same as {nameof(Source.UpdatedDate)}");
+                values: $"Date is same as {nameof(Source.UpdatedDate)}");
 
             var expectedConfigurationValidationException =
                 new ConfigurationValidationException(
@@ -441,7 +441,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectSourceByIdAsync(invalidConfiguration.Id),
+                broker.SelectConfigurationByIdAsync(invalidConfiguration.Id),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

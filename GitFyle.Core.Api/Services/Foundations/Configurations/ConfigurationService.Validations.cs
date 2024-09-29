@@ -96,7 +96,14 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                     secondDate: storageConfiguration.CreatedDate,
                     secondDateName: nameof(Configuration.CreatedDate)),
 
-                Parameter: nameof(Configuration.CreatedDate)));
+                Parameter: nameof(Configuration.CreatedDate)),
+
+                (Rule: await IsSameAsync(
+                    firstDate: inputConfiguration.UpdatedDate,
+                    secondDate: storageConfiguration.UpdatedDate,
+                    secondDateName: nameof(Configuration.UpdatedDate)),
+
+                Parameter: nameof(Configuration.UpdatedDate)));
         }
 
         private static async ValueTask<dynamic> IsSameAsync(
