@@ -60,6 +60,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             Configuration maybeConfiguration =
                 await this.storageBroker.SelectConfigurationByIdAsync(configuration.Id);
 
+            await ValidateStorageConfigurationAsync(maybeConfiguration, configuration.Id);
+
             return await this.storageBroker.UpdateConfigurationAsync(configuration);
         });
     }
