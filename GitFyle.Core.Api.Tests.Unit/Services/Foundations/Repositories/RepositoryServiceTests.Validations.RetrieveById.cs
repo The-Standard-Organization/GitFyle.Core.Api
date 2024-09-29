@@ -61,5 +61,52 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfRepositoryIdNotFoundAndLogitAsync()
+        {
+            //given
+            var someRepositoryId = Guid.NewGuid();
+            Repository nullRepository = null;
+            var innerException = new Exception();
+
+            var notFoundRepositoryException =
+                new NotFoundRepositoryException(
+                    message: $"Repository not found with id: {someRepositoryId}");
+
+            var expectedRepositoryValidationException =
+                new RepositoryValidationException(
+                    message: "Repository validation error occurred, fix errors and try again.",
+                    innerException: notFoundRepositoryException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectRepositoryByIdAsync(someRepositoryId))
+                    .ReturnsAsync(nullRepository);
+
+            // when
+            ValueTask<Repository> retrieveRepositoryByIdTask =
+                this.repositoryService.RetrieveRepositoryByIdAsync(someRepositoryId);
+
+            RepositoryValidationException actualRepositoryValidationException =
+                await Assert.ThrowsAsync<RepositoryValidationException>(
+                    retrieveRepositoryByIdTask.AsTask);
+
+            // then
+            actualRepositoryValidationException.Should().BeEquivalentTo(
+                expectedRepositoryValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectRepositoryByIdAsync(someRepositoryId),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedRepositoryValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
