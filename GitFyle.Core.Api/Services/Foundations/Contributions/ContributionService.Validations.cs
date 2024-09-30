@@ -226,15 +226,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             }
         }
 
-        private static async ValueTask ValidateStorageContributionAsync(Contribution maybeContribution, Guid id)
-        {
-            if (maybeContribution is null)
-            {
-                throw new NotFoundContributionException(
-                    message: $"Contribution not found with id: {id}");
-            }
-        }
-
         private static async ValueTask ValidateAgainstStorageContributionOnModifyAsync(
           Contribution inputContribution, Contribution storageContribution)
         {
