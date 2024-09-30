@@ -214,6 +214,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 Message = $"Text is not the same as {secondName}"
             };
 
+        private static async ValueTask ValidateContributionIdAsync(Guid contributionId) =>
+             Validate((Rule: await IsInvalidAsync(contributionId), Parameter: nameof(Contribution.Id)));
+
+        private static async ValueTask ValidateStorageContributionAsync(Contribution maybeContribution, Guid id)
+        {
+            if (maybeContribution is null)
+            {
+                throw new NotFoundContributionException(
+                    message: $"Contribution not found with id: {id}");
+            }
+        }
+
         private static async ValueTask ValidateStorageContributionAsync(Contribution maybeContribution, Guid id)
         {
             if (maybeContribution is null)
