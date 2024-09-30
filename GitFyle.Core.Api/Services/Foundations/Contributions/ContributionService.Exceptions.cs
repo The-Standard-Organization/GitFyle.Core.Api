@@ -112,8 +112,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         }
 
         private async ValueTask<ContributionValidationException> 
-            CreateAndLogValidationExceptionAsync(
-                Xeption exception)
+            CreateAndLogValidationExceptionAsync(Xeption exception)
         {
             var contributionValidationException = new ContributionValidationException(
                 message: "Contribution validation error occurred, fix errors and try again.",

@@ -85,7 +85,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         {
             int randomDaysInThePast = GetRandomNegativeNumber();
             Contribution randomContribution = CreateRandomContribution(dateTimeOffset);
-
             randomContribution.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
 
             return randomContribution;
