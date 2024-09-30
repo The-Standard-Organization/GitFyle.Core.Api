@@ -16,7 +16,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         [Fact]
         public async Task ShouldModifyContributionAsync()
         {
-            //given
+            // given
             DateTimeOffset randomDateOffset = GetRandomDateTimeOffset();
 
             Contribution randomModifyContribution =
@@ -40,11 +40,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 broker.UpdateContributionAsync(inputContribution))
                     .ReturnsAsync(updatedContribution);
 
-            //when
+            // when
             Contribution actualContribution =
                 await this.contributionService.ModifyContributionAsync(inputContribution);
 
-            //then
+            // then
             actualContribution.Should().BeEquivalentTo(expectedContribution);
 
             this.dateTimeBrokerMock.Verify(broker =>

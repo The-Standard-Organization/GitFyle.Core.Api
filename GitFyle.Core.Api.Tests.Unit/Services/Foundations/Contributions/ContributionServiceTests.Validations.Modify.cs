@@ -17,7 +17,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfContributionIsNullAndLogItAsync()
         {
-            //given
+            // given
             Contribution nullContribution = null;
 
             var nullContributionException =
@@ -61,7 +61,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         public async Task ShouldThrowValidationExceptionOnModifyIfContributionIsInvalidAndLogItAsync(
                 string invalidString)
         {
-            //given
+            // given
             var invalidContribution = new Contribution
             {
                 Id = Guid.Empty,
@@ -226,7 +226,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
         {
-            //given
+            // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             Contribution randomContribution = CreateRandomContribution(randomDateTimeOffset);
             Contribution invalidContribution = randomContribution;
@@ -282,7 +282,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(
          int invalidSeconds)
         {
-            //given
+            // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             DateTimeOffset now = randomDateTimeOffset;
             DateTimeOffset startDate = now.AddSeconds(-60);
@@ -342,7 +342,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfStorageContributionDoesNotExistAndLogItAsync()
         {
-            //given
+            // given
             int randomNegative = GetRandomNegativeNumber();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             Contribution randomContribution = CreateRandomContribution(randomDateTimeOffset);
@@ -400,7 +400,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfCreatedAuditInfoHasChangedAndLogItAsync()
         {
-            //given
+            // given
             int randomMinutes = GetRandomNegativeNumber();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             Contribution randomContribution = CreateRandomModifyContribution(randomDateTimeOffset);
