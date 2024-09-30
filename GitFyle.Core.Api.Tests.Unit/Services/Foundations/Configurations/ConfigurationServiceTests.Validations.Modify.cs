@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Sources;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Moq;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 {

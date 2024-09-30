@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Configurations
 {
@@ -56,7 +55,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 (Rule: await IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
                 (Rule: await IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
                 (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
-                
+
                 (Rule: await IsSameAsync(
                     firstDate: configuration.UpdatedDate,
                     secondDate: configuration.CreatedDate,
@@ -109,8 +108,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         private static async ValueTask<dynamic> IsSameAsync(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
-            string secondDateName) => new 
-            { 
+            string secondDateName) => new
+            {
                 Condition = firstDate == secondDate,
                 Message = $"Date is same as {secondDateName}"
             };
