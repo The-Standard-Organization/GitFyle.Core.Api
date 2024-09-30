@@ -16,7 +16,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         [Fact]
         public async Task ShouldModifySourceAsync()
         {
-            //given
+            // given
             DateTimeOffset randomDateOffset = GetRandomDateTimeOffset();
 
             Source randomModifySource =
@@ -40,11 +40,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 broker.UpdateSourceAsync(inputSource))
                     .ReturnsAsync(updatedSource);
 
-            //when
+            // when
             Source actualSource =
                 await this.sourceService.ModifySourceAsync(inputSource);
 
-            //then
+            // then
             actualSource.Should().BeEquivalentTo(expectedSource);
 
             this.dateTimeBrokerMock.Verify(broker =>

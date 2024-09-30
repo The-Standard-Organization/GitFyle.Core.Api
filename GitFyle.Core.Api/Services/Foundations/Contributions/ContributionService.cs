@@ -39,6 +39,32 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         public ValueTask<IQueryable<Contribution>> RetrieveAllContributionsAsync() =>
         TryCatch(async () => await this.storageBroker.SelectAllContributionsAsync());
 
+        public ValueTask<Contribution> RetrieveContributionByIdAsync(Guid contributionId) =>
+        TryCatch(async () =>
+        {
+            await ValidateContributionIdAsync(contributionId);
+
+            Contribution maybeContribution =
+                await this.storageBroker.SelectContributionByIdAsync(contributionId);
+
+            await ValidateStorageContributionAsync(maybeContribution, contributionId);
+
+            return maybeContribution;
+        });
+
+        public ValueTask<Contribution> ModifyContributionAsync(Contribution contribution) =>
+        TryCatch(async () =>
+        {
+            await ValidateContributionOnModifyAsync(contribution);
+            Contribution maybeContribution =
+                await this.storageBroker.SelectContributionByIdAsync(contribution.Id);
+
+            await ValidateStorageContributionAsync(maybeContribution, contribution.Id);
+            await ValidateAgainstStorageContributionOnModifyAsync(contribution, maybeContribution);
+
+            return await this.storageBroker.UpdateContributionAsync(contribution);
+        });
+
         public ValueTask<Contribution> RemoveContributionByIdAsync(Guid contributionId) =>
         TryCatch(async () =>
         {
