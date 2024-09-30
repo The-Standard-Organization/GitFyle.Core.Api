@@ -69,12 +69,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyExceptionOnModifyIfDbUpdatedExceptionOccursAndLogItAsync()
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDbUpdateExceptionOccursAndLogItAsync()
         {
             // given
             int minutesInPast = CreateRandomNegativeNumber();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            Configuration randomConfiguration = CreateRandomConfiguration();
+            Configuration randomConfiguration = CreateRandomConfiguration(randomDateTimeOffset);
 
             randomConfiguration.CreatedDate =
                 randomDateTimeOffset.AddMinutes(minutesInPast);
@@ -83,7 +83,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             var failedOperationConfigurationException =
                 new FailedOperationConfigurationException(
-                    message: "Failed configuration storage error occurred, contact support.",
+                    message: "Failed operation configuration error occurred, contact support.",
                     innerException: dbUpdateException);
 
             var expectedConfigurationDependencyException =
@@ -120,7 +120,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogCriticalAsync(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedConfigurationDependencyException))),
                         Times.Once);
 
