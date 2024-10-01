@@ -3,7 +3,6 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.Data;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
@@ -44,6 +43,30 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 Parameter: nameof(configuration.CreatedDate)));
         }
 
+        private async ValueTask ValidateConfigurationOnModify(Configuration configuration)
+        {
+            ValidateConfigurationIsNotNull(configuration);
+
+            Validate(
+                (Rule: await IsInvalidAsync(configuration.Id), Parameter: nameof(configuration.Id)),
+                (Rule: await IsInvalidAsync(configuration.Name), Parameter: nameof(configuration.Name)),
+                (Rule: await IsInvalidAsync(configuration.Value), Parameter: nameof(configuration.Value)),
+                (Rule: await IsInvalidAsync(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
+                (Rule: await IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
+                (Rule: await IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
+                (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
+
+                (Rule: await IsSameAsync(
+                    firstDate: configuration.UpdatedDate,
+                    secondDate: configuration.CreatedDate,
+                    secondDateName: nameof(Configuration.CreatedDate)),
+                    Parameter: nameof(configuration.UpdatedDate)),
+
+                (Rule: await IsInvalidLengthAsync(configuration.Name, 450), Parameter: nameof(Configuration.Name)),
+
+                (Rule: await IsNotRecentAsync(configuration.UpdatedDate),
+                Parameter: nameof(configuration.UpdatedDate)));
+        }
         private static async ValueTask ValidateConfigurationIdAsync(Guid configurationId) =>
             Validate((Rule: await IsInvalidAsync(configurationId), Parameter: nameof(Configuration.Id)));
 
@@ -55,6 +78,41 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                     message: $"Configuration not found with id: {id}");
             }
         }
+
+        private static async ValueTask ValidateAgainstStorageConfigurationOnModifyAsync(
+            Configuration inputConfiguration, Configuration storageConfiguration)
+        {
+            Validate(
+                (Rule: await IsNotSameAsync(
+                    first: inputConfiguration.CreatedBy,
+                    second: storageConfiguration.CreatedBy,
+                    secondName: nameof(Configuration.CreatedBy)),
+
+                Parameter: nameof(Configuration.CreatedBy)),
+
+                (Rule: await IsNotSameAsync(
+                    firstDate: inputConfiguration.CreatedDate,
+                    secondDate: storageConfiguration.CreatedDate,
+                    secondDateName: nameof(Configuration.CreatedDate)),
+
+                Parameter: nameof(Configuration.CreatedDate)),
+
+                (Rule: await IsSameAsync(
+                    firstDate: inputConfiguration.UpdatedDate,
+                    secondDate: storageConfiguration.UpdatedDate,
+                    secondDateName: nameof(Configuration.UpdatedDate)),
+
+                Parameter: nameof(Configuration.UpdatedDate)));
+        }
+
+        private static async ValueTask<dynamic> IsSameAsync(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is same as {secondDateName}"
+            };
 
         private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new
         {

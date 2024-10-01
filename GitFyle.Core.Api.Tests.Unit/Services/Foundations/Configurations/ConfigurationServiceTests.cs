@@ -37,6 +37,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 dateTimeBroker: this.datetimeBrokerMock.Object);
         }
 
+        private static Configuration CreateRandomModifyConfiguration(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInThePast = CreateRandomNegativeNumber();
+            Configuration randomConfiguration = CreateRandomConfiguration(dateTimeOffset);
+
+            randomConfiguration.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
+
+            return randomConfiguration;
+        }
+
+        private static int CreateRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
         private static Expression<Func<Xeption, bool>> SameExceptionAs(
             Xeption expectedException)
         {
