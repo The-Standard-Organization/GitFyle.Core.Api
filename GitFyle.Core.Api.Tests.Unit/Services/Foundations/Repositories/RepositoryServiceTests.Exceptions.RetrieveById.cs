@@ -21,7 +21,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             var failedStorageRepositoryException =
                 new FailedStorageRepositoryException(
-                    message: "Failed Repository storage error occurred, contact support.",
+                    message: "Failed storage repository error occurred, contact support.",
                     innerException: sqlException);
 
             var expectedRepositoryDependencyException =
@@ -30,19 +30,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
                     innerException: failedStorageRepositoryException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectRepositoryByIdAsync(someGuid))
-                        .ThrowsAsync(sqlException);
+                broker.SelectRepositoryByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sqlException);
 
             // when
             ValueTask<Repository> retrieveRepositoryByIdTask =
                 this.repositoryService.RetrieveRepositoryByIdAsync(someGuid);
 
             // then
-            await Assert.ThrowsAsync<RepositoryDependencyException>(() =>
-                retrieveRepositoryByIdTask.AsTask());
+            await Assert.ThrowsAsync<RepositoryDependencyException>(
+                retrieveRepositoryByIdTask.AsTask);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectRepositoryByIdAsync(someGuid),
+                broker.SelectRepositoryByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
