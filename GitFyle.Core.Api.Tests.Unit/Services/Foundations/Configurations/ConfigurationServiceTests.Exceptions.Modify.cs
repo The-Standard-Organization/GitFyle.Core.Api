@@ -133,5 +133,57 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDbUpdateConcurrencyOccursAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Configuration randomConfiguration = CreateRandomConfiguration(randomDateTimeOffset);
+            var dbUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedConfigurationException =
+                new LockedConfigurationException(
+                    message: "Locked configuration record error occurred, please try again.",
+                    innerException: dbUpdateConcurrencyException);
+
+            var expectedConfigurationDependencyValidationException =
+                new ConfigurationDependencyValidationException(
+                    message: "Configuration dependency validation error occurred, fix errors and try again.",
+                    innerException: lockedConfigurationException);
+
+            this.datetimeBrokerMock.Setup(broker => 
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(dbUpdateConcurrencyException);
+
+            // when
+            ValueTask<Configuration> modifyConfigurationTask = 
+                this.configurationService.ModifyConfigurationAsync(randomConfiguration);
+
+            ConfigurationDependencyValidationException actualConfigurationDependencyValidationException =
+                await Assert.ThrowsAsync<ConfigurationDependencyValidationException>(
+                    modifyConfigurationTask.AsTask);
+
+            // then
+            actualConfigurationDependencyValidationException.Should().BeEquivalentTo(
+                expectedConfigurationDependencyValidationException);
+
+            this.datetimeBrokerMock.Verify(broker => 
+                broker.GetCurrentDateTimeOffsetAsync(), 
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker => 
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConfigurationDependencyValidationException))), 
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConfigurationByIdAsync(randomConfiguration.Id),
+                    Times.Never);
+
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();            
+        }
     }
 }
