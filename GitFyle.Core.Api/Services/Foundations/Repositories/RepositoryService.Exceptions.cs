@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Xeptions;
@@ -114,7 +113,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             return RepositoryValidationException;
         }
 
-        private async Task<Exception> CreateAndLogCriticalDependencyExceptionAsync(Xeption exception)
+        private async Task<RepositoryDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
+            Xeption exception)
         {
             var repositoryDependencyException = new RepositoryDependencyException(
                 message: "Repository dependency error occurred, contact support.",
