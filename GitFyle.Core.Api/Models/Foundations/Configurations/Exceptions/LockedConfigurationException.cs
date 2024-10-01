@@ -9,8 +9,8 @@ namespace GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions
 {
     public class LockedConfigurationException : Xeption
     {
-        public LockedConfigurationException(string message, Exception innerException) 
-            : base(message, innerException) 
+        public LockedConfigurationException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

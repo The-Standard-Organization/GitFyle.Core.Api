@@ -152,12 +152,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     message: "Configuration dependency validation error occurred, fix errors and try again.",
                     innerException: lockedConfigurationException);
 
-            this.datetimeBrokerMock.Setup(broker => 
+            this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ThrowsAsync(dbUpdateConcurrencyException);
 
             // when
-            ValueTask<Configuration> modifyConfigurationTask = 
+            ValueTask<Configuration> modifyConfigurationTask =
                 this.configurationService.ModifyConfigurationAsync(randomConfiguration);
 
             ConfigurationDependencyValidationException actualConfigurationDependencyValidationException =
@@ -168,13 +168,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationDependencyValidationException.Should().BeEquivalentTo(
                 expectedConfigurationDependencyValidationException);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationDependencyValidationException))), 
+                    expectedConfigurationDependencyValidationException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -183,7 +183,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             this.datetimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();            
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -204,12 +204,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     message: "Service error occurred, contact support.",
                     innerException: failedServiceConfigurationException);
 
-            this.datetimeBrokerMock.Setup(broker => 
+            this.datetimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ThrowsAsync(serviceException);
 
             // when
-            ValueTask<Configuration> modifyConfigurationTask = 
+            ValueTask<Configuration> modifyConfigurationTask =
                 this.configurationService.ModifyConfigurationAsync(
                     randomConfiguration);
 
@@ -221,17 +221,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationServiceException.Should().BeEquivalentTo(
                 expectedConfigurationServiceException);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationServiceException))), 
+                    expectedConfigurationServiceException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.UpdateConfigurationAsync(It.IsAny<Configuration>()), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateConfigurationAsync(It.IsAny<Configuration>()),
                     Times.Never);
 
             this.datetimeBrokerMock.VerifyNoOtherCalls();
