@@ -175,7 +175,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccurrsAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
         {
             // given
             DateTimeOffset someDate = GetRandomDateTimeOffset();
