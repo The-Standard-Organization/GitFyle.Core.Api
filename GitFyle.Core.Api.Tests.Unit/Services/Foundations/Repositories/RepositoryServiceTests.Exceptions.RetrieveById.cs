@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Moq;
@@ -48,6 +49,57 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedRepositoryDependencyException))),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            //given
+            var someRepositoryId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedServiceRepositoryException =
+                new FailedServiceRepositoryException(
+                    message: "Failed service repository error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedRepositoryServiceException =
+                new RepositoryServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceRepositoryException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectRepositoryByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            //when
+            ValueTask<Repository> retrieveRepositoryByIdTask =
+                this.repositoryService.RetrieveRepositoryByIdAsync(someRepositoryId);
+
+            RepositoryServiceException actualRepositoryServiceException =
+                await Assert.ThrowsAsync<RepositoryServiceException>(
+                    retrieveRepositoryByIdTask.AsTask);
+
+            //then
+            actualRepositoryServiceException.Should().BeEquivalentTo(
+                expectedRepositoryServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectRepositoryByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+            broker.LogErrorAsync(It.Is(SameExceptionAs(
+                expectedRepositoryServiceException))),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>

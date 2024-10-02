@@ -68,7 +68,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             {
                 var failedServiceRepositoryException =
                     new FailedServiceRepositoryException(
-                        message: "Failed service Repository error occurred, contact support.",
+                        message: "Failed service repository error occurred, contact support.",
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
