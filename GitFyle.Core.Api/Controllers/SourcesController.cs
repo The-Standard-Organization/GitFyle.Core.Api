@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
@@ -42,6 +43,26 @@ namespace GitFyle.Core.Api.Controllers
             catch (SourceDependencyValidationException sourceDependencyValidationException)
             {
                 return BadRequest(sourceDependencyValidationException.InnerException);
+            }
+            catch (SourceDependencyException sourceDependencyException)
+            {
+                return InternalServerError(sourceDependencyException);
+            }
+            catch (SourceServiceException sourceServiceException)
+            {
+                return InternalServerError(sourceServiceException);
+            }
+        }
+
+        [HttpGet]
+        public async ValueTask<ActionResult<IQueryable<Source>>> GetAsync()
+        {
+            try
+            {
+                IQueryable<Source> sourcees =
+                    await this.sourceService.RetrieveAllSourcesAsync();
+
+                return Ok(sourcees);
             }
             catch (SourceDependencyException sourceDependencyException)
             {
