@@ -148,10 +148,21 @@ namespace GitFyle.Core.Api.Controllers
         [HttpDelete("{sourceId}")]
         public async ValueTask<ActionResult<Source>> DeleteSourceByIdAsync(Guid sourceId)
         {
-            Source deletedSource =
+            try
+            {
+                Source deletedSource =
                 await this.sourceService.RemoveSourceByIdAsync(sourceId);
 
-            return Ok(deletedSource);
+                return Ok(deletedSource);
+            }
+            catch (SourceValidationException sourceValidationException)
+            {
+                return BadRequest(sourceValidationException.InnerException);
+            }
+            catch (SourceDependencyValidationException sourceDependencyValidationException)
+            {
+                return BadRequest(sourceDependencyValidationException.InnerException);
+            }
         }
     }
 }
