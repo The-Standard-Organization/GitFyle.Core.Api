@@ -4,6 +4,7 @@
 
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
+using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
@@ -62,6 +63,46 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
             this.sourceServiceMock.Setup(service =>
                 service.ModifySourceAsync(It.IsAny<Source>()))
                     .ThrowsAsync(validationException);
+
+            // when
+            ActionResult<Source> actualActionResult =
+                await this.sourcesController.PutSourceAsync(someSource);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.sourceServiceMock.Verify(service =>
+                service.ModifySourceAsync(It.IsAny<Source>()),
+                    Times.Once);
+
+            this.sourceServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldReturnNotFoundOnPutIfItemDoesNotExistAsync()
+        {
+            // given
+            Source someSource = CreateRandomSource();
+            string someMessage = GetRandomString();
+
+            var notFoundSourceException =
+                new NotFoundSourceException(
+                    message: someMessage);
+
+            var sourceValidationException =
+                new SourceValidationException(
+                    message: someMessage,
+                    innerException: notFoundSourceException);
+
+            NotFoundObjectResult expectedNotFoundObjectResult =
+                NotFound(notFoundSourceException);
+
+            var expectedActionResult =
+                new ActionResult<Source>(expectedNotFoundObjectResult);
+
+            this.sourceServiceMock.Setup(service =>
+                service.ModifySourceAsync(It.IsAny<Source>()))
+                    .ThrowsAsync(sourceValidationException);
 
             // when
             ActionResult<Source> actualActionResult =
