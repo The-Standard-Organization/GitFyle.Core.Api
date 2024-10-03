@@ -108,7 +108,12 @@ namespace GitFyle.Core.Api.Controllers
         }
 
         [HttpPost]
-        public async ValueTask<ActionResult<Source>> PutSourceAsync(Source source) =>
-            throw new NotImplementedException();
+        public async ValueTask<ActionResult<Source>> PutSourceAsync(Source source)
+        {
+            Source modifiedSource =
+                await this.sourceService.ModifySourceAsync(source);
+
+            return Ok(modifiedSource);
+        }
     }
 }
