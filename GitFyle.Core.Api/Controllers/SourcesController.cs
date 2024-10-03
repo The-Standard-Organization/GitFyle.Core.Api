@@ -76,7 +76,11 @@ namespace GitFyle.Core.Api.Controllers
         }
 
         [HttpGet("{sourceId}")]
-        public async ValueTask<ActionResult<Source>> GetSourceByIdAsync(Guid sourceId) =>
-            throw new NotImplementedException();
+        public async ValueTask<ActionResult<Source>> GetSourceByIdAsync(Guid sourceId)
+        {
+            Source source = await this.sourceService.RetrieveSourceByIdAsync(sourceId);
+
+            return Ok(source);
+        }
     }
 }
