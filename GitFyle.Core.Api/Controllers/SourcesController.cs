@@ -85,6 +85,11 @@ namespace GitFyle.Core.Api.Controllers
                 return Ok(source);
             }
             catch (SourceValidationException sourceValidationException)
+                when (sourceValidationException.InnerException is NotFoundSourceException)
+            {
+                return NotFound(sourceValidationException.InnerException);
+            }
+            catch (SourceValidationException sourceValidationException)
             {
                 return BadRequest(sourceValidationException.InnerException);
             }
