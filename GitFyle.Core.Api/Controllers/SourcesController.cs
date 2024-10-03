@@ -146,7 +146,12 @@ namespace GitFyle.Core.Api.Controllers
         }
 
         [HttpDelete("{sourceId}")]
-        public async ValueTask<ActionResult<Source>> DeleteSourceByIdAsync(Guid sourceId) =>
-            throw new NotImplementedException();
+        public async ValueTask<ActionResult<Source>> DeleteSourceByIdAsync(Guid sourceId)
+        {
+            Source deletedSource =
+                await this.sourceService.RemoveSourceByIdAsync(sourceId);
+
+            return Ok(deletedSource);
+        }
     }
 }
