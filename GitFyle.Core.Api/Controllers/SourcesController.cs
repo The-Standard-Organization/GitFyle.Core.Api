@@ -78,9 +78,20 @@ namespace GitFyle.Core.Api.Controllers
         [HttpGet("{sourceId}")]
         public async ValueTask<ActionResult<Source>> GetSourceByIdAsync(Guid sourceId)
         {
-            Source source = await this.sourceService.RetrieveSourceByIdAsync(sourceId);
+            try
+            {
+                Source source = await this.sourceService.RetrieveSourceByIdAsync(sourceId);
 
-            return Ok(source);
+                return Ok(source);
+            }
+            catch (SourceValidationException sourceValidationException)
+            {
+                return BadRequest(sourceValidationException.InnerException);
+            }
+            catch (SourceDependencyValidationException sourceDependencyValidationException)
+            {
+                return BadRequest(sourceDependencyValidationException.InnerException);
+            }
         }
     }
 }
