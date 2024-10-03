@@ -18,11 +18,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnPostIfValidationErrorOccurredAsync(
-            Xeption validationException)
+        public async Task ShouldReturnBadRequestOnGetByIdIfValidationErrorOccurredAsync(Xeption validationException)
         {
             // given
-            Source someSource = CreateRandomSource();
+            Guid someId = Guid.NewGuid();
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
@@ -31,18 +30,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
                 new ActionResult<Source>(expectedBadRequestObjectResult);
 
             this.sourceServiceMock.Setup(service =>
-                service.AddSourceAsync(It.IsAny<Source>()))
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(validationException);
 
             // when
             ActionResult<Source> actualActionResult =
-                await this.sourcesController.PostSourceAsync(someSource);
+                await this.sourcesController.GetSourceByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.sourceServiceMock.Verify(service =>
-                service.AddSourceAsync(It.IsAny<Source>()),
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.sourceServiceMock.VerifyNoOtherCalls();
@@ -50,74 +49,71 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnPostIfServerErrorOccurredAsync(
-            Xeption serverException)
+        public async Task ShouldReturnInternalServerErrorOnGetByIdIfServerErrorOccurredAsync(
+            Xeption validationException)
         {
             // given
-            Source someSource = CreateRandomSource();
+            Guid someId = Guid.NewGuid();
 
-            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
-                InternalServerError(serverException);
+            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+                InternalServerError(validationException);
 
             var expectedActionResult =
-                new ActionResult<Source>(expectedInternalServerErrorObjectResult);
+                new ActionResult<Source>(expectedBadRequestObjectResult);
 
             this.sourceServiceMock.Setup(service =>
-                service.AddSourceAsync(It.IsAny<Source>()))
-                    .ThrowsAsync(serverException);
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(validationException);
 
             // when
             ActionResult<Source> actualActionResult =
-                await this.sourcesController.PostSourceAsync(someSource);
+                await this.sourcesController.GetSourceByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.sourceServiceMock.Verify(service =>
-                service.AddSourceAsync(It.IsAny<Source>()),
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.sourceServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldReturnConflictOnPostIfAlreadyExistsSourceErrorOccurredAsync()
+        public async Task ShouldReturnNotFoundOnGetByIdIfItemDoesNotExistAsync()
         {
             // given
-            Source someSource = CreateRandomSource();
-            var someInnerException = new Exception();
+            Guid someId = Guid.NewGuid();
             string someMessage = GetRandomString();
 
-            var alreadyExistsSourceException =
-                new AlreadyExistsSourceException(
-                    message: someMessage,
-                    innerException: someInnerException,
-                    data: someInnerException.Data);
+            var notFoundSourceException =
+                new NotFoundSourceException(
+                    message: someMessage);
 
-            var sourceDependencyValidationException =
-                new SourceDependencyValidationException(
+            var sourceValidationException =
+                new SourceValidationException(
                     message: someMessage,
-                    innerException: alreadyExistsSourceException);
+                    innerException: notFoundSourceException);
 
-            ConflictObjectResult expectedConflictObjectResult =
-                Conflict(alreadyExistsSourceException);
+            NotFoundObjectResult expectedNotFoundObjectResult =
+                NotFound(notFoundSourceException);
 
             var expectedActionResult =
-                new ActionResult<Source>(expectedConflictObjectResult);
+                new ActionResult<Source>(expectedNotFoundObjectResult);
 
             this.sourceServiceMock.Setup(service =>
-                service.AddSourceAsync(It.IsAny<Source>()))
-                    .ThrowsAsync(sourceDependencyValidationException);
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sourceValidationException);
 
             // when
             ActionResult<Source> actualActionResult =
-                await this.sourcesController.PostSourceAsync(someSource);
+                await this.sourcesController.GetSourceByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.sourceServiceMock.Verify(service =>
-                service.AddSourceAsync(It.IsAny<Source>()),
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.sourceServiceMock.VerifyNoOtherCalls();

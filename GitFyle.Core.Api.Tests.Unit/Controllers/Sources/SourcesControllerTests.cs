@@ -31,7 +31,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
         public static TheoryData<Xeption> ValidationExceptions()
         {
             var someInnerException = new Xeption();
-            string someMessage = CreateRandomString();
+            string someMessage = GetRandomString();
 
             return new TheoryData<Xeption>
             {
@@ -48,7 +48,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
         public static TheoryData<Xeption> ServerExceptions()
         {
             var someInnerException = new Xeption();
-            string someMessage = CreateRandomString();
+            string someMessage = GetRandomString();
 
             return new TheoryData<Xeption>
             {
@@ -71,7 +71,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
         private static Source CreateRandomSource() =>
             CreateSourceFiller().Create();
 
-        private static string CreateRandomString() =>
+        private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
