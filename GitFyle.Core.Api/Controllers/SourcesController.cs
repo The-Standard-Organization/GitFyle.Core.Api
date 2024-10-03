@@ -106,5 +106,9 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(sourceServiceException);
             }
         }
+
+        [HttpPost]
+        public async ValueTask<ActionResult<Source>> PutSourceAsync(Source source) =>
+            throw new NotImplementedException();
     }
 }
