@@ -118,5 +118,47 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
 
             this.sourceServiceMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+
+            var lockedSourceException =
+                new LockedSourceException(
+                    message: someMessage,
+                    innerException: someInnerException);
+
+            var sourceDependencyValidationException =
+                new SourceDependencyValidationException(
+                    message: someMessage,
+                    innerException: lockedSourceException);
+
+            LockedObjectResult expectedConflictObjectResult =
+                Locked(lockedSourceException);
+
+            var expectedActionResult =
+                new ActionResult<Source>(expectedConflictObjectResult);
+
+            this.sourceServiceMock.Setup(service =>
+                service.RemoveSourceByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sourceDependencyValidationException);
+
+            // when
+            ActionResult<Source> actualActionResult =
+                await this.sourcesController.DeleteSourceByIdAsync(someId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.sourceServiceMock.Verify(service =>
+                service.RemoveSourceByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.sourceServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
