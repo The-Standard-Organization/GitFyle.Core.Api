@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
@@ -103,6 +104,49 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
             this.sourceServiceMock.Setup(service =>
                 service.ModifySourceAsync(It.IsAny<Source>()))
                     .ThrowsAsync(sourceValidationException);
+
+            // when
+            ActionResult<Source> actualActionResult =
+                await this.sourcesController.PutSourceAsync(someSource);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.sourceServiceMock.Verify(service =>
+                service.ModifySourceAsync(It.IsAny<Source>()),
+                    Times.Once);
+
+            this.sourceServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldReturnConflictOnPutIfAlreadyExistsSourceErrorOccurredAsync()
+        {
+            // given
+            Source someSource = CreateRandomSource();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+
+            var alreadyExistsSourceException =
+                new AlreadyExistsSourceException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var sourceDependencyValidationException =
+                new SourceDependencyValidationException(
+                    message: someMessage,
+                    innerException: alreadyExistsSourceException);
+
+            ConflictObjectResult expectedConflictObjectResult =
+                Conflict(alreadyExistsSourceException);
+
+            var expectedActionResult =
+                new ActionResult<Source>(expectedConflictObjectResult);
+
+            this.sourceServiceMock.Setup(service =>
+                service.ModifySourceAsync(It.IsAny<Source>()))
+                    .ThrowsAsync(sourceDependencyValidationException);
 
             // when
             ActionResult<Source> actualActionResult =
