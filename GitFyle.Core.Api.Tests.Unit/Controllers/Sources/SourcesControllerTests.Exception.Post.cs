@@ -86,7 +86,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
             // given
             Source someSource = CreateRandomSource();
             var someInnerException = new Exception();
-            string someMessage = CreateRandomString();
+            string someMessage = GetRandomString();
 
             var alreadyExistsSourceException =
                 new AlreadyExistsSourceException(
