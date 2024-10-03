@@ -144,5 +144,9 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(sourceServiceException);
             }
         }
+
+        [HttpDelete("{sourceId}")]
+        public async ValueTask<ActionResult<Source>> DeleteSourceByIdAsync(Guid sourceId) =>
+            throw new NotImplementedException();
     }
 }
