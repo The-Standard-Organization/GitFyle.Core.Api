@@ -92,6 +92,14 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return BadRequest(sourceDependencyValidationException.InnerException);
             }
+            catch (SourceDependencyException sourceDependencyException)
+            {
+                return InternalServerError(sourceDependencyException);
+            }
+            catch (SourceServiceException sourceServiceException)
+            {
+                return InternalServerError(sourceServiceException);
+            }
         }
     }
 }
