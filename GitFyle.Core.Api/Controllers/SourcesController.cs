@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
@@ -51,6 +52,15 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return InternalServerError(sourceServiceException);
             }
+        }
+
+        [HttpGet]
+        public async ValueTask<ActionResult<IQueryable<Source>>> GetAsync()
+        {
+            IQueryable<Source> sourcees =
+                await this.sourceService.RetrieveAllSourcesAsync();
+
+            return Ok(sourcees);
         }
     }
 }

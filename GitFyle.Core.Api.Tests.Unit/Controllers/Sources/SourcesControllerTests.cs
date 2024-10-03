@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
@@ -60,6 +61,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
                     innerException: someInnerException)
             };
         }
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private static IQueryable<Source> CreateRandomSources() =>
+            CreateSourceFiller().Create(count: GetRandomNumber()).AsQueryable();
 
         private static Source CreateRandomSource() =>
             CreateSourceFiller().Create();
