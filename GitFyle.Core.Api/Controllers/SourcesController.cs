@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Sources;
@@ -73,5 +74,9 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(sourceServiceException);
             }
         }
+
+        [HttpGet("{sourceId}")]
+        public async ValueTask<ActionResult<Source>> GetSourceByIdAsync(Guid sourceId) =>
+            throw new NotImplementedException();
     }
 }
