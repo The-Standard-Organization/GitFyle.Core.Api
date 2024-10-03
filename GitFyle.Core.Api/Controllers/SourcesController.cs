@@ -110,10 +110,21 @@ namespace GitFyle.Core.Api.Controllers
         [HttpPost]
         public async ValueTask<ActionResult<Source>> PutSourceAsync(Source source)
         {
-            Source modifiedSource =
+            try
+            {
+                Source modifiedSource =
                 await this.sourceService.ModifySourceAsync(source);
 
-            return Ok(modifiedSource);
+                return Ok(modifiedSource);
+            }
+            catch (SourceValidationException sourceValidationException)
+            {
+                return BadRequest(sourceValidationException.InnerException);
+            }
+            catch (SourceDependencyValidationException sourceDependencyValidationException)
+            {
+                return BadRequest(sourceDependencyValidationException.InnerException);
+            }
         }
     }
 }
