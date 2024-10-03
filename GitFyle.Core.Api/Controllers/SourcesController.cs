@@ -57,10 +57,21 @@ namespace GitFyle.Core.Api.Controllers
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<Source>>> GetAsync()
         {
-            IQueryable<Source> sourcees =
-                await this.sourceService.RetrieveAllSourcesAsync();
+            try
+            {
+                IQueryable<Source> sourcees =
+                    await this.sourceService.RetrieveAllSourcesAsync();
 
-            return Ok(sourcees);
+                return Ok(sourcees);
+            }
+            catch (SourceDependencyException sourceDependencyException)
+            {
+                return InternalServerError(sourceDependencyException);
+            }
+            catch (SourceServiceException sourceServiceException)
+            {
+                return InternalServerError(sourceServiceException);
+            }
         }
     }
 }
