@@ -51,20 +51,20 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnPostIfServerErrorOccurredAsync(
-            Xeption validationException)
+            Xeption serverException)
         {
             // given
             Source someSource = CreateRandomSource();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
-                InternalServerError(validationException);
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
+                InternalServerError(serverException);
 
             var expectedActionResult =
-                new ActionResult<Source>(expectedBadRequestObjectResult);
+                new ActionResult<Source>(expectedInternalServerErrorObjectResult);
 
             this.sourceServiceMock.Setup(service =>
                 service.AddSourceAsync(It.IsAny<Source>()))
-                    .ThrowsAsync(validationException);
+                    .ThrowsAsync(serverException);
 
             // when
             ActionResult<Source> actualActionResult =
