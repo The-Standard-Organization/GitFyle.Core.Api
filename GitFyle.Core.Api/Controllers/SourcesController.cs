@@ -165,6 +165,11 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(sourceValidationException.InnerException);
             }
             catch (SourceDependencyValidationException sourceDependencyValidationException)
+                when (sourceDependencyValidationException.InnerException is LockedSourceException)
+            {
+                return Locked(sourceDependencyValidationException.InnerException);
+            }
+            catch (SourceDependencyValidationException sourceDependencyValidationException)
             {
                 return BadRequest(sourceDependencyValidationException.InnerException);
             }
