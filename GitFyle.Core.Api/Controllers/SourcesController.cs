@@ -106,5 +106,43 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(sourceServiceException);
             }
         }
+
+        [HttpPost]
+        public async ValueTask<ActionResult<Source>> PutSourceAsync(Source source)
+        {
+            try
+            {
+                Source modifiedSource =
+                await this.sourceService.ModifySourceAsync(source);
+
+                return Ok(modifiedSource);
+            }
+            catch (SourceValidationException sourceValidationException)
+                when (sourceValidationException.InnerException is NotFoundSourceException)
+            {
+                return NotFound(sourceValidationException.InnerException);
+            }
+            catch (SourceValidationException sourceValidationException)
+            {
+                return BadRequest(sourceValidationException.InnerException);
+            }
+            catch (SourceDependencyValidationException sourceDependencyValidationException)
+                when (sourceDependencyValidationException.InnerException is AlreadyExistsSourceException)
+            {
+                return Conflict(sourceDependencyValidationException.InnerException);
+            }
+            catch (SourceDependencyValidationException sourceDependencyValidationException)
+            {
+                return BadRequest(sourceDependencyValidationException.InnerException);
+            }
+            catch (SourceDependencyException sourceDependencyException)
+            {
+                return InternalServerError(sourceDependencyException);
+            }
+            catch (SourceServiceException sourceServiceException)
+            {
+                return InternalServerError(sourceServiceException);
+            }
+        }
     }
 }
