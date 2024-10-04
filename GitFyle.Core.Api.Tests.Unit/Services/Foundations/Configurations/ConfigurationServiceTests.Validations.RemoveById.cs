@@ -19,7 +19,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             Guid someConfigurationId = Guid.Empty;
 
             var invalidConfigurationException =
-                new NullConfigurationException(
+                new InvalidConfigurationException(
                     message: "Configuration is invalid, fix the errors and try again.");
 
             invalidConfigurationException.AddData(
