@@ -18,11 +18,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnPostIfValidationErrorOccurredAsync(
-            Xeption validationException)
+        public async Task ShouldReturnBadRequestOnGetByIdIfValidationErrorOccurredAsync(Xeption validationException)
         {
             // given
-            Source someSource = CreateRandomSource();
+            Guid someId = Guid.NewGuid();
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
@@ -31,18 +30,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
                 new ActionResult<Source>(expectedBadRequestObjectResult);
 
             this.sourceServiceMock.Setup(service =>
-                service.AddSourceAsync(It.IsAny<Source>()))
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(validationException);
 
             // when
             ActionResult<Source> actualActionResult =
-                await this.sourcesController.PostSourceAsync(someSource);
+                await this.sourcesController.GetSourceByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.sourceServiceMock.Verify(service =>
-                service.AddSourceAsync(It.IsAny<Source>()),
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.sourceServiceMock.VerifyNoOtherCalls();
@@ -50,11 +49,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnPostIfServerErrorOccurredAsync(
+        public async Task ShouldReturnInternalServerErrorOnGetByIdIfServerErrorOccurredAsync(
             Xeption validationException)
         {
             // given
-            Source someSource = CreateRandomSource();
+            Guid someId = Guid.NewGuid();
 
             InternalServerErrorObjectResult expectedBadRequestObjectResult =
                 InternalServerError(validationException);
@@ -63,61 +62,58 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
                 new ActionResult<Source>(expectedBadRequestObjectResult);
 
             this.sourceServiceMock.Setup(service =>
-                service.AddSourceAsync(It.IsAny<Source>()))
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(validationException);
 
             // when
             ActionResult<Source> actualActionResult =
-                await this.sourcesController.PostSourceAsync(someSource);
+                await this.sourcesController.GetSourceByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.sourceServiceMock.Verify(service =>
-                service.AddSourceAsync(It.IsAny<Source>()),
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.sourceServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldReturnConflictOnPostIfAlreadyExistsSourceErrorOccurredAsync()
+        public async Task ShouldReturnNotFoundOnGetByIdIfItemDoesNotExistAsync()
         {
             // given
-            Source someSource = CreateRandomSource();
-            var someInnerException = new Exception();
-            string someMessage = CreateRandomString();
+            Guid someId = Guid.NewGuid();
+            string someMessage = GetRandomString();
 
-            var alreadyExistsSourceException =
-                new AlreadyExistsSourceException(
+            var notFoundSourceException =
+                new NotFoundSourceException(
+                    message: someMessage);
+
+            var sourceValidationException =
+                new SourceValidationException(
                     message: someMessage,
-                    innerException: someInnerException,
-                    data: someInnerException.Data);
+                    innerException: notFoundSourceException);
 
-            var sourceDependencyValidationException =
-                new SourceDependencyValidationException(
-                    message: someMessage,
-                    innerException: alreadyExistsSourceException);
-
-            ConflictObjectResult expectedConflictObjectResult =
-                Conflict(alreadyExistsSourceException);
+            NotFoundObjectResult expectedNotFoundObjectResult =
+                NotFound(notFoundSourceException);
 
             var expectedActionResult =
-                new ActionResult<Source>(expectedConflictObjectResult);
+                new ActionResult<Source>(expectedNotFoundObjectResult);
 
             this.sourceServiceMock.Setup(service =>
-                service.AddSourceAsync(It.IsAny<Source>()))
-                    .ThrowsAsync(sourceDependencyValidationException);
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sourceValidationException);
 
             // when
             ActionResult<Source> actualActionResult =
-                await this.sourcesController.PostSourceAsync(someSource);
+                await this.sourcesController.GetSourceByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.sourceServiceMock.Verify(service =>
-                service.AddSourceAsync(It.IsAny<Source>()),
+                service.RetrieveSourceByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.sourceServiceMock.VerifyNoOtherCalls();
