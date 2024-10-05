@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
+using System.Numerics;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 {
@@ -54,10 +58,62 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     expectedConfigurationDependencyException))), 
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.DeleteConfigurationAsync(
-                    It.IsAny<Configuration>()), 
+            this.datetimeBrokerMock.Verify(broker => 
+                broker.GetCurrentDateTimeOffsetAsync(), 
                         Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnRemoveByIdIfDbConcurrencyOccursAndLogItAsync()
+        {
+            // given
+            Guid someConfigurationId = Guid.NewGuid();
+
+            var dbUpdateConcurrencyException =
+                new DbUpdateConcurrencyException();
+
+            var lockedConfigurationException =
+                new LockedConfigurationException(                    
+                    message: "Locked configuration record error occurred, please try again.",
+                    innerException: dbUpdateConcurrencyException);
+
+            var expectedConfigurationDependencyValidationException =
+                new ConfigurationDependencyValidationException(
+                    message: "Configuration dependency validation error occurred, fix errors and try again.",
+                    innerException: lockedConfigurationException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConfigurationByIdAsync(someConfigurationId))
+                    .ThrowsAsync(dbUpdateConcurrencyException);
+
+            // when
+            ValueTask<Configuration> removeConfigurationByIdTask =
+                this.configurationService.RemoveConfigurationByIdAsync(someConfigurationId);
+
+            ConfigurationDependencyValidationException actualConfigurationDependencyValidationException =
+                await Assert.ThrowsAsync<ConfigurationDependencyValidationException>(
+                    removeConfigurationByIdTask.AsTask);
+
+            // then
+            actualConfigurationDependencyValidationException.Should().BeEquivalentTo(
+                expectedConfigurationDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConfigurationByIdAsync(someConfigurationId),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConfigurationDependencyValidationException))),
+                        Times.Once);
+
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

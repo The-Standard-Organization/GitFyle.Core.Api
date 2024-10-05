@@ -69,7 +69,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         public ValueTask<Configuration> RemoveConfigurationByIdAsync(Guid configurationId) =>
         TryCatch(async () =>
         {
-
             await ValidateConfigurationIdAsync(configurationId);
 
             Configuration maybeConfiguration =
