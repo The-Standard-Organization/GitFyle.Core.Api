@@ -35,6 +35,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectConfigurationByIdAsync(someConfigurationId))
                     .ThrowsAsync(sqlException);
+
             // when
             ValueTask<Configuration> removeConfigurationByIdTask =
                 this.configurationService.RemoveConfigurationByIdAsync(someConfigurationId);
