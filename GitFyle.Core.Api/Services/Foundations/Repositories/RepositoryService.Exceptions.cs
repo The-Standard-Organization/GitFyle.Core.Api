@@ -77,37 +77,11 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         }
 
         private async ValueTask<IQueryable<Repository>> TryCatch(
-            ReturningRepositoriesFunction returningRepositoriesunction)
+            ReturningRepositoriesFunction returningRepositoriesFunction)
         {
             try
             {
-                return await returningRepositoriesunction();
-            }
-            catch (SqlException sqlException)
-            {
-                var failedStorageRepositoryException = new FailedStorageRepositoryException(
-                    message: "Failed repository storage error occurred, contact support.",
-                    innerException: sqlException);
-
-                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageRepositoryException);
-            }
-            catch (Exception exception)
-            {
-                var failedServiceRepositoryException =
-                    new FailedServiceRepositoryException(
-                        message: "Failed service repository error occurred, contact support.",
-                        innerException: exception);
-
-                throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
-            }
-        }
-
-        private async ValueTask<IQueryable<Repository>> TryCatch(
-            ReturningRepositoriesFunction returningRepositoriesunction)
-        {
-            try
-            {
-                return await returningRepositoriesunction();
+                return await returningRepositoriesFunction();
             }
             catch (SqlException sqlException)
             {
