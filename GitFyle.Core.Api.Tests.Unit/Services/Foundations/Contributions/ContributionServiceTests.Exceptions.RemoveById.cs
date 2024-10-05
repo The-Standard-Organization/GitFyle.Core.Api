@@ -78,7 +78,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             var lockedContributionException =
                 new LockedContributionException(
                     message: "Locked contribution record error occurred, please try again.",
-                    innerException: dbUpdateConcurrencyException);
+                    innerException: dbUpdateConcurrencyException,
+                    data: dbUpdateConcurrencyException.Data);
 
             var expectedContributionDependencyValidationException =
                 new ContributionDependencyValidationException(
