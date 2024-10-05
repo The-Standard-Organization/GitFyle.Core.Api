@@ -56,6 +56,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsContributionException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var concurrencyGemException =
+                    new LockedContributionException(
+                        message: "Locked contribution record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException,
+                        data: dbUpdateConcurrencyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
+            }
             catch (DbUpdateException dbUpdateException)
             {
                 var failedOperationContributionException =
@@ -102,8 +112,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             }
         }
 
-        private async ValueTask<ContributionValidationException> CreateAndLogValidationExceptionAsync(
-            Xeption exception)
+        private async ValueTask<ContributionValidationException>
+            CreateAndLogValidationExceptionAsync(Xeption exception)
         {
             var contributionValidationException = new ContributionValidationException(
                 message: "Contribution validation error occurred, fix errors and try again.",
@@ -133,7 +143,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         {
             var contributionDependencyValidationException = new ContributionDependencyValidationException(
                 message: "Contribution dependency validation error occurred, fix errors and try again.",
-                innerException: exception);
+                innerException: exception,
+                data: exception.Data);
 
             await this.loggingBroker.LogErrorAsync(contributionDependencyValidationException);
 

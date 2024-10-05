@@ -41,7 +41,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationDependencyException actualConfigurationDependencyException =
                 await Assert.ThrowsAsync<ConfigurationDependencyException>(
-                    modifyConfigurationTask.AsTask);
+                    testCode: modifyConfigurationTask.AsTask);
 
             // then
             actualConfigurationDependencyException.Should()
@@ -106,7 +106,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationDependencyException actualConfigurationDependencyException =
                 await Assert.ThrowsAsync<ConfigurationDependencyException>(
-                    modifyConfigurationTask.AsTask);
+                    testCode: modifyConfigurationTask.AsTask);
 
             // then
             actualConfigurationDependencyException.Should()
@@ -145,7 +145,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             var lockedConfigurationException =
                 new LockedConfigurationException(
                     message: "Locked configuration record error occurred, please try again.",
-                    innerException: dbUpdateConcurrencyException);
+                    innerException: dbUpdateConcurrencyException,
+                    data: dbUpdateConcurrencyException.Data);
 
             var expectedConfigurationDependencyValidationException =
                 new ConfigurationDependencyValidationException(
@@ -162,7 +163,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationDependencyValidationException actualConfigurationDependencyValidationException =
                 await Assert.ThrowsAsync<ConfigurationDependencyValidationException>(
-                    modifyConfigurationTask.AsTask);
+                    testCode: modifyConfigurationTask.AsTask);
 
             // then
             actualConfigurationDependencyValidationException.Should().BeEquivalentTo(
@@ -215,7 +216,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationServiceException actualConfigurationServiceException =
                 await Assert.ThrowsAsync<ConfigurationServiceException>(
-                    modifyConfigurationTask.AsTask);
+                    testCode: modifyConfigurationTask.AsTask);
 
             // then
             actualConfigurationServiceException.Should().BeEquivalentTo(
