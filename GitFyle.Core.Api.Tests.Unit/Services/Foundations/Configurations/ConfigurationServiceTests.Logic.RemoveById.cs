@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -23,27 +24,27 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             Configuration removedConfiguration = inputConfiguration;
             Configuration expectedConfiguration = removedConfiguration.DeepClone();
 
-            this.storageBrokerMock.Setup(broker => 
+            this.storageBrokerMock.Setup(broker =>
                 broker.SelectConfigurationByIdAsync(someConfigurationId))
                     .ReturnsAsync(storageConfiguration);
 
-            this.storageBrokerMock.Setup(broker => 
+            this.storageBrokerMock.Setup(broker =>
                 broker.DeleteConfigurationAsync(inputConfiguration))
                     .ReturnsAsync(removedConfiguration);
-            
+
             // when
-            Configuration actualConfiguration = 
+            Configuration actualConfiguration =
                 await this.configurationService.RemoveConfigurationByIdAsync(someConfigurationId);
 
             // then
             actualConfiguration.Should().BeEquivalentTo(expectedConfiguration);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.SelectConfigurationByIdAsync(someConfigurationId), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConfigurationByIdAsync(someConfigurationId),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.DeleteConfigurationAsync(storageConfiguration), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteConfigurationAsync(storageConfiguration),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

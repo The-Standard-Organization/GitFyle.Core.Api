@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using System.Numerics;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 {
@@ -34,11 +32,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     message: "Configuration dependency error occurred, contact support.",
                     innerException: failedStorageConfigurationException);
 
-            this.storageBrokerMock.Setup(broker => 
+            this.storageBrokerMock.Setup(broker =>
                 broker.SelectConfigurationByIdAsync(someConfigurationId))
                     .ThrowsAsync(sqlException);
             // when
-            ValueTask<Configuration> removeConfigurationByIdTask = 
+            ValueTask<Configuration> removeConfigurationByIdTask =
                 this.configurationService.RemoveConfigurationByIdAsync(someConfigurationId);
 
             ConfigurationDependencyException actualConfigurationDependencyException =
@@ -49,17 +47,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationDependencyException.Should().BeEquivalentTo(
                 expectedConfigurationDependencyException);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.SelectConfigurationByIdAsync(someConfigurationId), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConfigurationByIdAsync(someConfigurationId),
                     Times.Once());
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationDependencyException))), 
+                    expectedConfigurationDependencyException))),
                         Times.Once);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                         Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -77,7 +75,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 new DbUpdateConcurrencyException();
 
             var lockedConfigurationException =
-                new LockedConfigurationException(                    
+                new LockedConfigurationException(
                     message: "Locked configuration record error occurred, please try again.",
                     innerException: dbUpdateConcurrencyException);
 
@@ -163,8 +161,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     expectedConfigurationServiceException))),
                         Times.Once);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

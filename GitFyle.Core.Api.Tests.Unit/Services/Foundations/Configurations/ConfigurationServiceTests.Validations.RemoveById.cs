@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
@@ -43,17 +44,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationValidationException.Should().BeEquivalentTo(
                 expectedConfigurationValidationException);
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationValidationException))), 
+                    expectedConfigurationValidationException))),
                         Times.Once);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.InsertConfigurationAsync(It.IsAny<Configuration>()), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertConfigurationAsync(It.IsAny<Configuration>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -68,7 +69,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             Guid someConfigurationId = Guid.NewGuid();
             Configuration noConfiguration = null;
 
-            var notFoundConfigurationException = 
+            var notFoundConfigurationException =
                 new NotFoundConfigurationException(
                     message: $"Configuration not found with id: {someConfigurationId}");
 
@@ -82,7 +83,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                     .ReturnsAsync(noConfiguration);
 
             // when
-            ValueTask<Configuration> removeConfigurationByIdTask = 
+            ValueTask<Configuration> removeConfigurationByIdTask =
                 this.configurationService.RemoveConfigurationByIdAsync(someConfigurationId);
 
             ConfigurationValidationException actualConfigurationValidationException =
@@ -93,18 +94,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             actualConfigurationValidationException.Should().BeEquivalentTo(
                 expectedConfigurationValidationException);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.SelectConfigurationByIdAsync(someConfigurationId), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConfigurationByIdAsync(someConfigurationId),
                     Times.Once);
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationValidationException))), 
+                    expectedConfigurationValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
+            this.storageBrokerMock.Verify(broker =>
                 broker.DeleteConfigurationAsync(
-                    It.IsAny<Configuration>()), 
+                    It.IsAny<Configuration>()),
                         Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
