@@ -65,5 +65,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 
             return await this.storageBroker.UpdateConfigurationAsync(configuration);
         });
+
+        public ValueTask<Configuration> RemoveConfigurationByIdAsync(Guid configurationId) =>
+        TryCatch(async () =>
+        {
+            await ValidateConfigurationIdAsync(configurationId);
+
+            Configuration maybeConfiguration =
+                await this.storageBroker.SelectConfigurationByIdAsync(configurationId);
+
+            await ValidateStorageConfigurationAsync(maybeConfiguration, configurationId);
+
+            return await this.storageBroker.DeleteConfigurationAsync(maybeConfiguration);
+        });
     }
 }

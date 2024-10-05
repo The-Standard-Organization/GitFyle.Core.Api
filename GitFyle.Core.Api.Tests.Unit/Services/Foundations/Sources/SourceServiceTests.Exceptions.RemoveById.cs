@@ -67,7 +67,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         }
 
         [Fact]
-        private async Task ShouldThrowDependencyValidationExceptionOnRemoveByIdIfDbConcurrencyOccursAndLogItAsync()
+        public async Task ShouldThrowDependencyValidationExceptionOnRemoveByIdIfDbConcurrencyOccursAndLogItAsync()
         {
             // given
             Guid someSourceId = Guid.NewGuid();

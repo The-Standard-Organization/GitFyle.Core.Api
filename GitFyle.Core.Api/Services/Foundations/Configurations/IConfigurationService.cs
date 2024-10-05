@@ -15,5 +15,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
         ValueTask<Configuration> RetrieveConfigurationByIdAsync(Guid configurationId);
         ValueTask<IQueryable<Configuration>> RetrieveAllConfigurationsAsync();
         ValueTask<Configuration> ModifyConfigurationAsync(Configuration configuration);
+        ValueTask<Configuration> RemoveConfigurationByIdAsync(Guid configurationId);
     }
 }
