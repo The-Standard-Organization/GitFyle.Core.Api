@@ -44,7 +44,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 this.configurationService.AddConfigurationAsync(someConfiguration);
 
             ConfigurationDependencyException actualConfigurationDependencyException =
-                await Assert.ThrowsAsync<ConfigurationDependencyException>(addConfigurationTask.AsTask);
+                await Assert.ThrowsAsync<ConfigurationDependencyException>(
+                    testCode: addConfigurationTask.AsTask);
 
             // then
             actualConfigurationDependencyException.Should()
@@ -98,7 +99,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 this.configurationService.AddConfigurationAsync(someConfiguration);
 
             ConfigurationDependencyValidationException actualConfigurationDependencyValidationException =
-                await Assert.ThrowsAsync<ConfigurationDependencyValidationException>(addConfigurationTask.AsTask);
+                await Assert.ThrowsAsync<ConfigurationDependencyValidationException>(
+                    testCode: addConfigurationTask.AsTask);
 
             // then
             actualConfigurationDependencyValidationException.Should()
@@ -149,7 +151,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 this.configurationService.AddConfigurationAsync(someConfiguration);
 
             ConfigurationDependencyException actualConfigurationDependencyException =
-                 await Assert.ThrowsAsync<ConfigurationDependencyException>(addConfigurationTask.AsTask);
+                 await Assert.ThrowsAsync<ConfigurationDependencyException>(
+                     testCode: addConfigurationTask.AsTask);
 
             // then
             actualConfigurationDependencyException.Should()
@@ -175,7 +178,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccurrsAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
         {
             // given
             DateTimeOffset someDate = GetRandomDateTimeOffset();
@@ -201,7 +204,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             var actualConfigurationServiceException =
                 await Assert.ThrowsAsync<ConfigurationServiceException>(
-                    addConfigurationTask.AsTask);
+                    testCode: addConfigurationTask.AsTask);
 
             // then
             actualConfigurationServiceException.Should()

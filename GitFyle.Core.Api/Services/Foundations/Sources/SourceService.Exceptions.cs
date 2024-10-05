@@ -58,12 +58,13 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
             }
             catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
-                var concurrencyGemException =
+                var lockedSourceException =
                     new LockedSourceException(
                         message: "Locked source record error occurred, please try again.",
-                        innerException: dbUpdateConcurrencyException);
+                        innerException: dbUpdateConcurrencyException,
+                        data: dbUpdateConcurrencyException.Data);
 
-                throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
+                throw await CreateAndLogDependencyValidationExceptionAsync(lockedSourceException);
             }
             catch (DbUpdateException dbUpdateException)
             {

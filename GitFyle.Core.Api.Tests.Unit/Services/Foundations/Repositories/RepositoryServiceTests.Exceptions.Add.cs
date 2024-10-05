@@ -185,7 +185,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             var failedServiceRepositoryException =
                 new FailedServiceRepositoryException(
-                    message: "Failed service Repository error occurred, contact support.",
+                    message: "Failed service repository error occurred, contact support.",
                     innerException: serviceException);
 
             var expectedRepositoryServiceException =

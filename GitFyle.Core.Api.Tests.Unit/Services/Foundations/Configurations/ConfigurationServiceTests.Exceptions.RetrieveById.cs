@@ -3,9 +3,6 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
@@ -23,43 +20,43 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             var someConfigurationId = Guid.NewGuid();
             var sqlException = CreateSqlException();
 
-            var failedStorageConfigurationException = 
+            var failedStorageConfigurationException =
                 new FailedStorageConfigurationException(
                     message: "Failed configuration storage error occurred, contact support.",
                     innerException: sqlException);
 
-            var expectedConfigurationDependencyException = 
+            var expectedConfigurationDependencyException =
                 new ConfigurationDependencyException(
-                    message:"Configuration dependency error occurred, contact support.", 
+                    message: "Configuration dependency error occurred, contact support.",
                     innerException: failedStorageConfigurationException);
 
-            this.storageBrokerMock.Setup(broker => 
+            this.storageBrokerMock.Setup(broker =>
                 broker.SelectConfigurationByIdAsync(someConfigurationId))
                     .ThrowsAsync(sqlException);
 
             // when
-            ValueTask<Configuration> retrieveConfigurationByIdTask = 
+            ValueTask<Configuration> retrieveConfigurationByIdTask =
                 this.configurationService.RetrieveConfigurationByIdAsync(someConfigurationId);
 
-            ConfigurationDependencyException actualConfigurationDependencyException = 
+            ConfigurationDependencyException actualConfigurationDependencyException =
                 await Assert.ThrowsAsync<ConfigurationDependencyException>(
-                    retrieveConfigurationByIdTask.AsTask);
+                    testCode: retrieveConfigurationByIdTask.AsTask);
 
             // then
             actualConfigurationDependencyException.Should().BeEquivalentTo(
                 expectedConfigurationDependencyException);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.SelectConfigurationByIdAsync(someConfigurationId), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConfigurationByIdAsync(someConfigurationId),
                     Times.Once);
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationDependencyException))), 
+                    expectedConfigurationDependencyException))),
                         Times.Once);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -76,41 +73,41 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             var failedServiceConfigurationException =
                 new FailedServiceConfigurationException(
-                    message: "Failed service configuration error occurred, contact support.", 
+                    message: "Failed service configuration error occurred, contact support.",
                     innerException: serviceException);
 
-            var expectedConfigurationServiceException = 
+            var expectedConfigurationServiceException =
                 new ConfigurationServiceException(
-                    message:"Service error occurred, contact support.",
+                    message: "Service error occurred, contact support.",
                     innerException: failedServiceConfigurationException);
 
-            this.storageBrokerMock.Setup(broker => 
+            this.storageBrokerMock.Setup(broker =>
                 broker.SelectConfigurationByIdAsync(someConfigurationId))
                     .ThrowsAsync(serviceException);
 
             // when
-            ValueTask<Configuration> retrieveConfigurationByIdTask = 
+            ValueTask<Configuration> retrieveConfigurationByIdTask =
                 this.configurationService.RetrieveConfigurationByIdAsync(
                     someConfigurationId);
 
             ConfigurationServiceException actualConfigurationServiceException =
                 await Assert.ThrowsAsync<ConfigurationServiceException>(
-                    retrieveConfigurationByIdTask.AsTask);
+                    testCode: retrieveConfigurationByIdTask.AsTask);
             // then
             actualConfigurationServiceException.Should().BeEquivalentTo(
                 expectedConfigurationServiceException);
 
-            this.storageBrokerMock.Verify(broker => 
+            this.storageBrokerMock.Verify(broker =>
                 broker.SelectConfigurationByIdAsync(someConfigurationId),
                     Times.Once);
 
-            this.loggingBrokerMock.Verify(broker => 
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedConfigurationServiceException))), 
+                    expectedConfigurationServiceException))),
                         Times.Once);
 
-            this.datetimeBrokerMock.Verify(broker => 
-                broker.GetCurrentDateTimeOffsetAsync(), 
+            this.datetimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

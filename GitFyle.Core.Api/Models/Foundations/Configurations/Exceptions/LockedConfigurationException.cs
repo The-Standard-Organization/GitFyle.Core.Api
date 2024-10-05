@@ -6,11 +6,11 @@ using System;
 using System.Collections;
 using Xeptions;
 
-namespace GitFyle.Core.Api.Models.Foundations.Sources.Exceptions
+namespace GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions
 {
-    public class LockedSourceException : Xeption
+    public class LockedConfigurationException : Xeption
     {
-        public LockedSourceException(string message, Exception innerException, IDictionary data)
+        public LockedConfigurationException(string message, Exception innerException, IDictionary data)
             : base(message, innerException, data)
         { }
     }

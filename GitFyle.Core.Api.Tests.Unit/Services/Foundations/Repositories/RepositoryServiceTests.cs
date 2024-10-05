@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using GitFyle.Core.Api.Brokers.DateTimes;
@@ -58,6 +59,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
@@ -69,6 +73,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
         private static Repository CreateRandomRepository(DateTimeOffset dateTimeOffset) =>
             CreateRepositoryFiller(dateTimeOffset).Create();
+
+        private static IQueryable<Repository> CreateRandomRepositories()
+        {
+            return CreateRepositoryFiller(GetRandomDateTimeOffset())
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
 
         private static Filler<Repository> CreateRepositoryFiller(DateTimeOffset dateTimeOffset)
         {
