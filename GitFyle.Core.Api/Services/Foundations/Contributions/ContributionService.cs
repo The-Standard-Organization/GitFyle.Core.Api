@@ -65,5 +65,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
 
             return await this.storageBroker.UpdateContributionAsync(contribution);
         });
+
+        public ValueTask<Contribution> RemoveContributionByIdAsync(Guid contributionId) =>
+        TryCatch(async () =>
+        {
+            await ValidateContributionIdAsync(contributionId);
+
+            Contribution maybeContribution =
+                await this.storageBroker.SelectContributionByIdAsync(contributionId);
+
+            await ValidateStorageContributionAsync(maybeContribution, contributionId);
+
+            return await this.storageBroker.DeleteContributionAsync(maybeContribution);
+        });
     }
 }

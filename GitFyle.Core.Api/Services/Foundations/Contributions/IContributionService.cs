@@ -15,5 +15,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         ValueTask<IQueryable<Contribution>> RetrieveAllContributionsAsync();
         ValueTask<Contribution> RetrieveContributionByIdAsync(Guid contributionId);
         ValueTask<Contribution> ModifyContributionAsync(Contribution contribution);
+        ValueTask<Contribution> RemoveContributionByIdAsync(Guid contributionId);
     }
 }
