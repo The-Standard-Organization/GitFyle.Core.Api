@@ -51,5 +51,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
             return maybeRepository;
         });
+
+        public ValueTask<Repository> ModifyRepositoryAsync(Repository repository)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
