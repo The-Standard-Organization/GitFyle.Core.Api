@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
@@ -30,7 +31,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
         public static TheoryData<Xeption> ValidationExceptions()
         {
             var someInnerException = new Xeption();
-            string someMessage = CreateRandomString();
+            string someMessage = GetRandomString();
 
             return new TheoryData<Xeption>
             {
@@ -47,7 +48,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
         public static TheoryData<Xeption> ServerExceptions()
         {
             var someInnerException = new Xeption();
-            string someMessage = CreateRandomString();
+            string someMessage = GetRandomString();
 
             return new TheoryData<Xeption>
             {
@@ -61,10 +62,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
             };
         }
 
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private static IQueryable<Source> CreateRandomSources() =>
+            CreateSourceFiller().Create(count: GetRandomNumber()).AsQueryable();
+
         private static Source CreateRandomSource() =>
             CreateSourceFiller().Create();
 
-        private static string CreateRandomString() =>
+        private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
