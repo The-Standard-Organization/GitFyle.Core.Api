@@ -38,7 +38,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 
             ContributionValidationException actualContributionValidationException =
                 await Assert.ThrowsAsync<ContributionValidationException>(
-                    retrieveContributionByIdTask.AsTask);
+                    testCode: retrieveContributionByIdTask.AsTask);
 
             // then
             actualContributionValidationException.Should().BeEquivalentTo(
@@ -89,7 +89,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 
             ContributionValidationException actualContributionValidationException =
                 await Assert.ThrowsAsync<ContributionValidationException>(
-                    retrieveContributionByIdTask.AsTask);
+                    testCode: retrieveContributionByIdTask.AsTask);
 
             // then
             actualContributionValidationException.Should().BeEquivalentTo(

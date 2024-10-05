@@ -38,7 +38,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             RepositoryValidationException actualRepositoryValidationException =
                 await Assert.ThrowsAsync<RepositoryValidationException>(
-                    retrieveRepositoryByIdTask.AsTask);
+                    testCode: retrieveRepositoryByIdTask.AsTask);
 
             // then
             actualRepositoryValidationException.Should().BeEquivalentTo(
@@ -89,7 +89,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             RepositoryValidationException actualRepositoryValidationException =
                 await Assert.ThrowsAsync<RepositoryValidationException>(
-                    retrieveRepositoryByIdTask.AsTask);
+                    testCode: retrieveRepositoryByIdTask.AsTask);
 
             // then
             actualRepositoryValidationException.Should().BeEquivalentTo(

@@ -40,7 +40,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationDependencyException actualConfigurationDependencyException =
                 await Assert.ThrowsAsync<ConfigurationDependencyException>(
-                    retrieveConfigurationByIdTask.AsTask);
+                    testCode: retrieveConfigurationByIdTask.AsTask);
 
             // then
             actualConfigurationDependencyException.Should().BeEquivalentTo(
@@ -92,7 +92,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationServiceException actualConfigurationServiceException =
                 await Assert.ThrowsAsync<ConfigurationServiceException>(
-                    retrieveConfigurationByIdTask.AsTask);
+                    testCode: retrieveConfigurationByIdTask.AsTask);
             // then
             actualConfigurationServiceException.Should().BeEquivalentTo(
                 expectedConfigurationServiceException);
