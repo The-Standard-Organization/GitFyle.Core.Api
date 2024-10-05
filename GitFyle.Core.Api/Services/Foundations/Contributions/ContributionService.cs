@@ -34,8 +34,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             await ValidateContributionOnAddAsync(contribution);
 
             return await this.storageBroker.InsertContributionAsync(contribution);
-        });  
-        
+        });
+
         public ValueTask<IQueryable<Contribution>> RetrieveAllContributionsAsync() =>
         TryCatch(async () => await this.storageBroker.SelectAllContributionsAsync());
 

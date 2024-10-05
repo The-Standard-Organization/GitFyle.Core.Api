@@ -2,8 +2,8 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System.Linq;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 
