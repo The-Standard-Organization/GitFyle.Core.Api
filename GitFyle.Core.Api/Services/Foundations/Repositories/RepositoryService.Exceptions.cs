@@ -3,10 +3,12 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Xeptions;
@@ -16,6 +18,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
     internal partial class RepositoryService
     {
         private delegate ValueTask<Repository> ReturningRepositoryFunction();
+        private delegate ValueTask<IQueryable<Repository>> ReturningRepositoriesFunction();
 
         private async ValueTask<Repository> TryCatch(ReturningRepositoryFunction returningRepositoryFunction)
         {
@@ -25,11 +28,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             }
             catch (NullRepositoryException nullRepositoryException)
             {
-                throw await CreateAndLogValidationException(nullRepositoryException);
+                throw await CreateAndLogValidationExceptionAsync(nullRepositoryException);
             }
             catch (InvalidRepositoryException invalidRepositoryException)
             {
-                throw await CreateAndLogValidationException(invalidRepositoryException);
+                throw await CreateAndLogValidationExceptionAsync(invalidRepositoryException);
+            }
+            catch (NotFoundRepositoryException notFoundRepositoryException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundRepositoryException);
             }
             catch (SqlException sqlException)
             {
@@ -62,14 +69,40 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             {
                 var failedServiceRepositoryException =
                     new FailedServiceRepositoryException(
-                        message: "Failed service Repository error occurred, contact support.",
+                        message: "Failed service repository error occurred, contact support.",
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
             }
         }
 
-        private async ValueTask<RepositoryValidationException> CreateAndLogValidationException(
+        private async ValueTask<IQueryable<Repository>> TryCatch(
+            ReturningRepositoriesFunction returningRepositoriesFunction)
+        {
+            try
+            {
+                return await returningRepositoriesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageRepositoryException = new FailedStorageRepositoryException(
+                    message: "Failed repository storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageRepositoryException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceRepositoryException =
+                    new FailedServiceRepositoryException(
+                        message: "Failed service repository error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
+            }
+        }
+  
+        private async ValueTask<RepositoryValidationException> CreateAndLogValidationExceptionAsync(
             Xeption exception)
         {
             var RepositoryValidationException = new RepositoryValidationException(
@@ -81,7 +114,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             return RepositoryValidationException;
         }
 
-        private async Task<Exception> CreateAndLogCriticalDependencyExceptionAsync(Xeption exception)
+        private async Task<RepositoryDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
+            Xeption exception)
         {
             var repositoryDependencyException = new RepositoryDependencyException(
                 message: "Repository dependency error occurred, contact support.",
