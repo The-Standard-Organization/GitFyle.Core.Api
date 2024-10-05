@@ -42,7 +42,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 
             ContributionDependencyException actualContributionDependencyException =
                 await Assert.ThrowsAsync<ContributionDependencyException>(
-                    modifyContributionTask.AsTask);
+                    testCode: modifyContributionTask.AsTask);
 
             // then
             actualContributionDependencyException.Should().BeEquivalentTo(
@@ -109,7 +109,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 
             ContributionDependencyException actualContributionDependencyException =
                 await Assert.ThrowsAsync<ContributionDependencyException>(
-                    modifyContributionTask.AsTask);
+                    testCode: modifyContributionTask.AsTask);
 
             // then
             actualContributionDependencyException.Should().BeEquivalentTo(
@@ -146,7 +146,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             var lockedContributionException =
                 new LockedContributionException(
                     message: "Locked contribution record error occurred, please try again.",
-                    innerException: dbUpdateConcurrencyException);
+                    innerException: dbUpdateConcurrencyException,
+                    data: dbUpdateConcurrencyException.Data);
 
             var expectedContributionDependencyValidationException =
                 new ContributionDependencyValidationException(
@@ -163,7 +164,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 
             ContributionDependencyValidationException actualContributionDependencyValidationException =
                 await Assert.ThrowsAsync<ContributionDependencyValidationException>(
-                    modifyContributionTask.AsTask);
+                    testCode: modifyContributionTask.AsTask);
 
             // then
             actualContributionDependencyValidationException.Should().BeEquivalentTo(
@@ -226,7 +227,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 
             ContributionServiceException actualContributionServiceException =
                 await Assert.ThrowsAsync<ContributionServiceException>(
-                    modifyContributionTask.AsTask);
+                    testCode: modifyContributionTask.AsTask);
 
             // then
             actualContributionServiceException.Should().BeEquivalentTo(

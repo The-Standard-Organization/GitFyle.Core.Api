@@ -130,7 +130,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
             var lockedSourceException =
                 new LockedSourceException(
                     message: someMessage,
-                    innerException: someInnerException);
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
 
             var sourceDependencyValidationException =
                 new SourceDependencyValidationException(

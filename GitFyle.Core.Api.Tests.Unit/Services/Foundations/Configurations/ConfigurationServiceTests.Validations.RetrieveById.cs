@@ -38,7 +38,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    retrieveConfigurationByIdTask.AsTask);
+                    testCode: retrieveConfigurationByIdTask.AsTask);
             // then
             actualConfigurationValidationException.Should().BeEquivalentTo(
                 expectedConfigurationValidationException);
@@ -87,7 +87,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    retrieveConfigurationByIdTask.AsTask);
+                    testCode: retrieveConfigurationByIdTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should().BeEquivalentTo(

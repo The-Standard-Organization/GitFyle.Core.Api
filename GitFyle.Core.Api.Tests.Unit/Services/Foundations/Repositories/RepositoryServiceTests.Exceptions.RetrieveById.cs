@@ -40,7 +40,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             // then
             await Assert.ThrowsAsync<RepositoryDependencyException>(
-                retrieveRepositoryByIdTask.AsTask);
+                testCode: retrieveRepositoryByIdTask.AsTask);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectRepositoryByIdAsync(It.IsAny<Guid>()),
@@ -87,7 +87,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             RepositoryServiceException actualRepositoryServiceException =
                 await Assert.ThrowsAsync<RepositoryServiceException>(
-                    retrieveRepositoryByIdTask.AsTask);
+                    testCode: retrieveRepositoryByIdTask.AsTask);
 
             //then
             actualRepositoryServiceException.Should().BeEquivalentTo(

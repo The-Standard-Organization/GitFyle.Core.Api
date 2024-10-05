@@ -34,7 +34,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    addConfigurationTask.AsTask);
+                    testCode: addConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should().BeEquivalentTo(
@@ -120,7 +120,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    addConfigurationTask.AsTask);
+                    testCode: addConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should()
@@ -175,7 +175,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    addConfigurationTask.AsTask);
+                    testCode: addConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should()
@@ -235,7 +235,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    addConfigurationTask.AsTask);
+                    testCode: addConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should()
@@ -303,7 +303,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
                 this.configurationService.AddConfigurationAsync(invalidConfiguration);
 
             ConfigurationValidationException actualConfigurationValidationException =
-                await Assert.ThrowsAsync<ConfigurationValidationException>(addConfigurationTask.AsTask);
+                await Assert.ThrowsAsync<ConfigurationValidationException>(
+                    testCode: addConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should()
