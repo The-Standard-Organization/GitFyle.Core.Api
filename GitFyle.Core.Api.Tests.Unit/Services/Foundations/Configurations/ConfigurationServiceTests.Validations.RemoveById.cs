@@ -60,5 +60,56 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.datetimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRemoveByIdIfNotFoundAndLogItAsync()
+        {
+            // given
+            Guid someConfigurationId = Guid.NewGuid();
+            Configuration noConfiguration = null;
+
+            var notFoundConfigurationException = 
+                new NotFoundConfigurationException(
+                    message: $"Configuration not found with configuration id: {someConfigurationId}");
+
+            var expectedConfigurationValidationException =
+                new ConfigurationValidationException(
+                    message: "Configuration validation error occurred, fix the errors and try again.",
+                    innerException: notFoundConfigurationException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConfigurationByIdAsync(someConfigurationId))
+                    .ReturnsAsync(noConfiguration);
+
+            // when
+            ValueTask<Configuration> removeConfigurationByIdTask = 
+                this.configurationService.RemoveConfigurationByIdAsync(someConfigurationId);
+
+            ConfigurationValidationException actualConfigurationValidationException =
+                await Assert.ThrowsAsync<ConfigurationValidationException>(
+                    removeConfigurationByIdTask.AsTask);
+
+            // then
+            actualConfigurationValidationException.Should().BeEquivalentTo(
+                expectedConfigurationValidationException);
+
+            this.storageBrokerMock.Verify(broker => 
+                broker.SelectConfigurationByIdAsync(someConfigurationId), 
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker => 
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConfigurationValidationException))), 
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker => 
+                broker.DeleteConfigurationAsync(
+                    It.IsAny<Configuration>()), 
+                        Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.datetimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
