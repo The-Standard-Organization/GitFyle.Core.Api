@@ -70,7 +70,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             var notFoundConfigurationException = 
                 new NotFoundConfigurationException(
-                    message: $"Configuration not found with configuration id: {someConfigurationId}");
+                    message: $"Configuration not found with id: {someConfigurationId}");
 
             var expectedConfigurationValidationException =
                 new ConfigurationValidationException(
