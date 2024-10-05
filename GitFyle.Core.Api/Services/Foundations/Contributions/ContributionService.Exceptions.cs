@@ -61,7 +61,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
                 var concurrencyGemException =
                     new LockedContributionException(
                         message: "Locked contribution record error occurred, please try again.",
-                        innerException: dbUpdateConcurrencyException);
+                        innerException: dbUpdateConcurrencyException,
+                        data: dbUpdateConcurrencyException.Data);
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
             }
@@ -111,7 +112,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             }
         }
 
-        private async ValueTask<ContributionValidationException> 
+        private async ValueTask<ContributionValidationException>
             CreateAndLogValidationExceptionAsync(Xeption exception)
         {
             var contributionValidationException = new ContributionValidationException(

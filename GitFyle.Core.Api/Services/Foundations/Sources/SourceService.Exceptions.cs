@@ -61,7 +61,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Sources
                 var lockedSourceException =
                     new LockedSourceException(
                         message: "Locked source record error occurred, please try again.",
-                        innerException: dbUpdateConcurrencyException);
+                        innerException: dbUpdateConcurrencyException,
+                        data: dbUpdateConcurrencyException.Data);
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(lockedSourceException);
             }
