@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Xeptions;
@@ -55,6 +54,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                         data: duplicateKeyException.Data);
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsRepositoryException);
+            }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var concurrencyGemException =
+                    new LockedRepositoryException(
+                        message: "Locked repository record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException,
+                        data: dbUpdateConcurrencyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
             }
             catch (DbUpdateException dbUpdateException)
             {
