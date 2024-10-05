@@ -36,7 +36,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    addConfigurationTask.AsTask);
+                    testCode: addConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should().BeEquivalentTo(
@@ -122,7 +122,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             // then
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    modifyConfigurationTask.AsTask);
+                    testCode: modifyConfigurationTask.AsTask);
 
             actualConfigurationValidationException.Should().BeEquivalentTo(
                 expectedConfigurationValidationException);
@@ -176,7 +176,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    modifyConfigurationTask.AsTask);
+                    testCode: modifyConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should()
@@ -238,7 +238,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    modifyConfigurationTask.AsTask);
+                    testCode: modifyConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should()
@@ -296,7 +296,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    modifyConfigurationTask.AsTask);
+                    testCode: modifyConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should()
@@ -363,7 +363,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                 await Assert.ThrowsAsync<ConfigurationValidationException>(
-                    modifyConfigurationTask.AsTask);
+                    testCode: modifyConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should().BeEquivalentTo(
@@ -424,7 +424,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             ConfigurationValidationException actualConfigurationValidationException =
                await Assert.ThrowsAsync<ConfigurationValidationException>(
-                   modifyConfigurationTask.AsTask);
+                   testCode: modifyConfigurationTask.AsTask);
 
             // then
             actualConfigurationValidationException.Should().BeEquivalentTo(

@@ -39,8 +39,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                 this.sourceService.RetrieveSourceByIdAsync(someSourceId);
 
             // then
-            await Assert.ThrowsAsync<SourceDependencyException>(() =>
-                retrieveSourceByIdTask.AsTask());
+            await Assert.ThrowsAsync<SourceDependencyException>(
+                testCode: retrieveSourceByIdTask.AsTask);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectSourceByIdAsync(someSourceId),
@@ -87,7 +87,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             SourceServiceException actualSourceServiceException =
                 await Assert.ThrowsAsync<SourceServiceException>(
-                    retrieveSourceByIdTask.AsTask);
+                    testCode: retrieveSourceByIdTask.AsTask);
 
             //then
             actualSourceServiceException.Should().BeEquivalentTo(

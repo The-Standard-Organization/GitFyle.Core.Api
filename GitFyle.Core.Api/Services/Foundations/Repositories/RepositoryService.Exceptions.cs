@@ -28,11 +28,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             }
             catch (NullRepositoryException nullRepositoryException)
             {
-                throw await CreateAndLogValidationException(nullRepositoryException);
+                throw await CreateAndLogValidationExceptionAsync(nullRepositoryException);
             }
             catch (InvalidRepositoryException invalidRepositoryException)
             {
-                throw await CreateAndLogValidationException(invalidRepositoryException);
+                throw await CreateAndLogValidationExceptionAsync(invalidRepositoryException);
+            }
+            catch (NotFoundRepositoryException notFoundRepositoryException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundRepositoryException);
             }
             catch (SqlException sqlException)
             {
@@ -65,7 +69,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             {
                 var failedServiceRepositoryException =
                     new FailedServiceRepositoryException(
-                        message: "Failed service Repository error occurred, contact support.",
+                        message: "Failed service repository error occurred, contact support.",
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
@@ -73,11 +77,11 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         }
 
         private async ValueTask<IQueryable<Repository>> TryCatch(
-            ReturningRepositoriesFunction returningRepositoriesunction)
+            ReturningRepositoriesFunction returningRepositoriesFunction)
         {
             try
             {
-                return await returningRepositoriesunction();
+                return await returningRepositoriesFunction();
             }
             catch (SqlException sqlException)
             {
@@ -97,8 +101,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
             }
         }
-
-        private async ValueTask<RepositoryValidationException> CreateAndLogValidationException(
+  
+        private async ValueTask<RepositoryValidationException> CreateAndLogValidationExceptionAsync(
             Xeption exception)
         {
             var RepositoryValidationException = new RepositoryValidationException(
@@ -110,7 +114,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             return RepositoryValidationException;
         }
 
-        private async Task<Exception> CreateAndLogCriticalDependencyExceptionAsync(Xeption exception)
+        private async Task<RepositoryDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
+            Xeption exception)
         {
             var repositoryDependencyException = new RepositoryDependencyException(
                 message: "Repository dependency error occurred, contact support.",

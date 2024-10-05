@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Repositories
 {
@@ -134,11 +135,23 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             return (isNotRecent, startDate, endDate);
         }
 
+        private static async ValueTask ValidateRepositoryIdAsync(Guid repositoryId) =>
+            Validate((Rule: await IsInvalidAsync(repositoryId), Parameter: nameof(Repository.Id)));
+
         private static void ValidateRepositoryIsNotNull(Repository repository)
         {
             if (repository is null)
             {
                 throw new NullRepositoryException(message: "Repository is null");
+            }
+        }
+
+        private static async ValueTask ValidateStorageRepositoryAsync(Repository maybeRepository, Guid repositoryId)
+        {
+            if (maybeRepository is null)
+            {
+                throw new NotFoundRepositoryException(
+                    message: $"Repository not found with id: {repositoryId}");
             }
         }
 

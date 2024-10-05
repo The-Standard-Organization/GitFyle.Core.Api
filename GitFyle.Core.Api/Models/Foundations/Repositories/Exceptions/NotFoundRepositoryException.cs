@@ -2,16 +2,14 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
-using System.Collections;
 using Xeptions;
 
-namespace GitFyle.Core.Api.Models.Foundations.Sources.Exceptions
+namespace GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions
 {
-    public class LockedSourceException : Xeption
+    public class NotFoundRepositoryException : Xeption
     {
-        public LockedSourceException(string message, Exception innerException, IDictionary data)
-            : base(message, innerException, data)
+        public NotFoundRepositoryException(string message)
+            : base(message)
         { }
     }
 }
