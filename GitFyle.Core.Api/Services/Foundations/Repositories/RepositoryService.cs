@@ -52,9 +52,17 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             return maybeRepository;
         });
 
-        public ValueTask<Repository> ModifyRepositoryAsync(Repository repository)
+        public ValueTask<Repository> ModifyRepositoryAsync(Repository repository) =>
+        TryCatch(async () =>
         {
-            throw new NotImplementedException();
-        }
+            await ValidateRepositoryOnModifyAsync(repository);
+            Repository maybeRepository =
+                await this.storageBroker.SelectRepositoryByIdAsync(repository.Id);
+
+            await ValidateStorageRepositoryAsync(maybeRepository, repository.Id);
+            await ValidateAgainstStorageRepositoryOnModifyAsync(repository, maybeRepository);
+
+            return await this.storageBroker.UpdateRepositoryAsync(repository);
+        });
     }
 }

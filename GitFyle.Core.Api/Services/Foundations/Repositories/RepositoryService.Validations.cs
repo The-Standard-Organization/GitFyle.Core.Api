@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
 
 namespace GitFyle.Core.Api.Services.Foundations.Repositories
 {
@@ -59,6 +58,47 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 (Rule: await IsNotRecentAsync(repository.CreatedDate), Parameter: nameof(Repository.CreatedDate)));
         }
 
+        private async ValueTask ValidateRepositoryOnModifyAsync(Repository repository)
+        {
+            ValidateRepositoryIsNotNull(repository);
+
+            Validate(
+                (Rule: await IsInvalidAsync(repository.Id), Parameter: nameof(Repository.Id)),
+                (Rule: await IsInvalidAsync(repository.Name), Parameter: nameof(Repository.Name)),
+                (Rule: await IsInvalidAsync(repository.Owner), Parameter: nameof(Repository.Owner)),
+                (Rule: await IsInvalidAsync(repository.ExternalId), Parameter: nameof(Repository.ExternalId)),
+                (Rule: await IsInvalidAsync(repository.SourceId), Parameter: nameof(Repository.SourceId)),
+                (Rule: await IsInvalidAsync(repository.Token), Parameter: nameof(Repository.Token)),
+                (Rule: await IsInvalidAsync(repository.TokenExpireAt), Parameter: nameof(Repository.TokenExpireAt)),
+                (Rule: await IsInvalidAsync(repository.Description), Parameter: nameof(Repository.Description)),
+
+                (Rule: await IsInvalidAsync(repository.ExternalCreatedAt),
+                    Parameter: nameof(Repository.ExternalCreatedAt)),
+
+                (Rule: await IsInvalidAsync(repository.ExternalUpdatedAt),
+                    Parameter: nameof(Repository.ExternalUpdatedAt)),
+
+                (Rule: await IsInvalidAsync(repository.CreatedBy), Parameter: nameof(Repository.CreatedBy)),
+                (Rule: await IsInvalidAsync(repository.CreatedDate), Parameter: nameof(Repository.CreatedDate)),
+                (Rule: await IsInvalidAsync(repository.UpdatedBy), Parameter: nameof(Repository.UpdatedBy)),
+                (Rule: await IsInvalidAsync(repository.UpdatedDate), Parameter: nameof(Repository.UpdatedDate)),
+                (Rule: await IsInvalidLengthAsync(repository.Name, 255), Parameter: nameof(Repository.Name)),
+                (Rule: await IsInvalidLengthAsync(repository.Owner, 255), Parameter: nameof(Repository.Owner)),
+
+                (Rule: await IsInvalidLengthAsync(repository.ExternalId, 255),
+                    Parameter: nameof(Repository.ExternalId)),
+
+                (Rule: await IsSameAsync(
+                    firstDate: repository.UpdatedDate,
+                    secondDate: repository.CreatedDate,
+                    secondDateName: nameof(Repository.CreatedDate)),
+
+                Parameter: nameof(Repository.UpdatedDate)),
+
+                (Rule: await IsNotRecentAsync(repository.UpdatedDate),
+                    Parameter: nameof(Repository.UpdatedDate)));
+        }
+
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
         {
             Condition = id == Guid.Empty,
@@ -85,6 +125,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
         private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
+
+        private static async ValueTask<dynamic> IsSameAsync(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
+            };
+
 
         private static async ValueTask<dynamic> IsNotSameAsync(
             DateTimeOffset firstDate,
@@ -153,6 +203,32 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 throw new NotFoundRepositoryException(
                     message: $"Repository not found with id: {repositoryId}");
             }
+        }
+
+        private static async ValueTask ValidateAgainstStorageRepositoryOnModifyAsync(
+          Repository inputRepository, Repository storageRepository)
+        {
+            Validate(
+                (Rule: await IsNotSameAsync(
+                    first: inputRepository.CreatedBy,
+                    second: storageRepository.CreatedBy,
+                    secondName: nameof(Repository.CreatedBy)),
+
+                Parameter: nameof(Repository.CreatedBy)),
+
+                (Rule: await IsNotSameAsync(
+                    firstDate: inputRepository.CreatedDate,
+                    secondDate: storageRepository.CreatedDate,
+                    secondDateName: nameof(Repository.CreatedDate)),
+
+                Parameter: nameof(Repository.CreatedDate)),
+
+                (Rule: await IsSameAsync(
+                    firstDate: inputRepository.UpdatedDate,
+                    secondDate: storageRepository.UpdatedDate,
+                    secondDateName: nameof(Repository.UpdatedDate)),
+
+                Parameter: nameof(Repository.UpdatedDate)));
         }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
