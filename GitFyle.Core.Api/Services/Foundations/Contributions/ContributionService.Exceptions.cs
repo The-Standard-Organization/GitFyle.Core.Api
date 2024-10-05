@@ -143,7 +143,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
         {
             var contributionDependencyValidationException = new ContributionDependencyValidationException(
                 message: "Contribution dependency validation error occurred, fix errors and try again.",
-                innerException: exception);
+                innerException: exception,
+                data: exception.Data);
 
             await this.loggingBroker.LogErrorAsync(contributionDependencyValidationException);
 
