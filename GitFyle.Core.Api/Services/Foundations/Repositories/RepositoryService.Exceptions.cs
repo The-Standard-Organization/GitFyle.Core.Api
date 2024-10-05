@@ -131,7 +131,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         {
             var RepositoryDependencyValidationException = new RepositoryDependencyValidationException(
                 message: "Repository dependency validation error occurred, fix errors and try again.",
-                innerException: exception);
+                innerException: exception,
+                data: exception.Data);
 
             await this.loggingBroker.LogErrorAsync(RepositoryDependencyValidationException);
 
