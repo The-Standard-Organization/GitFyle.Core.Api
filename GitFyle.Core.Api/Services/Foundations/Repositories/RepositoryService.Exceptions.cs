@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Xeptions;
@@ -101,6 +102,32 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             }
         }
 
+        private async ValueTask<IQueryable<Repository>> TryCatch(
+            ReturningRepositoriesFunction returningRepositoriesunction)
+        {
+            try
+            {
+                return await returningRepositoriesunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageRepositoryException = new FailedStorageRepositoryException(
+                    message: "Failed repository storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageRepositoryException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceRepositoryException =
+                    new FailedServiceRepositoryException(
+                        message: "Failed service repository error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
+            }
+        }
+  
         private async ValueTask<RepositoryValidationException> CreateAndLogValidationExceptionAsync(
             Xeption exception)
         {
