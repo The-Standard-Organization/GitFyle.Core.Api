@@ -78,7 +78,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             var lockedConfigurationException =
                 new LockedConfigurationException(
                     message: "Locked configuration record error occurred, please try again.",
-                    innerException: dbUpdateConcurrencyException);
+                    innerException: dbUpdateConcurrencyException,
+                    data: dbUpdateConcurrencyException.Data);
 
             var expectedConfigurationDependencyValidationException =
                 new ConfigurationDependencyValidationException(
