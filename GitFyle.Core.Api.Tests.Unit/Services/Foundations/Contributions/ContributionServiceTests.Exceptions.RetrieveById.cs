@@ -39,8 +39,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                 this.contributionService.RetrieveContributionByIdAsync(someContributionId);
 
             // then
-            await Assert.ThrowsAsync<ContributionDependencyException>(() =>
-                retrieveContributionByIdTask.AsTask());
+            await Assert.ThrowsAsync<ContributionDependencyException>(
+                testCode: retrieveContributionByIdTask.AsTask);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectContributionByIdAsync(someContributionId),
@@ -87,7 +87,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 
             ContributionServiceException actualContributionServiceException =
                 await Assert.ThrowsAsync<ContributionServiceException>(
-                    retrieveContributionByIdTask.AsTask);
+                    testCode: retrieveContributionByIdTask.AsTask);
 
             // then
             actualContributionServiceException.Should().BeEquivalentTo(

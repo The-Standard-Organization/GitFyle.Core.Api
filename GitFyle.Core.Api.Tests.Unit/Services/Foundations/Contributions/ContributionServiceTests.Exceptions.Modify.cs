@@ -5,64 +5,64 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
+namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 {
-    public partial class SourceServiceTests
+    public partial class ContributionServiceTests
     {
         [Fact]
         public async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
         {
             // given
-            Source someSource = CreateRandomSource();
+            Contribution someContribution = CreateRandomContribution();
             SqlException sqlException = CreateSqlException();
 
-            var failedSourceStorageException =
-                new FailedStorageSourceException(
-                    message: "Failed source storage error occurred, contact support.",
+            var failedContributionStorageException =
+                new FailedStorageContributionException(
+                    message: "Failed contribution storage error occurred, contact support.",
                         innerException: sqlException);
 
-            var expectedSourceDependencyException =
-                new SourceDependencyException(
-                    message: "Source dependency error occurred, contact support.",
-                        innerException: failedSourceStorageException);
+            var expectedContributionDependencyException =
+                new ContributionDependencyException(
+                    message: "Contribution dependency error occurred, contact support.",
+                        innerException: failedContributionStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ThrowsAsync(sqlException);
 
             // when
-            ValueTask<Source> modifySourceTask =
-                this.sourceService.ModifySourceAsync(someSource);
+            ValueTask<Contribution> modifyContributionTask =
+                this.contributionService.ModifyContributionAsync(someContribution);
 
-            SourceDependencyException actualSourceDependencyException =
-                await Assert.ThrowsAsync<SourceDependencyException>(
-                    testCode: modifySourceTask.AsTask);
+            ContributionDependencyException actualContributionDependencyException =
+                await Assert.ThrowsAsync<ContributionDependencyException>(
+                    testCode: modifyContributionTask.AsTask);
 
             // then
-            actualSourceDependencyException.Should().BeEquivalentTo(
-                expectedSourceDependencyException);
+            actualContributionDependencyException.Should().BeEquivalentTo(
+                expectedContributionDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectSourceByIdAsync(someSource.Id),
+                broker.SelectContributionByIdAsync(someContribution.Id),
                     Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
-                    expectedSourceDependencyException))),
+                    expectedContributionDependencyException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdateSourceAsync(someSource),
+                broker.UpdateContributionAsync(someContribution),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -77,26 +77,26 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             int minutesInPast = GetRandomNegativeNumber();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
 
-            Source randomSource =
-                CreateRandomSource(randomDateTimeOffset);
+            Contribution randomContribution =
+                CreateRandomContribution(randomDateTimeOffset);
 
-            randomSource.CreatedDate =
+            randomContribution.CreatedDate =
                 randomDateTimeOffset.AddMinutes(minutesInPast);
 
             var dbUpdateException = new DbUpdateException();
 
-            var failedOperationSourceException =
-                new FailedOperationSourceException(
-                    message: "Failed operation source  error occurred, contact support.",
+            var failedOperationContributionException =
+                new FailedOperationContributionException(
+                    message: "Failed operation contribution  error occurred, contact support.",
                     innerException: dbUpdateException);
 
-            var expectedSourceDependencyException =
-                new SourceDependencyException(
-                    message: "Source dependency error occurred, contact support.",
-                    innerException: failedOperationSourceException);
+            var expectedContributionDependencyException =
+                new ContributionDependencyException(
+                    message: "Contribution dependency error occurred, contact support.",
+                    innerException: failedOperationContributionException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectSourceByIdAsync(randomSource.Id))
+                broker.SelectContributionByIdAsync(randomContribution.Id))
                     .ThrowsAsync(dbUpdateException);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -104,19 +104,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                     .ReturnsAsync(randomDateTimeOffset);
 
             // when
-            ValueTask<Source> modifySourceTask =
-                this.sourceService.ModifySourceAsync(randomSource);
+            ValueTask<Contribution> modifyContributionTask =
+                this.contributionService.ModifyContributionAsync(randomContribution);
 
-            SourceDependencyException actualSourceDependencyException =
-                await Assert.ThrowsAsync<SourceDependencyException>(
-                    testCode: modifySourceTask.AsTask);
+            ContributionDependencyException actualContributionDependencyException =
+                await Assert.ThrowsAsync<ContributionDependencyException>(
+                    testCode: modifyContributionTask.AsTask);
 
             // then
-            actualSourceDependencyException.Should().BeEquivalentTo(
-                expectedSourceDependencyException);
+            actualContributionDependencyException.Should().BeEquivalentTo(
+                expectedContributionDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectSourceByIdAsync(randomSource.Id),
+                broker.SelectContributionByIdAsync(randomContribution.Id),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -125,7 +125,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedSourceDependencyException))),
+                    expectedContributionDependencyException))),
                         Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -138,37 +138,38 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            Source randomSource = CreateRandomSource(randomDateTimeOffset);
+            Contribution randomContribution = CreateRandomContribution(randomDateTimeOffset);
 
             var dbUpdateConcurrencyException =
                 new DbUpdateConcurrencyException();
 
-            var lockedSourceException =
-                new LockedSourceException(
-                    message: "Locked source record error occurred, please try again.",
+            var lockedContributionException =
+                new LockedContributionException(
+                    message: "Locked contribution record error occurred, please try again.",
                     innerException: dbUpdateConcurrencyException,
                     data: dbUpdateConcurrencyException.Data);
 
-            var expectedSourceDependencyValidationException =
-                new SourceDependencyValidationException(
-                    message: "Source dependency validation error occurred, fix errors and try again.",
-                    innerException: lockedSourceException);
+            var expectedContributionDependencyValidationException =
+                new ContributionDependencyValidationException(
+                    message: "Contribution dependency validation error occurred, fix errors and try again.",
+                    innerException: lockedContributionException, 
+                    data: lockedContributionException.Data);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ThrowsAsync(dbUpdateConcurrencyException);
 
             // when
-            ValueTask<Source> modifySourceTask =
-                this.sourceService.ModifySourceAsync(randomSource);
+            ValueTask<Contribution> modifyContributionTask =
+                this.contributionService.ModifyContributionAsync(randomContribution);
 
-            SourceDependencyValidationException actualSourceDependencyValidationException =
-                await Assert.ThrowsAsync<SourceDependencyValidationException>(
-                    testCode: modifySourceTask.AsTask);
+            ContributionDependencyValidationException actualContributionDependencyValidationException =
+                await Assert.ThrowsAsync<ContributionDependencyValidationException>(
+                    testCode: modifyContributionTask.AsTask);
 
             // then
-            actualSourceDependencyValidationException.Should().BeEquivalentTo(
-                expectedSourceDependencyValidationException);
+            actualContributionDependencyValidationException.Should().BeEquivalentTo(
+                expectedContributionDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
@@ -176,11 +177,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedSourceDependencyValidationException))),
+                    expectedContributionDependencyValidationException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectSourceByIdAsync(randomSource.Id),
+                broker.SelectContributionByIdAsync(randomContribution.Id),
                     Times.Never());
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -195,26 +196,26 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             int minutesInPast = GetRandomNegativeNumber();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
 
-            Source randomSource =
-                CreateRandomSource(randomDateTimeOffset);
+            Contribution randomContribution =
+                CreateRandomContribution(randomDateTimeOffset);
 
-            randomSource.CreatedDate =
+            randomContribution.CreatedDate =
                 randomDateTimeOffset.AddMinutes(minutesInPast);
 
             var serviceException = new Exception();
 
-            var failedServiceSourceException =
-                new FailedServiceSourceException(
-                    message: "Failed service source error occurred, contact support.",
+            var failedServiceContributionException =
+                new FailedServiceContributionException(
+                    message: "Failed service contribution error occurred, contact support.",
                     innerException: serviceException);
 
-            var expectedSourceServiceException =
-                new SourceServiceException(
+            var expectedContributionServiceException =
+                new ContributionServiceException(
                     message: "Service error occurred, contact support.",
-                    innerException: failedServiceSourceException);
+                    innerException: failedServiceContributionException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectSourceByIdAsync(randomSource.Id))
+                broker.SelectContributionByIdAsync(randomContribution.Id))
                     .ThrowsAsync(serviceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -222,19 +223,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
                     .ReturnsAsync(randomDateTimeOffset);
 
             // when
-            ValueTask<Source> modifySourceTask =
-                this.sourceService.ModifySourceAsync(randomSource);
+            ValueTask<Contribution> modifyContributionTask =
+                this.contributionService.ModifyContributionAsync(randomContribution);
 
-            SourceServiceException actualSourceServiceException =
-                await Assert.ThrowsAsync<SourceServiceException>(
-                    testCode: modifySourceTask.AsTask);
+            ContributionServiceException actualContributionServiceException =
+                await Assert.ThrowsAsync<ContributionServiceException>(
+                    testCode: modifyContributionTask.AsTask);
 
             // then
-            actualSourceServiceException.Should().BeEquivalentTo(
-                expectedSourceServiceException);
+            actualContributionServiceException.Should().BeEquivalentTo(
+                expectedContributionServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectSourceByIdAsync(randomSource.Id),
+                broker.SelectContributionByIdAsync(randomContribution.Id),
                     Times.Once());
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -243,7 +244,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedSourceServiceException))),
+                    expectedContributionServiceException))),
                         Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

@@ -34,7 +34,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             RepositoryValidationException actualRepositoryValidationException =
                 await Assert.ThrowsAsync<RepositoryValidationException>(
-                    addRepositoryTask.AsTask);
+                    testCode: addRepositoryTask.AsTask);
 
             // then
             actualRepositoryValidationException.Should().BeEquivalentTo(
@@ -154,7 +154,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             RepositoryValidationException actualRepositoryValidationException =
                 await Assert.ThrowsAsync<RepositoryValidationException>(
-                    addRepositoryTask.AsTask);
+                    testCode: addRepositoryTask.AsTask);
 
             // then
             actualRepositoryValidationException.Should().BeEquivalentTo(
@@ -219,7 +219,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             RepositoryValidationException actualRepositoryValidationException =
                 await Assert.ThrowsAsync<RepositoryValidationException>(
-                    addRepositoryTask.AsTask);
+                    testCode: addRepositoryTask.AsTask);
 
             // then
             actualRepositoryValidationException.Should()
@@ -282,7 +282,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             RepositoryValidationException actualRepositoryValidationException =
                 await Assert.ThrowsAsync<RepositoryValidationException>(
-                    addRepositoryTask.AsTask);
+                    testCode: addRepositoryTask.AsTask);
 
             // then
             actualRepositoryValidationException.Should().BeEquivalentTo(
@@ -350,7 +350,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             RepositoryValidationException actualRepositoryValidationException =
                 await Assert.ThrowsAsync<RepositoryValidationException>(
-                    addRepositoryTask.AsTask);
+                    testCode: addRepositoryTask.AsTask);
 
             // then
             actualRepositoryValidationException.Should().BeEquivalentTo(

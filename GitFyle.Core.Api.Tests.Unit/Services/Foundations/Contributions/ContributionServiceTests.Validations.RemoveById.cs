@@ -14,10 +14,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
     public partial class ContributionServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdWhenContributionIdIsInvalidAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnRemoveByIdIfIdIsInvalidAndLogitAsync()
         {
             // given
-            var invalidContributionId = Guid.Empty;
+            Guid someContributionId = Guid.Empty;
 
             var invalidContributionException =
                 new InvalidContributionException(
@@ -33,42 +33,41 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                     innerException: invalidContributionException);
 
             // when
-            ValueTask<Contribution> retrieveContributionByIdTask =
-                this.contributionService.RetrieveContributionByIdAsync(invalidContributionId);
+            ValueTask<Contribution> removeContributionByIdTask =
+                this.contributionService.RemoveContributionByIdAsync(someContributionId);
 
             ContributionValidationException actualContributionValidationException =
                 await Assert.ThrowsAsync<ContributionValidationException>(
-                    testCode: retrieveContributionByIdTask.AsTask);
+                    removeContributionByIdTask.AsTask);
 
             // then
             actualContributionValidationException.Should().BeEquivalentTo(
                 expectedContributionValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedContributionValidationException))),
-                    Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectContributionByIdAsync(It.IsAny<Guid>()),
-                    Times.Never);
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedContributionValidationException))),
+                        Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributionAsync(It.IsAny<Contribution>()),
+                    Times.Never);
+
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfContributionIdNotFoundAndLogitAsync()
+        public async Task ShouldThrowValidationExceptionOnRemoveByIdIfNotFoundAndLogItAsync()
         {
-            // given
-            var someContributionId = Guid.NewGuid();
-            Contribution nullContribution = null;
-            var innerException = new Exception();
+            //given
+            Guid someContributionId = Guid.NewGuid();
+            Contribution noContribution = null;
 
             var notFoundContributionException =
                 new NotFoundContributionException(
@@ -80,18 +79,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                     innerException: notFoundContributionException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectContributionByIdAsync(someContributionId))
-                    .ReturnsAsync(nullContribution);
+                broker.SelectContributionByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noContribution);
 
-            // when
-            ValueTask<Contribution> retrieveContributionByIdTask =
-                this.contributionService.RetrieveContributionByIdAsync(someContributionId);
+            //when
+            ValueTask<Contribution> removeContributionByIdTask =
+                this.contributionService.RemoveContributionByIdAsync(someContributionId);
 
             ContributionValidationException actualContributionValidationException =
                 await Assert.ThrowsAsync<ContributionValidationException>(
-                    testCode: retrieveContributionByIdTask.AsTask);
+                    removeContributionByIdTask.AsTask);
 
-            // then
+            //then
             actualContributionValidationException.Should().BeEquivalentTo(
                 expectedContributionValidationException);
 
@@ -100,9 +99,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedContributionValidationException))),
-                    Times.Once);
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedContributionValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteContributionAsync(It.IsAny<Contribution>()),
+                    Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

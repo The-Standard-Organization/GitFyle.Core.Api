@@ -42,7 +42,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             SourceDependencyException actualSourceDependencyException =
                 await Assert.ThrowsAsync<SourceDependencyException>(
-                    removeSourceByIdTask.AsTask);
+                    testCode: removeSourceByIdTask.AsTask);
 
             // then
             actualSourceDependencyException.Should().BeEquivalentTo(
@@ -78,7 +78,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
             var lockedSourceException =
                 new LockedSourceException(
                     message: "Locked source record error occurred, please try again.",
-                    innerException: dbUpdateConcurrencyException);
+                    innerException: dbUpdateConcurrencyException,
+                    data: dbUpdateConcurrencyException.Data);
 
             var expectedSourceDependencyValidationException =
                 new SourceDependencyValidationException(
@@ -95,7 +96,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             SourceDependencyValidationException actualSourceDependencyValidationException =
                 await Assert.ThrowsAsync<SourceDependencyValidationException>(
-                    removeSourceByIdTask.AsTask);
+                    testCode: removeSourceByIdTask.AsTask);
 
             // then
             actualSourceDependencyValidationException.Should().BeEquivalentTo(
@@ -146,7 +147,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Sources
 
             SourceServiceException actualSourceServiceException =
                 await Assert.ThrowsAsync<SourceServiceException>(
-                    removeSourceByIdTask.AsTask);
+                    testCode: removeSourceByIdTask.AsTask);
 
             // then
             actualSourceServiceException.Should()
