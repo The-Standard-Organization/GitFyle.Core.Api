@@ -300,5 +300,68 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(-61)]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(
+             int invalidSeconds)
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            DateTimeOffset now = randomDateTimeOffset;
+            DateTimeOffset startDate = now.AddSeconds(-60);
+            DateTimeOffset endDate = now.AddSeconds(0);
+            Repository randomRepository = CreateRandomRepository(randomDateTimeOffset);
+            randomRepository.UpdatedDate = randomDateTimeOffset.AddSeconds(invalidSeconds);
+
+            var invalidRepositoryException = new InvalidRepositoryException(
+                message: "Repository is invalid, fix the errors and try again.");
+
+            invalidRepositoryException.AddData(
+                key: nameof(Repository.UpdatedDate),
+                values:
+                [
+                    $"Date is not recent." +
+                    $" Expected a value between {startDate} and {endDate} but found {randomRepository.UpdatedDate}"
+                ]);
+
+            var expectedRepositoryValidationException = new RepositoryValidationException(
+                message: "Repository validation error occurred, fix errors and try again.",
+                innerException: invalidRepositoryException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Repository> modifyRepositoryTask =
+                this.repositoryService.ModifyRepositoryAsync(randomRepository);
+
+            RepositoryValidationException actualRepositoryValidationException =
+                await Assert.ThrowsAsync<RepositoryValidationException>(
+                    testCode: modifyRepositoryTask.AsTask);
+
+            // then
+            actualRepositoryValidationException.Should().BeEquivalentTo(
+                expectedRepositoryValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedRepositoryValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectRepositoryByIdAsync(It.IsAny<Guid>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
