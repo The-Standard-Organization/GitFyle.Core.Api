@@ -64,5 +64,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
             return await this.storageBroker.UpdateRepositoryAsync(repository);
         });
+
+        public ValueTask<Repository> RemoveRepositoryByIdAsync(Guid repositoryId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
