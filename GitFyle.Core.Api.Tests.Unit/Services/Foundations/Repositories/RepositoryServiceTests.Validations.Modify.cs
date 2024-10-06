@@ -5,7 +5,6 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Moq;
@@ -168,6 +167,75 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(
                     SameExceptionAs(expectedRepositoryValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertRepositoryAsync(It.IsAny<Repository>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfRepositoryHasInvalidLengthPropertiesAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            var invalidRepository = CreateRandomRepository(dateTimeOffset: randomDateTimeOffset);
+            invalidRepository.Name = GetRandomStringWithLengthOf(256);
+            invalidRepository.Owner = GetRandomStringWithLengthOf(256);
+            invalidRepository.ExternalId = GetRandomStringWithLengthOf(256);
+
+            var invalidRepositoryException =
+                new InvalidRepositoryException(
+                    message: "Repository is invalid, fix the errors and try again.");
+
+            invalidRepositoryException.AddData(
+                key: nameof(Repository.Name),
+                values: $"Text exceeds max length of {invalidRepository.Name.Length - 1} characters");
+
+            invalidRepositoryException.AddData(
+                key: nameof(Repository.Owner),
+                values: $"Text exceeds max length of {invalidRepository.Owner.Length - 1} characters");
+
+            invalidRepositoryException.AddData(
+                key: nameof(Repository.ExternalId),
+                values: $"Text exceeds max length of {invalidRepository.ExternalId.Length - 1} characters");
+
+            invalidRepositoryException.AddData(
+                key: nameof(Repository.UpdatedDate),
+                values: $"Date is the same as {nameof(Repository.CreatedDate)}");
+
+            var expectedRepositoryValidationException =
+                new RepositoryValidationException(
+                    message: "Repository validation error occurred, fix errors and try again.",
+                    innerException: invalidRepositoryException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Repository> modifyRepositoryTask =
+                this.repositoryService.ModifyRepositoryAsync(invalidRepository);
+
+            RepositoryValidationException actualRepositoryValidationException =
+                await Assert.ThrowsAsync<RepositoryValidationException>(
+                    testCode: modifyRepositoryTask.AsTask);
+
+            // then
+            actualRepositoryValidationException.Should()
+                .BeEquivalentTo(expectedRepositoryValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedRepositoryValidationException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
