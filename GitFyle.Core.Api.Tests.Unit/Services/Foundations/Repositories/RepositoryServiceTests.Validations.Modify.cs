@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Moq;
@@ -419,6 +420,73 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfCreatedAuditInfoHasChangedAndLogItAsync()
+        {
+            // given
+            int randomMinutes = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Repository randomRepository = CreateRandomModifyRepository(randomDateTimeOffset);
+            Repository invalidRepository = randomRepository;
+            Repository storedRepository = randomRepository.DeepClone();
+            storedRepository.CreatedBy = GetRandomString();
+            storedRepository.CreatedDate = storedRepository.CreatedDate.AddMinutes(randomMinutes);
+            storedRepository.UpdatedDate = storedRepository.UpdatedDate.AddMinutes(randomMinutes);
+            Guid RepositoryId = invalidRepository.Id;
+
+            var invalidRepositoryException = new InvalidRepositoryException(
+                message: "Repository is invalid, fix the errors and try again.");
+
+            invalidRepositoryException.AddData(
+                key: nameof(Repository.CreatedBy),
+                values: $"Text is not the same as {nameof(Repository.CreatedBy)}");
+
+            invalidRepositoryException.AddData(
+                key: nameof(Repository.CreatedDate),
+                values: $"Date is not the same as {nameof(Repository.CreatedDate)}");
+
+            var expectedRepositoryValidationException = new RepositoryValidationException(
+                message: "Repository validation error occurred, fix errors and try again.",
+                innerException: invalidRepositoryException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectRepositoryByIdAsync(RepositoryId))
+                    .ReturnsAsync(storedRepository);
+
+            // when
+            ValueTask<Repository> modifyRepositoryTask =
+                this.repositoryService.ModifyRepositoryAsync(invalidRepository);
+
+            RepositoryValidationException actualRepositoryValidationException =
+                await Assert.ThrowsAsync<RepositoryValidationException>(
+                    testCode: modifyRepositoryTask.AsTask);
+
+            // then
+            actualRepositoryValidationException.Should().BeEquivalentTo(
+                expectedRepositoryValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectRepositoryByIdAsync(invalidRepository.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedRepositoryValidationException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
