@@ -61,5 +61,55 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRemoveByIdIfNotFoundAndLogItAsync()
+        {
+            //given
+            Guid someRepositoryId = Guid.NewGuid();
+            Repository noRepository = null;
+
+            var notFoundRepositoryException =
+                new NotFoundRepositoryException(
+                    message: $"Repository not found with id: {someRepositoryId}");
+
+            var expectedRepositoryValidationException =
+                new RepositoryValidationException(
+                    message: "Repository validation error occurred, fix errors and try again.",
+                    innerException: notFoundRepositoryException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectRepositoryByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noRepository);
+
+            //when
+            ValueTask<Repository> removeRepositoryByIdTask =
+                this.repositoryService.RemoveRepositoryByIdAsync(someRepositoryId);
+
+            RepositoryValidationException actualRepositoryValidationException =
+                await Assert.ThrowsAsync<RepositoryValidationException>(
+                    removeRepositoryByIdTask.AsTask);
+
+            //then
+            actualRepositoryValidationException.Should().BeEquivalentTo(
+                expectedRepositoryValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectRepositoryByIdAsync(someRepositoryId),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedRepositoryValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteRepositoryAsync(It.IsAny<Repository>()),
+                    Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
