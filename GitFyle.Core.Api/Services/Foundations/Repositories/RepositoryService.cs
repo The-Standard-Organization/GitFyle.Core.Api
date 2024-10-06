@@ -65,9 +65,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             return await this.storageBroker.UpdateRepositoryAsync(repository);
         });
 
-        public ValueTask<Repository> RemoveRepositoryByIdAsync(Guid repositoryId)
+        public ValueTask<Repository> RemoveRepositoryByIdAsync(Guid repositoryId) =>
+        TryCatch(async () =>
         {
-            throw new NotImplementedException();
-        }
+            await ValidateRepositoryIdAsync(repositoryId);
+            Repository maybeRepository =
+                await this.storageBroker.SelectRepositoryByIdAsync(repositoryId);
+
+            await ValidateStorageRepositoryAsync(maybeRepository, repositoryId);
+
+            return await this.storageBroker.DeleteRepositoryAsync(maybeRepository);
+        });
     }
 }
