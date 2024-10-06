@@ -363,5 +363,64 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageRepositoryDoesNotExistAndLogItAsync()
+        {
+            // given
+            int randomNegative = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Repository randomRepository = CreateRandomRepository(randomDateTimeOffset);
+            Repository nonExistingRepository = randomRepository;
+            nonExistingRepository.CreatedDate = randomDateTimeOffset.AddMinutes(randomNegative);
+            Repository nullRepository = null;
+
+            var notFoundRepositoryException =
+                new NotFoundRepositoryException(
+                    message: $"Repository not found with id: {nonExistingRepository.Id}");
+
+            var expectedRepositoryValidationException =
+                new RepositoryValidationException(
+                    message: "Repository validation error occurred, fix errors and try again.",
+                    innerException: notFoundRepositoryException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectRepositoryByIdAsync(nonExistingRepository.Id))
+                    .ReturnsAsync(nullRepository);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Repository> modifyRepositoryTask =
+                this.repositoryService.ModifyRepositoryAsync(nonExistingRepository);
+
+            RepositoryValidationException actualRepositoryValidationException =
+                await Assert.ThrowsAsync<RepositoryValidationException>(
+                    testCode: modifyRepositoryTask.AsTask);
+
+            // then
+            actualRepositoryValidationException.Should().BeEquivalentTo(
+                expectedRepositoryValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectRepositoryByIdAsync(nonExistingRepository.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedRepositoryValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
     }
 }
