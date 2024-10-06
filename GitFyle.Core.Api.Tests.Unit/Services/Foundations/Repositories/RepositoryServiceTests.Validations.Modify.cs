@@ -248,7 +248,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
-
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
         {
@@ -550,6 +549,5 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
-
     }
 }
