@@ -24,7 +24,7 @@ namespace GitFyle.Core.Api.Controllers
                 Configuration addedConfiguration =
                     await this.configurationService.AddConfigurationAsync(configuration);
 
-                return Created(configuration);
+                return Created(configuration); 
             }
             catch (ConfigurationValidationException configurationValidationException)
             {
