@@ -43,7 +43,7 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return InternalServerError(configurationDependencyException.InnerException);
             }
-            catch (ConfigurationServiceException configurationServiceException) 
+            catch (ConfigurationServiceException configurationServiceException)
             {
                 return InternalServerError(configurationServiceException);
             }

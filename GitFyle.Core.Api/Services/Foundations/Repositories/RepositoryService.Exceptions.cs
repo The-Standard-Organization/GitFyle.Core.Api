@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Xeptions;
@@ -101,7 +100,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
             }
         }
-  
+
         private async ValueTask<RepositoryValidationException> CreateAndLogValidationExceptionAsync(
             Xeption exception)
         {
