@@ -18,7 +18,12 @@ namespace GitFyle.Core.Api.Controllers
             this.configurationService = configurationService;
 
         [HttpPost]
-        public async ValueTask<ActionResult<Configuration>> PostConfigurationAsync(Configuration configuration) =>
-            throw new NotImplementedException();
+        public async ValueTask<ActionResult<Configuration>> PostConfigurationAsync(Configuration configuration) 
+        {
+            Configuration addedConfiguration =
+                await this.configurationService.AddConfigurationAsync(configuration);
+
+            return Created(addedConfiguration);
+        }
     }
 }

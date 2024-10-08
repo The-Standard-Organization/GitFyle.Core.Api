@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
 using System.Threading.Tasks;
-using FluentAssertions;
 using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +24,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
             Configuration expectedConfiguration = addedConfiguration.DeepClone();
 
             var expectedObjectResult =
-                new CreatedObjectResult(value: expectedConfiguration);
+                new CreatedObjectResult(expectedConfiguration);
 
             var expectedActionResult = 
                 new ActionResult<Configuration>(expectedObjectResult);
@@ -41,7 +40,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
                 
             // then
             actualActionResult.ShouldBeEquivalentTo(
-                expectedConfiguration);
+                expectedActionResult);
 
             this.configurationServiceMock.Verify(service => 
                 service.AddConfigurationAsync(inputConfiguration), 
