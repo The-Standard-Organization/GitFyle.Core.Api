@@ -87,7 +87,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             var expectedRepositoryDependencyValidationException =
                 new RepositoryDependencyValidationException(
                     message: "Repository dependency validation error occurred, fix errors and try again.",
-                    innerException: alreadyExistsRepositoryException);
+                    innerException: alreadyExistsRepositoryException,
+                    data: alreadyExistsRepositoryException.Data);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
