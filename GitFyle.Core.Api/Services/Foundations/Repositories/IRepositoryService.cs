@@ -15,5 +15,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         ValueTask<IQueryable<Repository>> RetrieveAllRepositoriesAsync();
         ValueTask<Repository> RetrieveRepositoryByIdAsync(Guid repositoryId);
         ValueTask<Repository> ModifyRepositoryAsync(Repository repository);
+        ValueTask<Repository> RemoveRepositoryByIdAsync(Guid repositoryId);
     }
 }
