@@ -42,12 +42,12 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         public ValueTask<Repository> RetrieveRepositoryByIdAsync(Guid repositoryId) =>
         TryCatch(async () =>
         {
-            await ValidateRepositoryIdAsync(repositoryId);
+            ValidateRepositoryId(repositoryId);
 
             Repository maybeRepository =
                 await this.storageBroker.SelectRepositoryByIdAsync(repositoryId);
 
-            await ValidateStorageRepositoryAsync(maybeRepository, repositoryId);
+            ValidateStorageRepository(maybeRepository, repositoryId);
 
             return maybeRepository;
         });
@@ -59,8 +59,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
             Repository maybeRepository =
                 await this.storageBroker.SelectRepositoryByIdAsync(repository.Id);
 
-            await ValidateStorageRepositoryAsync(maybeRepository, repository.Id);
-            await ValidateAgainstStorageRepositoryOnModifyAsync(repository, maybeRepository);
+            ValidateStorageRepository(maybeRepository, repository.Id);
+            ValidateAgainstStorageRepositoryOnModify(repository, maybeRepository);
 
             return await this.storageBroker.UpdateRepositoryAsync(repository);
         });
