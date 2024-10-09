@@ -68,11 +68,11 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         public ValueTask<Repository> RemoveRepositoryByIdAsync(Guid repositoryId) =>
         TryCatch(async () =>
         {
-            await ValidateRepositoryIdAsync(repositoryId);
+            ValidateRepositoryId(repositoryId);
             Repository maybeRepository =
                 await this.storageBroker.SelectRepositoryByIdAsync(repositoryId);
 
-            await ValidateStorageRepositoryAsync(maybeRepository, repositoryId);
+            ValidateStorageRepository(maybeRepository, repositoryId);
 
             return await this.storageBroker.DeleteRepositoryAsync(maybeRepository);
         });
