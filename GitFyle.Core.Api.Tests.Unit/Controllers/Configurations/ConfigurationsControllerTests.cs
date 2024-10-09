@@ -2,6 +2,7 @@
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Configurations;
 using Moq;
 using RESTFulSense.Controllers;
@@ -36,7 +37,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
                     innerException: someInnerException),
 
                 new ConfigurationDependencyValidationException(
-                    message: someMessage,
+                    message: someMessage, 
                     innerException: someInnerException)
             };
         }
@@ -53,9 +54,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
         private static Filler<Configuration> CreateConfigurationFiller()
         {
             var filler = new Filler<Configuration>();
+            string user = Guid.NewGuid().ToString();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(GetRandomDateTimeOffset());
+                .OnType<DateTimeOffset>().Use(GetRandomDateTimeOffset())
+                .OnProperty(configuration => configuration.CreatedBy).Use(user)
+                .OnProperty(configuration => configuration.UpdatedBy).Use(user);
 
             return filler;
         }

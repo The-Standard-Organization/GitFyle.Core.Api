@@ -20,10 +20,26 @@ namespace GitFyle.Core.Api.Controllers
         [HttpPost]
         public async ValueTask<ActionResult<Configuration>> PostConfigurationAsync(Configuration configuration) 
         {
-            Configuration addedConfiguration =
-                await this.configurationService.AddConfigurationAsync(configuration);
+            try
+            {
+                Configuration addedConfiguration =
+                    await this.configurationService.AddConfigurationAsync(configuration);
 
-            return Created(addedConfiguration);
+                return Created(addedConfiguration);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+            {
+                return BadRequest(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+                when (configurationDependencyValidationException.InnerException is AlreadyExistsConfigurationException)
+            {
+                return Conflict(configurationDependencyValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+            {
+                return BadRequest(configurationDependencyValidationException.InnerException);
+            }
         }
     }
 }
