@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
+using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Configurations;
 using Moq;
+using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
 {
-    public partial class ConfigurationsControllerTests
+    public partial class ConfigurationsControllerTests : RESTFulController
     {
         private readonly Mock<IConfigurationService> configurationServiceMock;
         private readonly ConfigurationsController configurationsController;
@@ -24,6 +23,26 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
                 new ConfigurationsController(
                     configurationService:  this.configurationServiceMock.Object);
         }
+
+        public static TheoryData<Xeption> ValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new ConfigurationValidationException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new ConfigurationDependencyValidationException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
