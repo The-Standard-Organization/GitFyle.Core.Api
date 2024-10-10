@@ -25,6 +25,23 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
                     configurationService:  this.configurationServiceMock.Object);
         }
 
+        public static TheoryData<Xeption> ServerExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new ConfigurationDependencyException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new ConfigurationServiceException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
         public static TheoryData<Xeption> ValidationExceptions()
         {
             var someInnerException = new Xeption();
