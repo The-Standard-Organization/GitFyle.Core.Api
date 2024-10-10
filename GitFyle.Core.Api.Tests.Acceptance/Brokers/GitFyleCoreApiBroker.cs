@@ -16,12 +16,12 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Brokers
 
         public GitFyleCoreApiBroker()
         {
-            this.webApplicationFactory = 
+            this.webApplicationFactory =
                 new WebApplicationFactory<Program>();
 
-            this.httpClient = 
+            this.httpClient =
                 this.webApplicationFactory.CreateClient();
-            
+
             this.apiFactoryClient =
                 new RESTFulApiFactoryClient(
                     this.httpClient);

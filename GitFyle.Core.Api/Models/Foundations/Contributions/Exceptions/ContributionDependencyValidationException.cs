@@ -11,6 +11,6 @@ namespace GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions
     {
         public ContributionDependencyValidationException(
             string message, Xeption innerException, IDictionary data)
-                : base(message, innerException,data) { }
+                : base(message, innerException, data) { }
     }
 }
