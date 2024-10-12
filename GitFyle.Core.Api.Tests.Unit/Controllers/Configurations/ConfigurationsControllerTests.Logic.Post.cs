@@ -26,7 +26,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
             var expectedObjectResult =
                 new CreatedObjectResult(expectedConfiguration);
 
-            var expectedActionResult = 
+            var expectedActionResult =
                 new ActionResult<Configuration>(expectedObjectResult);
 
             this.configurationServiceMock.Setup(service =>
@@ -37,13 +37,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
             ActionResult<Configuration> actualActionResult =
                 await this.configurationsController.PostConfigurationAsync(
                     inputConfiguration);
-                
+
             // then
             actualActionResult.ShouldBeEquivalentTo(
                 expectedActionResult);
 
-            this.configurationServiceMock.Verify(service => 
-                service.AddConfigurationAsync(inputConfiguration), 
+            this.configurationServiceMock.Verify(service =>
+                service.AddConfigurationAsync(inputConfiguration),
                     Times.Once);
 
             this.configurationServiceMock.VerifyNoOtherCalls();

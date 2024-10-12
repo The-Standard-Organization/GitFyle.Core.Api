@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Configurations;
@@ -18,7 +17,7 @@ namespace GitFyle.Core.Api.Controllers
             this.configurationService = configurationService;
 
         [HttpPost]
-        public async ValueTask<ActionResult<Configuration>> PostConfigurationAsync(Configuration configuration) 
+        public async ValueTask<ActionResult<Configuration>> PostConfigurationAsync(Configuration configuration)
         {
             try
             {

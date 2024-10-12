@@ -1,12 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
+using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Xeptions;
 using RESTFulSense.Clients.Extensions;
 using RESTFulSense.Models;
-using System;
-using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
+using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
 {

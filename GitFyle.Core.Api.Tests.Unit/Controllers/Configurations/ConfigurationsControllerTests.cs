@@ -2,7 +2,6 @@
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Configurations;
 using Moq;
 using RESTFulSense.Controllers;
@@ -20,9 +19,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
         {
             this.configurationServiceMock = new Mock<IConfigurationService>();
 
-            this.configurationsController = 
+            this.configurationsController =
                 new ConfigurationsController(
-                    configurationService:  this.configurationServiceMock.Object);
+                    configurationService: this.configurationServiceMock.Object);
         }
 
         public static TheoryData<Xeption> ServerExceptions()
@@ -54,7 +53,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
                     innerException: someInnerException),
 
                 new ConfigurationDependencyValidationException(
-                    message: someMessage, 
+                    message: someMessage,
                     innerException: someInnerException)
             };
         }
