@@ -55,6 +55,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsRepositoryException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var concurrencyGemException =
+                    new LockedRepositoryException(
+                        message: "Locked repository record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException,
+                        data: dbUpdateConcurrencyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
+            }
             catch (DbUpdateException dbUpdateException)
             {
                 var failedOperationRepositoryException =
@@ -130,7 +140,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         {
             var RepositoryDependencyValidationException = new RepositoryDependencyValidationException(
                 message: "Repository dependency validation error occurred, fix errors and try again.",
-                innerException: exception);
+                innerException: exception,
+                data: exception.Data);
 
             await this.loggingBroker.LogErrorAsync(RepositoryDependencyValidationException);
 

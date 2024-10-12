@@ -42,14 +42,39 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         public ValueTask<Repository> RetrieveRepositoryByIdAsync(Guid repositoryId) =>
         TryCatch(async () =>
         {
-            await ValidateRepositoryIdAsync(repositoryId);
+            ValidateRepositoryId(repositoryId);
 
             Repository maybeRepository =
                 await this.storageBroker.SelectRepositoryByIdAsync(repositoryId);
 
-            await ValidateStorageRepositoryAsync(maybeRepository, repositoryId);
+            ValidateStorageRepository(maybeRepository, repositoryId);
 
             return maybeRepository;
+        });
+
+        public ValueTask<Repository> ModifyRepositoryAsync(Repository repository) =>
+        TryCatch(async () =>
+        {
+            await ValidateRepositoryOnModifyAsync(repository);
+            Repository maybeRepository =
+                await this.storageBroker.SelectRepositoryByIdAsync(repository.Id);
+
+            ValidateStorageRepository(maybeRepository, repository.Id);
+            ValidateAgainstStorageRepositoryOnModify(repository, maybeRepository);
+
+            return await this.storageBroker.UpdateRepositoryAsync(repository);
+        });
+
+        public ValueTask<Repository> RemoveRepositoryByIdAsync(Guid repositoryId) =>
+        TryCatch(async () =>
+        {
+            ValidateRepositoryId(repositoryId);
+            Repository maybeRepository =
+                await this.storageBroker.SelectRepositoryByIdAsync(repositoryId);
+
+            ValidateStorageRepository(maybeRepository, repositoryId);
+
+            return await this.storageBroker.DeleteRepositoryAsync(maybeRepository);
         });
     }
 }
