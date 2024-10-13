@@ -153,7 +153,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 
             invalidContributionTypeException.AddData(
                 key: nameof(ContributionType.Name),
-                values: $"Text exceed max length of {invalidContributionType.Name.Length - 1} characters");
+                values: $"Text exceeds max length of {invalidContributionType.Name.Length - 1} characters");
 
             var expectedContributionTypeValidationException =
                 new ContributionTypeValidationException(
@@ -178,7 +178,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

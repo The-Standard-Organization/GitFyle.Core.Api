@@ -32,7 +32,9 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
                     Parameter: nameof(ContributionType.UpdatedBy)),
 
                 (Rule: IsInvalid(contributionType.UpdatedDate),
-                    Parameter: nameof(ContributionType.UpdatedDate)));
+                    Parameter: nameof(ContributionType.UpdatedDate)),
+
+                (Rule: IsInvalidLength(contributionType.Name, 255), Parameter: nameof(ContributionType.Name)));
         }
 
         private static dynamic IsInvalid(Guid id) => new
@@ -52,6 +54,15 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             Condition = date == default,
             Message = "Date is invalid"
         };
+
+        private static dynamic IsInvalidLength(string text, int maxLength) => new
+        {
+            Condition = IsExceedingLengthAsync(text, maxLength),
+            Message = $"Text exceeds max length of {maxLength} characters"
+        };
+
+        private static bool IsExceedingLengthAsync(string text, int maxLength) =>
+            (text ?? string.Empty).Length > maxLength;
 
         private static void ValidateContributionTypeId(Guid contributionTypeId) =>
             Validate((Rule: IsInvalid(contributionTypeId), Parameter: nameof(ContributionType.Id)));
