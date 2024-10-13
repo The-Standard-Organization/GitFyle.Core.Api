@@ -29,7 +29,7 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
         public ValueTask<ContributionType> AddContributionTypeAsync(ContributionType contributionType) =>
         TryCatch(async () =>
         {
-            ValidateContributionTypeOnAddAsync(contributionType);
+            await ValidateContributionTypeOnAddAsync(contributionType);
             return await this.storageBroker.InsertContributionTypeAsync(contributionType);
         });
     }

@@ -23,6 +23,10 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             {
                 throw await CreateAndLogValidationExceptionAsync(nullContributionTypeException);
             }
+            catch (InvalidContributionTypeException invalidContributionTypeException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidContributionTypeException);
+            }
         }
 
         private async ValueTask<ContributionTypeValidationException>

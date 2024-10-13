@@ -52,5 +52,91 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnAddIfContributionTypeIsInvalidAndLogItAsync(
+            string invalidString)
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = default;
+
+            var invalidContributionType = new ContributionType
+            {
+                Id = Guid.Empty,
+                Name = invalidString,
+                CreatedBy = invalidString,
+                CreatedDate = default,
+                UpdatedBy = invalidString,
+                UpdatedDate = default,
+            };
+
+            var invalidContributionTypeException = new InvalidContributionTypeException(
+                message: "ContributionType is invalid, fix the errors and try again.");
+
+            invalidContributionTypeException.AddData(
+                key: nameof(ContributionType.Id),
+                values: "Id is invalid");
+
+            invalidContributionTypeException.AddData(
+                key: nameof(ContributionType.Name),
+                values: "Text is required");
+
+            invalidContributionTypeException.AddData(
+               key: nameof(ContributionType.CreatedBy),
+               values: "Text is required");
+
+            invalidContributionTypeException.AddData(
+                key: nameof(ContributionType.UpdatedBy),
+                values: "Text is required");
+
+            invalidContributionTypeException.AddData(
+                key: nameof(ContributionType.CreatedDate),
+                values: "Date is invalid");
+
+            invalidContributionTypeException.AddData(
+                key: nameof(ContributionType.UpdatedDate),
+                values: "Date is invalid");
+
+            var expectedContributionTypeValidationException =
+                new ContributionTypeValidationException(
+                    message: "ContributionType validation error occurred, fix errors and try again.",
+                    innerException: invalidContributionTypeException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<ContributionType> addContributionTypeTask =
+                this.contributionService.AddContributionTypeAsync(invalidContributionType);
+
+            ContributionTypeValidationException actualContributionTypeValidationException =
+                await Assert.ThrowsAsync<ContributionTypeValidationException>(
+                    testCode: addContributionTypeTask.AsTask);
+
+            // then
+            actualContributionTypeValidationException.Should().BeEquivalentTo(
+                expectedContributionTypeValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedContributionTypeValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributionTypeAsync(It.IsAny<ContributionType>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

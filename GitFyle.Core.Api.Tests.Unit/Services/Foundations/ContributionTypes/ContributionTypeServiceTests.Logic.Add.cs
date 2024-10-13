@@ -28,6 +28,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
                 broker.InsertContributionTypeAsync(inputContributionType))
                     .ReturnsAsync(insertedContributionType);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(now);
+
             // when
             ContributionType actualContributionType =
                 await this.contributionService.AddContributionTypeAsync(inputContributionType);
@@ -35,12 +39,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
             // then
             actualContributionType.Should().BeEquivalentTo(expectedContributionType);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertContributionTypeAsync(inputContributionType),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
