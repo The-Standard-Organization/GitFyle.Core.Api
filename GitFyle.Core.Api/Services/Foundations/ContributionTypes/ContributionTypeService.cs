@@ -2,8 +2,6 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
@@ -28,9 +26,9 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<ContributionType> AddContributionTypeAsync(ContributionType repository)
+        public ValueTask<ContributionType> AddContributionTypeAsync(ContributionType contributionType)
         {
-            throw new NotImplementedException();
+            return this.storageBroker.InsertContributionTypeAsync(contributionType);
         }
     }
 }
