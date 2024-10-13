@@ -176,5 +176,57 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccurredAndLogItAsync()
+        {
+            // given
+            ContributionType randomContributionType = CreateRandomContributionType();
+            var serviceException = new Exception();
+
+            var failedServiceContributionTypeException =
+                new FailedServiceContributionTypeException(
+                    message: "Failed service contributionType error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedContributionTypeServiceException =
+                new ContributionTypeServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceContributionTypeException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<ContributionType> addContributionTypeTask =
+                this.contributionTypeService.AddContributionTypeAsync(
+                    randomContributionType);
+
+            ContributionTypeServiceException actualContributionTypeServiceException =
+                await Assert.ThrowsAsync<ContributionTypeServiceException>(
+                    testCode: addContributionTypeTask.AsTask);
+
+            // then
+            actualContributionTypeServiceException.Should().BeEquivalentTo(
+                expectedContributionTypeServiceException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionTypeServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributionTypeAsync(It.IsAny<ContributionType>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
