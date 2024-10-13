@@ -48,8 +48,11 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
                     firstDate: contributionType.UpdatedDate,
                     secondDate: contributionType.CreatedDate,
                     secondDateName: nameof(ContributionType.CreatedDate)),
-                     
-                Parameter: nameof(ContributionType.UpdatedDate)));
+
+                Parameter: nameof(ContributionType.UpdatedDate)),
+
+                (Rule: await IsNotRecentAsync(contributionType.CreatedDate), 
+                    Parameter: nameof(ContributionType.CreatedDate)));
         }
 
         private static dynamic IsInvalid(Guid id) => new
@@ -96,6 +99,37 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
                 Condition = first != second,
                 Message = $"Text is not the same as {secondName}"
             };
+
+        private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
+        {
+            var (isNotRecent, startDate, endDate) = await IsDateNotRecentAsync(date);
+
+            return new
+            {
+                Condition = isNotRecent,
+                Message = $"Date is not recent. Expected a value between {startDate} and {endDate} but found {date}"
+            };
+        }
+
+        private async ValueTask<(bool IsNotRecent, DateTimeOffset StartDate, DateTimeOffset EndDate)>
+            IsDateNotRecentAsync(DateTimeOffset date)
+        {
+            int pastSeconds = 60;
+            int futureSeconds = 0;
+            DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+            if (currentDateTime == default)
+            {
+                return (false, default, default);
+            }
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            DateTimeOffset startDate = currentDateTime.AddSeconds(-pastSeconds);
+            DateTimeOffset endDate = currentDateTime.AddSeconds(futureSeconds);
+            bool isNotRecent = timeDifference.TotalSeconds is > 60 or < 0;
+
+            return (isNotRecent, startDate, endDate);
+        }
 
         private static void ValidateContributionTypeId(Guid contributionTypeId) =>
             Validate((Rule: IsInvalid(contributionTypeId), Parameter: nameof(ContributionType.Id)));

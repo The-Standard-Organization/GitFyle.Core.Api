@@ -41,7 +41,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Never);
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertContributionTypeAsync(inputContributionType),
