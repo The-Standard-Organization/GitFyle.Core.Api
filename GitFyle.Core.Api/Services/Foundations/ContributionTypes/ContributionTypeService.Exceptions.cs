@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
@@ -48,6 +48,15 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsContributionTypeException);
             }
+            catch (DbUpdateException dbUpdateException)
+            {
+                var failedOperationContributionTypeException =
+                    new FailedOperationContributionTypeException(
+                        message: "Failed operation contributionType error occurred, contact support.",
+                        innerException: dbUpdateException);
+
+                throw await CreateAndLogDependencyExceptionAsync(failedOperationContributionTypeException);
+            }
         }
 
         private async ValueTask<ContributionTypeValidationException>
@@ -77,14 +86,25 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
         private async ValueTask<ContributionTypeDependencyValidationException>
             CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
         {
-            var ContributionTypeDependencyValidationException = new ContributionTypeDependencyValidationException(
+            var contributionTypeDependencyValidationException = new ContributionTypeDependencyValidationException(
                 message: "ContributionType dependency validation error occurred, fix errors and try again.",
                 innerException: exception,
                 data: exception.Data);
 
-            await this.loggingBroker.LogErrorAsync(ContributionTypeDependencyValidationException);
+            await this.loggingBroker.LogErrorAsync(contributionTypeDependencyValidationException);
 
-            return ContributionTypeDependencyValidationException;
+            return contributionTypeDependencyValidationException;
+        }
+
+        private async ValueTask<ContributionTypeDependencyException> CreateAndLogDependencyExceptionAsync(Xeption exception)
+        {
+            var contributionTypeDependencyException = new ContributionTypeDependencyException(
+                message: "ContributionType dependency error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(contributionTypeDependencyException);
+
+            return contributionTypeDependencyException;
         }
     }
 }
