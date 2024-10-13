@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Configurations;
@@ -47,6 +48,12 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return InternalServerError(configurationServiceException);
             }
+        }
+
+        [HttpGet("{configurationId}")]
+        public async ValueTask<ActionResult<Configuration>> GetConfigurationByIdAsync(Guid configurationId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
