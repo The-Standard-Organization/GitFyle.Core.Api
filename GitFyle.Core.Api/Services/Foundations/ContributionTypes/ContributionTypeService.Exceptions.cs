@@ -3,8 +3,10 @@
 // ----------------------------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Microsoft.Data.SqlClient;
 using Xeptions;
 
@@ -36,6 +38,16 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageContributionTypeException);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsContributionTypeException =
+                    new AlreadyExistsContributionTypeException(
+                        message: "ContributionType already exists error occurred.",
+                        innerException: duplicateKeyException,
+                        data: duplicateKeyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsContributionTypeException);
+            }
         }
 
         private async ValueTask<ContributionTypeValidationException>
@@ -60,6 +72,19 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             await this.loggingBroker.LogCriticalAsync(contributionTypeDependencyException);
 
             return contributionTypeDependencyException;
+        }
+
+        private async ValueTask<ContributionTypeDependencyValidationException>
+            CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
+        {
+            var ContributionTypeDependencyValidationException = new ContributionTypeDependencyValidationException(
+                message: "ContributionType dependency validation error occurred, fix errors and try again.",
+                innerException: exception,
+                data: exception.Data);
+
+            await this.loggingBroker.LogErrorAsync(ContributionTypeDependencyValidationException);
+
+            return ContributionTypeDependencyValidationException;
         }
     }
 }
