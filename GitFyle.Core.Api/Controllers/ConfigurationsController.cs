@@ -53,7 +53,10 @@ namespace GitFyle.Core.Api.Controllers
         [HttpGet("{configurationId}")]
         public async ValueTask<ActionResult<Configuration>> GetConfigurationByIdAsync(Guid configurationId)
         {
-            throw new NotImplementedException();
+            Configuration configuration = 
+                await this.configurationService.RetrieveConfigurationByIdAsync(configurationId);
+
+            return Ok(configuration);
         }
     }
 }
