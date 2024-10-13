@@ -34,7 +34,22 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
                 (Rule: IsInvalid(contributionType.UpdatedDate),
                     Parameter: nameof(ContributionType.UpdatedDate)),
 
-                (Rule: IsInvalidLength(contributionType.Name, 255), Parameter: nameof(ContributionType.Name)));
+                (Rule: IsInvalidLength(contributionType.Name, 255),
+                    Parameter: nameof(ContributionType.Name)),
+
+                (Rule: IsNotSame(
+                    first: contributionType.UpdatedBy,
+                    second: contributionType.CreatedBy,
+                    secondName: nameof(ContributionType.CreatedBy)),
+
+                Parameter: nameof(ContributionType.UpdatedBy)),
+
+                (Rule: IsNotSame(
+                    firstDate: contributionType.UpdatedDate,
+                    secondDate: contributionType.CreatedDate,
+                    secondDateName: nameof(ContributionType.CreatedDate)),
+                     
+                Parameter: nameof(ContributionType.UpdatedDate)));
         }
 
         private static dynamic IsInvalid(Guid id) => new
@@ -63,6 +78,24 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
         private static bool IsExceedingLengthAsync(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
+
+        private static dynamic IsNotSame(
+            string first,
+            string second,
+            string secondName) => new
+            {
+                Condition = first != second,
+                Message = $"Text is not the same as {secondName}"
+            };
 
         private static void ValidateContributionTypeId(Guid contributionTypeId) =>
             Validate((Rule: IsInvalid(contributionTypeId), Parameter: nameof(ContributionType.Id)));
