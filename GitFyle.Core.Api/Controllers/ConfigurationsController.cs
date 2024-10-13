@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
@@ -81,6 +82,12 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return InternalServerError(configurationServiceException);
             }
+        }
+
+        [HttpGet]
+        public async ValueTask<ActionResult<IQueryable<Configuration>>> GetConfigurationsAsync()
+        { 
+            throw new NotImplementedException();
         }
     }
 }
