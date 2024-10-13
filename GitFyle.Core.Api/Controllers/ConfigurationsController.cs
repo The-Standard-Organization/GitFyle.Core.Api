@@ -87,7 +87,10 @@ namespace GitFyle.Core.Api.Controllers
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<Configuration>>> GetConfigurationsAsync()
         { 
-            throw new NotImplementedException();
+            IQueryable<Configuration> configurations = 
+                await this.configurationService.RetrieveAllConfigurationsAsync();
+
+            return Ok(configurations);
         }
     }
 }
