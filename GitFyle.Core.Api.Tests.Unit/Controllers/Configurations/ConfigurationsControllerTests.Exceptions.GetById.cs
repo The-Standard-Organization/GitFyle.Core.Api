@@ -7,6 +7,7 @@ using GitFyle.Core.Api.Models.Foundations.Configurations;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
+using RESTFulSense.Models;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
@@ -22,6 +23,38 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
+
+            var expectedActionResult =
+                new ActionResult<Configuration>(expectedBadRequestObjectResult);
+
+            this.configurationServiceMock.Setup(service =>
+                service.RetrieveConfigurationByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(validationException);
+
+            // when
+            ActionResult<Configuration> actualActionResult =
+                await this.configurationsController.GetConfigurationByIdAsync(someId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.configurationServiceMock.Verify(service =>
+                service.RetrieveConfigurationByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.configurationServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [MemberData(nameof(ServerExceptions))]
+        public async Task ShouldReturnInternalServerErrorOnGetByIdIfServerErrorOccurredAsync(
+            Xeption validationException)
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+
+            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+                InternalServerError(validationException);
 
             var expectedActionResult =
                 new ActionResult<Configuration>(expectedBadRequestObjectResult);
