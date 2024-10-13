@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
@@ -25,21 +22,21 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
             var expectedObjectResult =
                 new OkObjectResult(expectedConfiguration);
 
-            var expectedActionResult = 
+            var expectedActionResult =
                 new ActionResult<Configuration>(expectedObjectResult);
 
-            this.configurationServiceMock.Setup(service => 
+            this.configurationServiceMock.Setup(service =>
                 service.RetrieveConfigurationByIdAsync(inputId))
                     .ReturnsAsync(storageConfiguration);
             // when
-            ActionResult<Configuration> actualActionResult = 
+            ActionResult<Configuration> actualActionResult =
                 await configurationsController.GetConfigurationByIdAsync(inputId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.configurationServiceMock.Verify(service => 
-                service.RetrieveConfigurationByIdAsync(inputId), 
+            this.configurationServiceMock.Verify(service =>
+                service.RetrieveConfigurationByIdAsync(inputId),
                     Times.Once());
 
             this.configurationServiceMock.VerifyNoOtherCalls();
