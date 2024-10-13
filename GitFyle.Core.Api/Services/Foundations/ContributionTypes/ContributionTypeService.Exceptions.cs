@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
@@ -57,6 +58,15 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationContributionTypeException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceContributionTypeException =
+                    new FailedServiceContributionTypeException(
+                        message: "Failed service contributionType error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceContributionTypeException);
+            }
         }
 
         private async ValueTask<ContributionTypeValidationException>
@@ -105,6 +115,18 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             await this.loggingBroker.LogErrorAsync(contributionTypeDependencyException);
 
             return contributionTypeDependencyException;
+        }
+
+        private async ValueTask<ContributionTypeServiceException> 
+            CreateAndLogServiceExceptionAsync(Xeption exception)
+        {
+            var contributionTypeServiceException = new ContributionTypeServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(contributionTypeServiceException);
+
+            return contributionTypeServiceException;
         }
     }
 }
