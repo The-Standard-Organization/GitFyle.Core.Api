@@ -47,7 +47,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnGetByIdIfServerErrorOccurredAsync(
+        public async Task ShouldReturnInternalServerErrorOnGetByIdIfServerErrorOccursAsync(
             Xeption validationException)
         {
             // given
