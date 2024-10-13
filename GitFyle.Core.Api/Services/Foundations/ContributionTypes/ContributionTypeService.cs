@@ -26,9 +26,11 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<ContributionType> AddContributionTypeAsync(ContributionType contributionType)
+        public ValueTask<ContributionType> AddContributionTypeAsync(ContributionType contributionType) =>
+        TryCatch(async () =>
         {
-            return this.storageBroker.InsertContributionTypeAsync(contributionType);
-        }
+            ValidateContributionTypeOnAddAsync(contributionType);
+            return await this.storageBroker.InsertContributionTypeAsync(contributionType);
+        });
     }
 }

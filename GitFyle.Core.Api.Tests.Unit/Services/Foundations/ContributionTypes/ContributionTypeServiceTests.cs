@@ -37,6 +37,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(
+            Xeption expectedException)
+        {
+            return actualException =>
+                actualException.SameExceptionAs(expectedException);
+        }
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
