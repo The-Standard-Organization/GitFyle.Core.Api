@@ -23,7 +23,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
-        private readonly ContributionTypeService contributionService;
+        private readonly ContributionTypeService contributionTypeService;
 
         public ContributionTypeServiceTests()
         {
@@ -31,7 +31,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
-            this.contributionService = new ContributionTypeService(
+            this.contributionTypeService = new ContributionTypeService(
                 storageBroker: this.storageBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
@@ -42,6 +42,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
         {
             return actualException =>
                 actualException.SameExceptionAs(expectedException);
+        }
+
+        private static SqlException CreateSqlException()
+        {
+            return (SqlException)RuntimeHelpers.GetUninitializedObject(
+                type: typeof(SqlException));
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>

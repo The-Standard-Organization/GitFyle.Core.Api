@@ -30,7 +30,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 
             // when
             ValueTask<ContributionType> addContributionTypeTask =
-                this.contributionService.AddContributionTypeAsync(nullContributionType);
+                this.contributionTypeService.AddContributionTypeAsync(nullContributionType);
 
             ContributionTypeValidationException actualContributionTypeValidationException =
                 await Assert.ThrowsAsync<ContributionTypeValidationException>(
@@ -111,7 +111,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 
             // when
             ValueTask<ContributionType> addContributionTypeTask =
-                this.contributionService.AddContributionTypeAsync(invalidContributionType);
+                this.contributionTypeService.AddContributionTypeAsync(invalidContributionType);
 
             ContributionTypeValidationException actualContributionTypeValidationException =
                 await Assert.ThrowsAsync<ContributionTypeValidationException>(
@@ -166,7 +166,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 
             // when
             ValueTask<ContributionType> addContributionTypeTask =
-                this.contributionService.AddContributionTypeAsync(invalidContributionType);
+                this.contributionTypeService.AddContributionTypeAsync(invalidContributionType);
 
             ContributionTypeValidationException actualContributionTypeValidationException =
                 await Assert.ThrowsAsync<ContributionTypeValidationException>(
@@ -229,7 +229,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 
             // when
             ValueTask<ContributionType> addContributionTypeTask =
-                this.contributionService.AddContributionTypeAsync(invalidContributionType);
+                this.contributionTypeService.AddContributionTypeAsync(invalidContributionType);
 
             ContributionTypeValidationException actualContributionTypeValidationException =
                 await Assert.ThrowsAsync<ContributionTypeValidationException>(
@@ -299,7 +299,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 
             // when
             ValueTask<ContributionType> addContributionTypeTask =
-                this.contributionService.AddContributionTypeAsync(invalidContributionType);
+                this.contributionTypeService.AddContributionTypeAsync(invalidContributionType);
 
             ContributionTypeValidationException actualContributionTypeValidationException =
                 await Assert.ThrowsAsync<ContributionTypeValidationException>(

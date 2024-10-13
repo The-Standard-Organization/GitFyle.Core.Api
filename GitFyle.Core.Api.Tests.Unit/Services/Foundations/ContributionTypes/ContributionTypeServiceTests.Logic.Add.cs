@@ -34,7 +34,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 
             // when
             ContributionType actualContributionType =
-                await this.contributionService.AddContributionTypeAsync(inputContributionType);
+                await this.contributionTypeService.AddContributionTypeAsync(inputContributionType);
 
             // then
             actualContributionType.Should().BeEquivalentTo(expectedContributionType);
