@@ -53,10 +53,26 @@ namespace GitFyle.Core.Api.Controllers
         [HttpGet("{configurationId}")]
         public async ValueTask<ActionResult<Configuration>> GetConfigurationByIdAsync(Guid configurationId)
         {
-            Configuration configuration = 
-                await this.configurationService.RetrieveConfigurationByIdAsync(configurationId);
+            try
+            {
+                Configuration configuration =
+                    await this.configurationService.RetrieveConfigurationByIdAsync(configurationId);
 
-            return Ok(configuration);
+                return Ok(configuration);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+                when (configurationValidationException.InnerException is NotFoundConfigurationException)
+            {
+                return NotFound(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+            {
+                return BadRequest(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+            {
+                return BadRequest(configurationDependencyValidationException.InnerException);
+            }
         }
     }
 }
