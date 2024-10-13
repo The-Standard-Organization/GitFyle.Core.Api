@@ -86,11 +86,22 @@ namespace GitFyle.Core.Api.Controllers
 
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<Configuration>>> GetConfigurationsAsync()
-        { 
-            IQueryable<Configuration> configurations = 
-                await this.configurationService.RetrieveAllConfigurationsAsync();
+        {
+            try
+            {
+                IQueryable<Configuration> configurations =
+                    await this.configurationService.RetrieveAllConfigurationsAsync();
 
-            return Ok(configurations);
+                return Ok(configurations);
+            }
+            catch (ConfigurationDependencyException configurationDependencyException)
+            {
+                return InternalServerError(configurationDependencyException);
+            }
+            catch (ConfigurationServiceException configurationServiceException)
+            {
+                return InternalServerError(configurationServiceException);
+            }
         }
     }
 }
