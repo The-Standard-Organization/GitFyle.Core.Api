@@ -2,12 +2,14 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
@@ -112,6 +114,58 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedContributionTypeDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributionTypeAsync(It.IsAny<ContributionType>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDependencyErrorOccurredAndLogItAsync()
+        {
+            // given
+            ContributionType someContributionType = CreateRandomContributionType();
+            var dbUpdateException = new DbUpdateException();
+
+            var failedOperationContributionTypeException =
+                new FailedOperationContributionTypeException(
+                    message: "Failed operation contributionType error occurred, contact support.",
+                    innerException: dbUpdateException);
+
+            var expectedContributionTypeDependencyException =
+                new ContributionTypeDependencyException(
+                    message: "ContributionType dependency error occurred, contact support.",
+                    innerException: failedOperationContributionTypeException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(dbUpdateException);
+
+            // when
+            ValueTask<ContributionType> addContributionTypeTask =
+                this.contributionTypeService.AddContributionTypeAsync(
+                    someContributionType);
+
+            ContributionTypeDependencyException actualContributionTypeDependencyException =
+                await Assert.ThrowsAsync<ContributionTypeDependencyException>(
+                    testCode: addContributionTypeTask.AsTask);
+
+            // then
+            actualContributionTypeDependencyException.Should().BeEquivalentTo(
+                expectedContributionTypeDependencyException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionTypeDependencyException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
