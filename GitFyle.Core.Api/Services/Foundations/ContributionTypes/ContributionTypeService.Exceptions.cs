@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
@@ -16,6 +17,7 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
     internal partial class ContributionTypeService
     {
         private delegate ValueTask<ContributionType> ReturningContributionTypeFunction();
+        private delegate ValueTask<IQueryable<ContributionType>> ReturningContributionTypesFunction();
 
         private async ValueTask<ContributionType> TryCatch(ReturningContributionTypeFunction returningContributionTypeFunction)
         {
@@ -57,6 +59,32 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
                         innerException: dbUpdateException);
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationContributionTypeException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceContributionTypeException =
+                    new FailedServiceContributionTypeException(
+                        message: "Failed service contributionType error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceContributionTypeException);
+            }
+        }
+
+        private async ValueTask<IQueryable<ContributionType>> TryCatch(
+            ReturningContributionTypesFunction returningContributionTypesFunction)
+        {
+            try
+            {
+                return await returningContributionTypesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageContributionTypeException = new FailedStorageContributionTypeException(
+                    message: "Failed contributionType storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageContributionTypeException);
             }
             catch (Exception exception)
             {
