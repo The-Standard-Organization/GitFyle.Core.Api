@@ -9,6 +9,6 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 {
     public interface IContributionTypeService
     {
-        ValueTask<ContributionType> AddContributionTypeAsync(ContributionType repository);
+        ValueTask<ContributionType> AddContributionTypeAsync(ContributionType contributionType);
     }
 }
