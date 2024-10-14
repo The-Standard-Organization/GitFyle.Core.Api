@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
@@ -36,5 +37,10 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
         public ValueTask<IQueryable<ContributionType>> RetrieveAllContributionTypesAsync() =>
         TryCatch(async () => await this.storageBroker.SelectAllContributionTypesAsync());
+
+        public ValueTask<ContributionType> RetrieveContributionTypeByIdAsync(Guid contributionTypeId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
