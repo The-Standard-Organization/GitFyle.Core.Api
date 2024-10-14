@@ -34,9 +34,7 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             return await this.storageBroker.InsertContributionTypeAsync(contributionType);
         });
 
-        public ValueTask<IQueryable<ContributionType>> RetrieveAllContributionTypesAsync()
-        {
-            throw new System.NotImplementedException();
-        }
+        public ValueTask<IQueryable<ContributionType>> RetrieveAllContributionTypesAsync() =>
+        TryCatch(async () => await this.storageBroker.SelectAllContributionTypesAsync());
     }
 }
