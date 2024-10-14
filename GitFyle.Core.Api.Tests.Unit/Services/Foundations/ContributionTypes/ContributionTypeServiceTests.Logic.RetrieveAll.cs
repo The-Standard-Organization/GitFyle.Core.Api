@@ -10,7 +10,7 @@ using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 {
-    public partial class ContributionTypeServiceTests
+    public partial class ContributionTypeServiceTests 
     {
         [Fact]
         public async Task ShouldRetrieveAllContributionTypesAsync()
