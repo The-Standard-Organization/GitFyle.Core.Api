@@ -61,5 +61,52 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfContributionTypeIdNotFoundAndLogitAsync()
+        {
+            //given
+            var someContributionTypeId = Guid.NewGuid();
+            ContributionType nullContributionType = null;
+            var innerException = new Exception();
+
+            var notFoundContributionTypeException =
+                new NotFoundContributionTypeException(
+                    message: $"ContributionType not found with id: {someContributionTypeId}");
+
+            var expectedContributionTypeValidationException =
+                new ContributionTypeValidationException(
+                    message: "ContributionType validation error occurred, fix errors and try again.",
+                    innerException: notFoundContributionTypeException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributionTypeByIdAsync(someContributionTypeId))
+                    .ReturnsAsync(nullContributionType);
+
+            // when
+            ValueTask<ContributionType> retrieveContributionTypeByIdTask =
+                this.contributionTypeService.RetrieveContributionTypeByIdAsync(someContributionTypeId);
+
+            ContributionTypeValidationException actualContributionTypeValidationException =
+                await Assert.ThrowsAsync<ContributionTypeValidationException>(
+                    testCode: retrieveContributionTypeByIdTask.AsTask);
+
+            // then
+            actualContributionTypeValidationException.Should().BeEquivalentTo(
+                expectedContributionTypeValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributionTypeByIdAsync(someContributionTypeId),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionTypeValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
