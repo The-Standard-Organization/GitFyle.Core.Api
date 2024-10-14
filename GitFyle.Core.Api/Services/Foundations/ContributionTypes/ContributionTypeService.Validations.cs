@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
 
@@ -99,6 +100,9 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
                 Condition = first != second,
                 Message = $"Text is not the same as {secondName}"
             };
+
+        private static void ValidateContributionTypeIdAsync(Guid contributionTypeId) =>
+            Validate((Rule: IsInvalid(contributionTypeId), Parameter: nameof(ContributionType.Id)));
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
         {

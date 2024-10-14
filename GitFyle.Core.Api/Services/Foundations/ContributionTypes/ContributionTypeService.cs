@@ -42,6 +42,8 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
         public ValueTask<ContributionType> RetrieveContributionTypeByIdAsync(Guid contributionTypeId) =>
         TryCatch(async () =>
         {
+            ValidateContributionTypeIdAsync(contributionTypeId);
+
             ContributionType maybeContributionType =
                 await this.storageBroker.SelectContributionTypeByIdAsync(contributionTypeId);
 
