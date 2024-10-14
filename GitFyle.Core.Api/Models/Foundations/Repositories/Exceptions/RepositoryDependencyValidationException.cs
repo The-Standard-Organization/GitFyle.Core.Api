@@ -9,8 +9,8 @@ namespace GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions
 {
     public class RepositoryDependencyValidationException : Xeption
     {
-        public RepositoryDependencyValidationException(string message, Xeption innerException,IDictionary data)
-            : base(message, innerException,data)
+        public RepositoryDependencyValidationException(string message, Xeption innerException, IDictionary data)
+            : base(message, innerException, data)
         { }
     }
 }
