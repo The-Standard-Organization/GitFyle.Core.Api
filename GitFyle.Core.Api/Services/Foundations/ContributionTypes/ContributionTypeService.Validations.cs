@@ -4,7 +4,6 @@
 
 using System;
 using System.Threading.Tasks;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
 
@@ -103,6 +102,15 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
         private static void ValidateContributionTypeIdAsync(Guid contributionTypeId) =>
             Validate((Rule: IsInvalid(contributionTypeId), Parameter: nameof(ContributionType.Id)));
+
+        private static async ValueTask ValidateStorageContributionTypeAsync(ContributionType maybeContributionType, Guid id)
+        {
+            if (maybeContributionType is null)
+            {
+                throw new NotFoundContributionTypeException(
+                    message: $"ContributionType not found with id: {id}");
+            }
+        }
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
         {
