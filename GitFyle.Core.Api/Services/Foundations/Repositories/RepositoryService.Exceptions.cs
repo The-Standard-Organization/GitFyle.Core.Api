@@ -110,7 +110,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 throw await CreateAndLogServiceExceptionAsync(failedServiceRepositoryException);
             }
         }
-  
+
         private async ValueTask<RepositoryValidationException> CreateAndLogValidationExceptionAsync(
             Xeption exception)
         {

@@ -107,7 +107,7 @@ namespace GitFyle.Core.Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPut]
         public async ValueTask<ActionResult<Source>> PutSourceAsync(Source source)
         {
             try
