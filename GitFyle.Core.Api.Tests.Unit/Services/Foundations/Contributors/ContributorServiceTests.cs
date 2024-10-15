@@ -46,6 +46,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
+        private static string GetRandomStringWithLengthOf(int length)
+        {
+            return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
+                .GetValue();
+        }
+
         private static Contributor CreateRandomContributor() =>
             CreateRandomContributor(dateTimeOffset: GetRandomDateTimeOffset());
 
