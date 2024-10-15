@@ -103,7 +103,7 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
         private static void ValidateContributionTypeIdAsync(Guid contributionTypeId) =>
             Validate((Rule: IsInvalid(contributionTypeId), Parameter: nameof(ContributionType.Id)));
 
-        private static async ValueTask ValidateStorageContributionTypeAsync(ContributionType maybeContributionType, Guid id)
+        private static void ValidateStorageContributionTypeAsync(ContributionType maybeContributionType, Guid id)
         {
             if (maybeContributionType is null)
             {

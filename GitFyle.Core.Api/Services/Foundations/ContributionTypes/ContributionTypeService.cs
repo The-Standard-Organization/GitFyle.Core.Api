@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 
 namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
@@ -46,14 +47,18 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             ContributionType maybeContributionType =
                 await this.storageBroker.SelectContributionTypeByIdAsync(contributionTypeId);
 
-            await ValidateStorageContributionTypeAsync(maybeContributionType, contributionTypeId);
+            ValidateStorageContributionTypeAsync(maybeContributionType, contributionTypeId);
 
             return maybeContributionType;
         });
 
-        public ValueTask<ContributionType> ModifyContributionTypeAsync(ContributionType contributionType)
+        public ValueTask<ContributionType> ModifyContributionTypeAsync(ContributionType contributionType) =>
+        TryCatch(async () =>
         {
-            throw new NotImplementedException();
-        }
+            ContributionType maybeContributionType =
+                await this.storageBroker.SelectContributionTypeByIdAsync(contributionType.Id);
+
+            return await this.storageBroker.UpdateContributionTypeAsync(contributionType);
+        });
     }
 }
