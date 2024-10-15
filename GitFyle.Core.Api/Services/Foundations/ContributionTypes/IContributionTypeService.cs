@@ -14,5 +14,6 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
         ValueTask<ContributionType> AddContributionTypeAsync(ContributionType contributionType);
         ValueTask<IQueryable<ContributionType>> RetrieveAllContributionTypesAsync();
         ValueTask<ContributionType> RetrieveContributionTypeByIdAsync(Guid contributionTypeId);
+        ValueTask<ContributionType> ModifyContributionTypeAsync(ContributionType contributionType);
     }
 }

@@ -65,6 +65,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
         private static ContributionType CreateRandomContributionType() =>
             CreateRandomContributionType(dateTimeOffset: GetRandomDateTimeOffset());
 
@@ -77,6 +80,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
                 .Create(GetRandomNumber())
                 .AsQueryable();
         }
+
+        private static ContributionType CreateRandomModifyContributionType(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInThePast = GetRandomNegativeNumber();
+            ContributionType randomContributionType = CreateRandomContributionType(dateTimeOffset);
+            randomContributionType.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
+
+            return randomContributionType;
+        }
+
         private static Filler<ContributionType> CreateContributionTypeFiller(DateTimeOffset dateTimeOffset)
         {
             string user = Guid.NewGuid().ToString();
