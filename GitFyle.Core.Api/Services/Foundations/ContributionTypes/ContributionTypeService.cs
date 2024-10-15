@@ -2,11 +2,15 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
+using GitFyle.Core.Api.Models.Foundations.Repositories;
 
 namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 {
@@ -31,6 +35,36 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
         {
             await ValidateContributionTypeOnAddAsync(contributionType);
             return await this.storageBroker.InsertContributionTypeAsync(contributionType);
+        });
+
+        public ValueTask<IQueryable<ContributionType>> RetrieveAllContributionTypesAsync() =>
+        TryCatch(async () => await this.storageBroker.SelectAllContributionTypesAsync());
+
+        public ValueTask<ContributionType> RetrieveContributionTypeByIdAsync(Guid contributionTypeId) =>
+        TryCatch(async () =>
+        {
+            ValidateContributionTypeIdAsync(contributionTypeId);
+
+            ContributionType maybeContributionType =
+                await this.storageBroker.SelectContributionTypeByIdAsync(contributionTypeId);
+
+            ValidateStorageContributionTypeAsync(maybeContributionType, contributionTypeId);
+
+            return maybeContributionType;
+        });
+
+        public ValueTask<ContributionType> ModifyContributionTypeAsync(ContributionType contributionType) =>
+        TryCatch(async () =>
+        {
+            await ValidateContributionTypeOnModifyAsync(contributionType);
+
+            ContributionType maybeContributionType =
+                await this.storageBroker.SelectContributionTypeByIdAsync(contributionType.Id);
+
+            ValidateStorageContributionType(maybeContributionType, contributionType.Id);
+            ValidateAgainstStorageContributionTypeOnModify(contributionType, maybeContributionType);
+
+            return await this.storageBroker.UpdateContributionTypeAsync(contributionType);
         });
     }
 }
