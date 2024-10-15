@@ -138,5 +138,64 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfContributionTypeHasInvalidLengthPropertiesAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            var invalidContributionType = CreateRandomContributionType(dateTimeOffset: randomDateTimeOffset);
+            invalidContributionType.Name = GetRandomStringWithLengthOf(256);
+
+            var invalidContributionTypeException =
+                new InvalidContributionTypeException(
+                    message: "ContributionType is invalid, fix the errors and try again.");
+
+            invalidContributionTypeException.AddData(
+                key: nameof(ContributionType.Name),
+                values: $"Text exceeds max length of {invalidContributionType.Name.Length - 1} characters");
+
+            invalidContributionTypeException.AddData(
+                key: nameof(ContributionType.UpdatedDate),
+                values: $"Date is the same as {nameof(ContributionType.CreatedDate)}");
+
+            var expectedContributionTypeValidationException =
+                new ContributionTypeValidationException(
+                    message: "ContributionType validation error occurred, fix errors and try again.",
+                    innerException: invalidContributionTypeException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<ContributionType> modifyContributionTypeTask =
+                this.contributionTypeService.ModifyContributionTypeAsync(invalidContributionType);
+
+            ContributionTypeValidationException actualContributionTypeValidationException =
+                await Assert.ThrowsAsync<ContributionTypeValidationException>(
+                    testCode: modifyContributionTypeTask.AsTask);
+
+            // then
+            actualContributionTypeValidationException.Should()
+                .BeEquivalentTo(expectedContributionTypeValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionTypeValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributionTypeAsync(It.IsAny<ContributionType>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
