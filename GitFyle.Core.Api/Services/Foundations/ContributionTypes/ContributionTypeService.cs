@@ -10,6 +10,7 @@ using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
+using GitFyle.Core.Api.Models.Foundations.Repositories;
 
 namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 {
@@ -55,6 +56,8 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
         public ValueTask<ContributionType> ModifyContributionTypeAsync(ContributionType contributionType) =>
         TryCatch(async () =>
         {
+            await ValidateContributionTypeOnModifyAsync(contributionType);
+
             ContributionType maybeContributionType =
                 await this.storageBroker.SelectContributionTypeByIdAsync(contributionType.Id);
 
