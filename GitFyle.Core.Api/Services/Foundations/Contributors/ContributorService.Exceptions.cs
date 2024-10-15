@@ -5,7 +5,6 @@
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
-using Microsoft.Data.SqlClient;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Contributors
@@ -28,14 +27,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidContributorException);
             }
-            catch (SqlException sqlException)
-            {
-                var failedStorageContributorException = new FailedStorageContributorException(
-                    message: "Failed storage contributor error occurred, contact support.",
-                    innerException: sqlException);
-
-                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageContributorException);
-            }
         }
 
         private async ValueTask<ContributorValidationException>
@@ -48,18 +39,6 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             await this.loggingBroker.LogErrorAsync(contributionValidationException);
 
             return contributionValidationException;
-        }
-
-        private async ValueTask<ContributorDependencyException>
-            CreateAndLogCriticalDependencyExceptionAsync(Xeption exception)
-        {
-            var contributorDependencyException = new ContributorDependencyException(
-                message: "Contributor dependency error occurred, contact support.",
-                innerException: exception);
-
-            await this.loggingBroker.LogCriticalAsync(contributorDependencyException);
-
-            return contributorDependencyException;
         }
     }
 }
