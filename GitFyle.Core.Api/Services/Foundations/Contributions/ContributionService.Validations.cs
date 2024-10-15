@@ -16,37 +16,37 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             ValidateContributionIsNotNull(contribution);
 
             Validate(
-                (Rule: await IsInvalidAsync(contribution.Id), 
+                (Rule: await IsInvalidAsync(contribution.Id),
                     Parameter: nameof(Contribution.Id)),
 
-                (Rule: await IsInvalidAsync(contribution.RepositoryId), 
+                (Rule: await IsInvalidAsync(contribution.RepositoryId),
                     Parameter: nameof(Contribution.RepositoryId)),
 
-                (Rule: await IsInvalidAsync(contribution.ContributorId), 
+                (Rule: await IsInvalidAsync(contribution.ContributorId),
                     Parameter: nameof(Contribution.ContributorId)),
 
                 (Rule: await IsInvalidAsync(contribution.ContributionTypeId),
                     Parameter: nameof(Contribution.ContributionTypeId)),
 
-                (Rule: await IsInvalidAsync(contribution.ExternalId), 
+                (Rule: await IsInvalidAsync(contribution.ExternalId),
                     Parameter: nameof(Contribution.ExternalId)),
 
-                (Rule: await IsInvalidAsync(contribution.Title), 
+                (Rule: await IsInvalidAsync(contribution.Title),
                     Parameter: nameof(Contribution.Title)),
 
-                (Rule: await IsInvalidAsync(contribution.CreatedBy), 
+                (Rule: await IsInvalidAsync(contribution.CreatedBy),
                     Parameter: nameof(Contribution.CreatedBy)),
 
-                (Rule: await IsInvalidAsync(contribution.CreatedDate), 
+                (Rule: await IsInvalidAsync(contribution.CreatedDate),
                     Parameter: nameof(Contribution.CreatedDate)),
 
-                (Rule: await IsInvalidAsync(contribution.UpdatedBy), 
+                (Rule: await IsInvalidAsync(contribution.UpdatedBy),
                     Parameter: nameof(Contribution.UpdatedBy)),
 
-                (Rule: await IsInvalidAsync(contribution.UpdatedDate), 
+                (Rule: await IsInvalidAsync(contribution.UpdatedDate),
                     Parameter: nameof(Contribution.UpdatedDate)),
 
-                (Rule: await IsInvalidLengthAsync(contribution.Title, 255), 
+                (Rule: await IsInvalidLengthAsync(contribution.Title, 255),
                     Parameter: nameof(Contribution.Title)),
 
                 (Rule: await IsInvalidLengthAsync(contribution.ExternalId, 255),
@@ -77,34 +77,34 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
             Validate(
                 (Rule: await IsInvalidAsync(contribution.Id), Parameter: nameof(Contribution.Id)),
 
-                (Rule: await IsInvalidAsync(contribution.RepositoryId), 
+                (Rule: await IsInvalidAsync(contribution.RepositoryId),
                     Parameter: nameof(Contribution.RepositoryId)),
 
-                (Rule: await IsInvalidAsync(contribution.ContributorId), 
+                (Rule: await IsInvalidAsync(contribution.ContributorId),
                     Parameter: nameof(Contribution.ContributorId)),
 
                 (Rule: await IsInvalidAsync(contribution.ContributionTypeId),
                     Parameter: nameof(Contribution.ContributionTypeId)),
 
-                (Rule: await IsInvalidAsync(contribution.ExternalId), 
+                (Rule: await IsInvalidAsync(contribution.ExternalId),
                     Parameter: nameof(Contribution.ExternalId)),
 
-                (Rule: await IsInvalidAsync(contribution.Title), 
+                (Rule: await IsInvalidAsync(contribution.Title),
                     Parameter: nameof(Contribution.Title)),
 
-                (Rule: await IsInvalidAsync(contribution.CreatedBy), 
+                (Rule: await IsInvalidAsync(contribution.CreatedBy),
                     Parameter: nameof(Contribution.CreatedBy)),
 
-                (Rule: await IsInvalidAsync(contribution.CreatedDate), 
+                (Rule: await IsInvalidAsync(contribution.CreatedDate),
                     Parameter: nameof(Contribution.CreatedDate)),
 
-                (Rule: await IsInvalidAsync(contribution.UpdatedBy), 
+                (Rule: await IsInvalidAsync(contribution.UpdatedBy),
                     Parameter: nameof(Contribution.UpdatedBy)),
 
-                (Rule: await IsInvalidAsync(contribution.UpdatedDate), 
+                (Rule: await IsInvalidAsync(contribution.UpdatedDate),
                     Parameter: nameof(Contribution.UpdatedDate)),
 
-                (Rule: await IsInvalidLengthAsync(contribution.Title, 255), 
+                (Rule: await IsInvalidLengthAsync(contribution.Title, 255),
                     Parameter: nameof(Contribution.Title)),
 
                 (Rule: await IsInvalidLengthAsync(contribution.ExternalId, 255),
@@ -117,7 +117,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributions
 
                 Parameter: nameof(Contribution.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(contribution.UpdatedDate), 
+                (Rule: await IsNotRecentAsync(contribution.UpdatedDate),
                     Parameter: nameof(Contribution.UpdatedDate)));
         }
 

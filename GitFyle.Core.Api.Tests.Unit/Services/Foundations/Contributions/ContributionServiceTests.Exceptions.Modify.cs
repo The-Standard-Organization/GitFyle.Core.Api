@@ -152,7 +152,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             var expectedContributionDependencyValidationException =
                 new ContributionDependencyValidationException(
                     message: "Contribution dependency validation error occurred, fix errors and try again.",
-                    innerException: lockedContributionException, 
+                    innerException: lockedContributionException,
                     data: lockedContributionException.Data);
 
             this.dateTimeBrokerMock.Setup(broker =>
