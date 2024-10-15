@@ -100,6 +100,18 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
                 Message = $"Text is not the same as {secondName}"
             };
 
+        private static void ValidateContributionTypeIdAsync(Guid contributionTypeId) =>
+            Validate((Rule: IsInvalid(contributionTypeId), Parameter: nameof(ContributionType.Id)));
+
+        private static async ValueTask ValidateStorageContributionTypeAsync(ContributionType maybeContributionType, Guid id)
+        {
+            if (maybeContributionType is null)
+            {
+                throw new NotFoundContributionTypeException(
+                    message: $"ContributionType not found with id: {id}");
+            }
+        }
+
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
         {
             var (isNotRecent, startDate, endDate) = await IsDateNotRecentAsync(date);

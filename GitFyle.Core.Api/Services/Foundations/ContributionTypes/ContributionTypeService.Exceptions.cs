@@ -19,7 +19,8 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
         private delegate ValueTask<ContributionType> ReturningContributionTypeFunction();
         private delegate ValueTask<IQueryable<ContributionType>> ReturningContributionTypesFunction();
 
-        private async ValueTask<ContributionType> TryCatch(ReturningContributionTypeFunction returningContributionTypeFunction)
+        private async ValueTask<ContributionType> TryCatch(
+            ReturningContributionTypeFunction returningContributionTypeFunction)
         {
             try
             {
@@ -32,6 +33,10 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             catch (InvalidContributionTypeException invalidContributionTypeException)
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidContributionTypeException);
+            }
+            catch (NotFoundContributionTypeException notFoundContributionTypeException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundContributionTypeException);
             }
             catch (SqlException sqlException)
             {
@@ -134,7 +139,8 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             return contributionTypeDependencyValidationException;
         }
 
-        private async ValueTask<ContributionTypeDependencyException> CreateAndLogDependencyExceptionAsync(Xeption exception)
+        private async ValueTask<ContributionTypeDependencyException> 
+            CreateAndLogDependencyExceptionAsync(Xeption exception)
         {
             var contributionTypeDependencyException = new ContributionTypeDependencyException(
                 message: "ContributionType dependency error occurred, contact support.",

@@ -7,6 +7,7 @@ using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
 using GitFyle.Core.Api.Services.Foundations.Configurations;
 using GitFyle.Core.Api.Services.Foundations.Contributions;
+using GitFyle.Core.Api.Services.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Services.Foundations.Repositories;
 using GitFyle.Core.Api.Services.Foundations.Sources;
 using Microsoft.AspNetCore.Builder;
@@ -58,6 +59,7 @@ namespace GitFyle.Core.Api
             services.AddTransient<IConfigurationService, ConfigurationService>();
             services.AddTransient<IContributionService, ContributionService>();
             services.AddTransient<IRepositoryService, RepositoryService>();
+            services.AddTransient<IContributionTypeService, ContributionTypeService>();
         }
     }
 }
