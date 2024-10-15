@@ -5,8 +5,6 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using Moq;
@@ -282,6 +280,76 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedContributorValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributorAsync(It.IsAny<Contributor>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(-61)]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(
+            int invalidSeconds)
+        {
+            // given
+            DateTimeOffset randomDateTime =
+                GetRandomDateTimeOffset();
+
+            DateTimeOffset now = randomDateTime;
+            DateTimeOffset startDate = now.AddSeconds(-60);
+            DateTimeOffset endDate = now.AddSeconds(0);
+            Contributor randomContributor = CreateRandomContributor();
+            Contributor invalidContributor = randomContributor;
+
+            DateTimeOffset invalidDate =
+                now.AddSeconds(invalidSeconds);
+
+            invalidContributor.CreatedDate = invalidDate;
+            invalidContributor.UpdatedDate = invalidDate;
+
+            var invalidContributorException = new InvalidContributorException(
+                message: "Contributor is invalid, fix the errors and try again.");
+
+            invalidContributorException.AddData(
+            key: nameof(Contributor.CreatedDate),
+                values:
+                    $"Date is not recent. Expected a value between " +
+                    $"{startDate} and {endDate} but found {invalidDate}");
+
+            var expectedContributorValidationException =
+                new ContributorValidationException(
+                    message: "Contributor validation error occurred, fix errors and try again.",
+                    innerException: invalidContributorException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(now);
+
+            // when
+            ValueTask<Contributor> addContributorTask =
+                this.contributorService.AddContributorAsync(invalidContributor);
+
+            ContributorValidationException actualContributorValidationException =
+                await Assert.ThrowsAsync<ContributorValidationException>(
+                    testCode: addContributorTask.AsTask);
+
+            // then
+            actualContributorValidationException.Should().BeEquivalentTo(
+                expectedContributorValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(
