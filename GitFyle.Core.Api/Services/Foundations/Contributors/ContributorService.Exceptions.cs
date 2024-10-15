@@ -23,6 +23,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             {
                 throw await CreateAndLogValidationExceptionAsync(nullContributorException);
             }
+            catch (InvalidContributorException invalidContributorException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidContributorException);
+            }
         }
 
         private async ValueTask<ContributorValidationException>
