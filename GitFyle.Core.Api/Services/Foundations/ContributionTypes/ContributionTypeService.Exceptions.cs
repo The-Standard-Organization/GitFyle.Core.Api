@@ -55,6 +55,16 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsContributionTypeException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var concurrencyGemException =
+                    new LockedContributionTypeException(
+                        message: "Locked contributionType record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException,
+                        data: dbUpdateConcurrencyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
+            }
             catch (DbUpdateException dbUpdateException)
             {
                 var failedOperationContributionTypeException =
