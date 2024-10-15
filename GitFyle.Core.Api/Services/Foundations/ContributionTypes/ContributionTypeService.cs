@@ -66,5 +66,10 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
             return await this.storageBroker.UpdateContributionTypeAsync(contributionType);
         });
+
+        public ValueTask<ContributionType> RemoveContributionTypeByIdAsync(Guid contributionTypeId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
