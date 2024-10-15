@@ -55,6 +55,43 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
                     Parameter: nameof(ContributionType.CreatedDate)));
         }
 
+        private async ValueTask ValidateContributionTypeOnModifyAsync(ContributionType contributionType)
+        {
+            ValidateContributionTypeIsNotNull(contributionType);
+
+            Validate(
+                (Rule: IsInvalid(contributionType.Id),
+                    Parameter: nameof(ContributionType.Id)),
+
+                (Rule: IsInvalid(contributionType.Name),
+                    Parameter: nameof(ContributionType.Name)),
+
+                (Rule: IsInvalid(contributionType.CreatedBy),
+                    Parameter: nameof(ContributionType.CreatedBy)),
+
+                (Rule: IsInvalid(contributionType.CreatedDate),
+                    Parameter: nameof(ContributionType.CreatedDate)),
+
+                (Rule: IsInvalid(contributionType.UpdatedBy),
+                    Parameter: nameof(ContributionType.UpdatedBy)),
+
+                (Rule: IsInvalid(contributionType.UpdatedDate),
+                    Parameter: nameof(ContributionType.UpdatedDate)),
+
+                (Rule: IsInvalidLength(contributionType.Name, 255),
+                    Parameter: nameof(ContributionType.Name)),
+
+                (Rule: IsSame(
+                    firstDate: contributionType.UpdatedDate,
+                    secondDate: contributionType.CreatedDate,
+                    secondDateName: nameof(ContributionType.CreatedDate)),
+
+                Parameter: nameof(ContributionType.UpdatedDate)),
+
+                (Rule: await IsNotRecentAsync(contributionType.UpdatedDate),
+                    Parameter: nameof(ContributionType.UpdatedDate)));
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
@@ -82,6 +119,15 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
         private static bool IsExceedingLengthAsync(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
 
+        private static dynamic IsSame(
+        DateTimeOffset firstDate,
+        DateTimeOffset secondDate,
+        string secondDateName) => new
+        {
+            Condition = firstDate == secondDate,
+            Message = $"Date is the same as {secondDateName}"
+        };
+
         private static dynamic IsNotSame(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
@@ -99,6 +145,18 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
                 Condition = first != second,
                 Message = $"Text is not the same as {secondName}"
             };
+
+        private static void ValidateContributionTypeIdAsync(Guid contributionTypeId) =>
+            Validate((Rule: IsInvalid(contributionTypeId), Parameter: nameof(ContributionType.Id)));
+
+        private static void ValidateStorageContributionTypeAsync(ContributionType maybeContributionType, Guid id)
+        {
+            if (maybeContributionType is null)
+            {
+                throw new NotFoundContributionTypeException(
+                    message: $"ContributionType not found with id: {id}");
+            }
+        }
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
         {
@@ -140,6 +198,41 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             {
                 throw new NullContributionTypeException(message: "ContributionType is null");
             }
+        }
+
+        private static void ValidateStorageContributionType(ContributionType maybeContributionType, Guid contributionTypeId)
+        {
+            if (maybeContributionType is null)
+            {
+                throw new NotFoundContributionTypeException(
+                    message: $"ContributionType not found with id: {contributionTypeId}");
+            }
+        }
+
+        private static void ValidateAgainstStorageContributionTypeOnModify(
+             ContributionType inputContributionType, ContributionType storageContributionType)
+        {
+            Validate(
+                (Rule: IsNotSame(
+                    first: inputContributionType.CreatedBy,
+                    second: storageContributionType.CreatedBy,
+                    secondName: nameof(ContributionType.CreatedBy)),
+
+                Parameter: nameof(ContributionType.CreatedBy)),
+
+                (Rule: IsNotSame(
+                    firstDate: inputContributionType.CreatedDate,
+                    secondDate: storageContributionType.CreatedDate,
+                    secondDateName: nameof(ContributionType.CreatedDate)),
+
+                Parameter: nameof(ContributionType.CreatedDate)),
+
+                (Rule: IsSame(
+                    firstDate: inputContributionType.UpdatedDate,
+                    secondDate: storageContributionType.UpdatedDate,
+                    secondDateName: nameof(ContributionType.UpdatedDate)),
+
+                Parameter: nameof(ContributionType.UpdatedDate)));
         }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)

@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
@@ -16,8 +17,10 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
     internal partial class ContributionTypeService
     {
         private delegate ValueTask<ContributionType> ReturningContributionTypeFunction();
+        private delegate ValueTask<IQueryable<ContributionType>> ReturningContributionTypesFunction();
 
-        private async ValueTask<ContributionType> TryCatch(ReturningContributionTypeFunction returningContributionTypeFunction)
+        private async ValueTask<ContributionType> TryCatch(
+            ReturningContributionTypeFunction returningContributionTypeFunction)
         {
             try
             {
@@ -30,6 +33,10 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             catch (InvalidContributionTypeException invalidContributionTypeException)
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidContributionTypeException);
+            }
+            catch (NotFoundContributionTypeException notFoundContributionTypeException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundContributionTypeException);
             }
             catch (SqlException sqlException)
             {
@@ -49,6 +56,16 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsContributionTypeException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var concurrencyGemException =
+                    new LockedContributionTypeException(
+                        message: "Locked contributionType record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException,
+                        data: dbUpdateConcurrencyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
+            }
             catch (DbUpdateException dbUpdateException)
             {
                 var failedOperationContributionTypeException =
@@ -57,6 +74,32 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
                         innerException: dbUpdateException);
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationContributionTypeException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceContributionTypeException =
+                    new FailedServiceContributionTypeException(
+                        message: "Failed service contributionType error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceContributionTypeException);
+            }
+        }
+
+        private async ValueTask<IQueryable<ContributionType>> TryCatch(
+            ReturningContributionTypesFunction returningContributionTypesFunction)
+        {
+            try
+            {
+                return await returningContributionTypesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageContributionTypeException = new FailedStorageContributionTypeException(
+                    message: "Failed contributionType storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageContributionTypeException);
             }
             catch (Exception exception)
             {
@@ -106,7 +149,8 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             return contributionTypeDependencyValidationException;
         }
 
-        private async ValueTask<ContributionTypeDependencyException> CreateAndLogDependencyExceptionAsync(Xeption exception)
+        private async ValueTask<ContributionTypeDependencyException> 
+            CreateAndLogDependencyExceptionAsync(Xeption exception)
         {
             var contributionTypeDependencyException = new ContributionTypeDependencyException(
                 message: "ContributionType dependency error occurred, contact support.",
