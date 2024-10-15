@@ -43,6 +43,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
                 actualException.SameExceptionAs(expectedException);
         }
 
+        private static SqlException CreateSqlException()
+        {
+            return (SqlException)RuntimeHelpers.GetUninitializedObject(
+                type: typeof(SqlException));
+        }
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
