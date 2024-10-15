@@ -44,7 +44,19 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
                     Parameter: nameof(Contributor.UpdatedBy)),
 
                 (Rule: IsInvalid(contributor.UpdatedDate),
-                    Parameter: nameof(Contributor.UpdatedDate)));
+                    Parameter: nameof(Contributor.UpdatedDate)),
+
+                (Rule: IsInvalidLength(contributor.Username, 255),
+                    Parameter: nameof(Contributor.Username)),
+
+                (Rule: IsInvalidLength(contributor.Name, 255),
+                    Parameter: nameof(Contributor.Name)),
+
+                (Rule: IsInvalidLength(contributor.Email, 255),
+                    Parameter: nameof(Contributor.Email)),
+
+                (Rule: IsInvalidLength(contributor.ExternalId, 255),
+                    Parameter: nameof(Contributor.ExternalId)));
         }
 
         private static dynamic IsInvalid(Guid id) => new
@@ -64,6 +76,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             Condition = date == default,
             Message = "Date is invalid"
         };
+
+        private static dynamic IsInvalidLength(string text, int maxLength) => new
+        {
+            Condition = IsExceedingLengthAsync(text, maxLength),
+            Message = $"Text exceeds max length of {maxLength} characters"
+        };
+
+        private static bool IsExceedingLengthAsync(string text, int maxLength) =>
+           (text ?? string.Empty).Length > maxLength;
 
         private static void ValidateContributorIsNotNull(Contributor contributor)
         {
