@@ -30,7 +30,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             // when
             ValueTask<Repository> addRepositoryTask =
-                this.repositoryService.AddRepositoryAsync(nullRepository);
+                this.repositoryService.ModifyRepositoryAsync(nullRepository);
 
             RepositoryValidationException actualRepositoryValidationException =
                 await Assert.ThrowsAsync<RepositoryValidationException>(
