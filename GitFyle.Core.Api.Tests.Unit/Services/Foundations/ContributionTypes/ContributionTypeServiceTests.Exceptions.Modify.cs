@@ -69,5 +69,68 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
+        {
+            // given
+            int minutesInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+
+            ContributionType randomContributionType =
+                CreateRandomContributionType(randomDateTimeOffset);
+
+            randomContributionType.CreatedDate =
+                randomDateTimeOffset.AddMinutes(minutesInPast);
+
+            var dbUpdateException = new DbUpdateException();
+
+            var failedOperationContributionTypeException =
+                new FailedOperationContributionTypeException(
+                    message: "Failed operation contributionType error occurred, contact support.",
+                    innerException: dbUpdateException);
+
+            var expectedContributionTypeDependencyException =
+                new ContributionTypeDependencyException(
+                    message: "ContributionType dependency error occurred, contact support.",
+                    innerException: failedOperationContributionTypeException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributionTypeByIdAsync(randomContributionType.Id))
+                    .ThrowsAsync(dbUpdateException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<ContributionType> modifyContributionTypeTask =
+                this.contributionTypeService.ModifyContributionTypeAsync(randomContributionType);
+
+            ContributionTypeDependencyException actualContributionTypeDependencyException =
+                await Assert.ThrowsAsync<ContributionTypeDependencyException>(
+                    testCode: modifyContributionTypeTask.AsTask);
+
+            // then
+            actualContributionTypeDependencyException.Should().BeEquivalentTo(
+                expectedContributionTypeDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributionTypeByIdAsync(randomContributionType.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionTypeDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
