@@ -52,6 +52,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
                 .GetValue();
         }
 
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
+
         private static Contributor CreateRandomContributor() =>
             CreateRandomContributor(dateTimeOffset: GetRandomDateTimeOffset());
 
