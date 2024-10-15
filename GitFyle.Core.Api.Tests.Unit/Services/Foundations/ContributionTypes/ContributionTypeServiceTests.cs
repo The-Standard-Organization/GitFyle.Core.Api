@@ -62,12 +62,21 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
         private static ContributionType CreateRandomContributionType() =>
             CreateRandomContributionType(dateTimeOffset: GetRandomDateTimeOffset());
 
         private static ContributionType CreateRandomContributionType(DateTimeOffset dateTimeOffset) =>
             CreateContributionTypeFiller(dateTimeOffset).Create();
 
+        private static IQueryable<ContributionType> CreateRandomContributionTypes()
+        {
+            return CreateContributionTypeFiller(GetRandomDateTimeOffset())
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
         private static Filler<ContributionType> CreateContributionTypeFiller(DateTimeOffset dateTimeOffset)
         {
             string user = Guid.NewGuid().ToString();
