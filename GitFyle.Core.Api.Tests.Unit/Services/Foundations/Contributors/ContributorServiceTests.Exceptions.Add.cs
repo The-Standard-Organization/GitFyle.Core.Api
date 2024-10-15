@@ -2,11 +2,10 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
-using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -126,7 +125,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
-
         [Fact]
         public async Task ShouldThrowDependencyExceptionOnAddIfDependencyErrorOccurredAndLogItAsync()
         {
@@ -179,5 +177,56 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccurredAndLogItAsync()
+        {
+            // given
+            Contributor randomContributor = CreateRandomContributor();
+            var serviceException = new Exception();
+
+            var failedServiceContributorException =
+                new FailedServiceContributorException(
+                    message: "Failed service contributor error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedContributorServiceException =
+                new ContributorServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceContributorException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Contributor> addContributorTask =
+                this.contributorService.AddContributorAsync(
+                    randomContributor);
+
+            ContributorServiceException actualContributorServiceException =
+                await Assert.ThrowsAsync<ContributorServiceException>(
+                    testCode: addContributorTask.AsTask);
+
+            // then
+            actualContributorServiceException.Should().BeEquivalentTo(
+                expectedContributorServiceException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributorServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertContributorAsync(It.IsAny<Contributor>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
