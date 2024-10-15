@@ -2,15 +2,14 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Xeptions;
-using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 
 namespace GitFyle.Core.Api.Services.Foundations.Contributors
 {
@@ -58,6 +57,15 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
                         innerException: dbUpdateException);
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationContributorException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceContributorException =
+                    new FailedServiceContributorException(
+                        message: "Failed service contributor error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceContributorException);
             }
         }
 
@@ -107,6 +115,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             await this.loggingBroker.LogErrorAsync(contributorDependencyException);
 
             return contributorDependencyException;
+        }
+
+        private async ValueTask<ContributorServiceException>
+            CreateAndLogServiceExceptionAsync(Xeption exception)
+        {
+            var contributorServiceException = new ContributorServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(contributorServiceException);
+
+            return contributorServiceException;
         }
     }
 }
