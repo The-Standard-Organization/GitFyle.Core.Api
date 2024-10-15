@@ -26,9 +26,12 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Contributor> AddContributorAsync(Contributor contributor)
+        public ValueTask<Contributor> AddContributorAsync(Contributor contributor) =>
+        TryCatch(async () =>
         {
+            await ValidateContributorOnAddAsync(contributor);
+
             return await this.storageBroker.InsertContributorAsync(contributor);
-        }
+        });
     }
 }
