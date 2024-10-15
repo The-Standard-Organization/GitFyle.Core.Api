@@ -106,7 +106,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             return contributorDependencyValidationException;
         }
 
-        private async ValueTask<ContributorDependencyException> CreateAndLogDependencyExceptionAsync(Xeption exception)
+        private async ValueTask<ContributorDependencyException> 
+            CreateAndLogDependencyExceptionAsync(Xeption exception)
         {
             var contributorDependencyException = new ContributorDependencyException(
                 message: "Contributor dependency error occurred, contact support.",
