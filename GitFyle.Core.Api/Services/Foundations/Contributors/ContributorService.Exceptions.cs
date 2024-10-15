@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -36,6 +37,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageContributorException);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsContributorException =
+                    new AlreadyExistsContributorException(
+                        message: "Contributor already exists error occurred.",
+                        innerException: duplicateKeyException,
+                        data: duplicateKeyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsContributorException);
+            }
         }
 
         private async ValueTask<ContributorValidationException>
@@ -60,6 +71,19 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             await this.loggingBroker.LogCriticalAsync(contributorDependencyException);
 
             return contributorDependencyException;
+        }
+
+        private async ValueTask<ContributorDependencyValidationException>
+            CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
+        {
+            var contributorDependencyValidationException = new ContributorDependencyValidationException(
+                message: "Contributor dependency validation error occurred, fix errors and try again.",
+                innerException: exception,
+                data: exception.Data);
+
+            await this.loggingBroker.LogErrorAsync(contributorDependencyValidationException);
+
+            return contributorDependencyValidationException;
         }
     }
 }
