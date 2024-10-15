@@ -200,6 +200,41 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             }
         }
 
+        private static void ValidateStorageContributionType(ContributionType maybeContributionType, Guid contributionTypeId)
+        {
+            if (maybeContributionType is null)
+            {
+                throw new NotFoundContributionTypeException(
+                    message: $"ContributionType not found with id: {contributionTypeId}");
+            }
+        }
+
+        private static void ValidateAgainstStorageContributionTypeOnModify(
+             ContributionType inputContributionType, ContributionType storageContributionType)
+        {
+            Validate(
+                (Rule: IsNotSame(
+                    first: inputContributionType.CreatedBy,
+                    second: storageContributionType.CreatedBy,
+                    secondName: nameof(ContributionType.CreatedBy)),
+
+                Parameter: nameof(ContributionType.CreatedBy)),
+
+                (Rule: IsNotSame(
+                    firstDate: inputContributionType.CreatedDate,
+                    secondDate: storageContributionType.CreatedDate,
+                    secondDateName: nameof(ContributionType.CreatedDate)),
+
+                Parameter: nameof(ContributionType.CreatedDate)),
+
+                (Rule: IsSame(
+                    firstDate: inputContributionType.UpdatedDate,
+                    secondDate: storageContributionType.UpdatedDate,
+                    secondDateName: nameof(ContributionType.UpdatedDate)),
+
+                Parameter: nameof(ContributionType.UpdatedDate)));
+        }
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidContributionTypeException =

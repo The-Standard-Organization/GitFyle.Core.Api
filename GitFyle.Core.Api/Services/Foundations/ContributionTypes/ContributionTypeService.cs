@@ -61,6 +61,9 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             ContributionType maybeContributionType =
                 await this.storageBroker.SelectContributionTypeByIdAsync(contributionType.Id);
 
+            ValidateStorageContributionType(maybeContributionType, contributionType.Id);
+            ValidateAgainstStorageContributionTypeOnModify(contributionType, maybeContributionType);
+
             return await this.storageBroker.UpdateContributionTypeAsync(contributionType);
         });
     }
