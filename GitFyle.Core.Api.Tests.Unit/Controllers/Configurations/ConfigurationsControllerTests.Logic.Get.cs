@@ -15,7 +15,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
     public partial class ConfigurationsControllerTests
     {
         [Fact]
-        public async Task ShouldReturnOkWithRecordsOnGetAsync()
+        public async Task ShouldReturnOkWithConfigurationsOnGetAsync()
         {
             // given
             IQueryable<Configuration> randomConfigurations = CreateRandomConfigurations();
