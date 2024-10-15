@@ -50,5 +50,10 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
             return maybeContributionType;
         });
+
+        public ValueTask<ContributionType> ModifyContributionTypeAsync(ContributionType contributionType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
