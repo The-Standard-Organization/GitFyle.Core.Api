@@ -83,7 +83,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
                 (Rule: IsInvalid(repository.UpdatedBy), Parameter: nameof(Repository.UpdatedBy)),
                 (Rule: IsInvalid(repository.UpdatedDate), Parameter: nameof(Repository.UpdatedDate)),
                 (Rule: IsInvalidLength(repository.Name, 255), Parameter: nameof(Repository.Name)),
-                (Rule: IsInvalidLength(repository.Owner, 255),Parameter: nameof(Repository.Owner)),
+                (Rule: IsInvalidLength(repository.Owner, 255), Parameter: nameof(Repository.Owner)),
 
                 (Rule: IsInvalidLength(repository.ExternalId, 255),
                     Parameter: nameof(Repository.ExternalId)),

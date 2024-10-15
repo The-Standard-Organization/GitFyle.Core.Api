@@ -87,7 +87,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
             var expectedContributionDependencyValidationException =
                 new ContributionDependencyValidationException(
                     message: "Contribution dependency validation error occurred, fix errors and try again.",
-                    innerException: alreadyExistsContributionException, 
+                    innerException: alreadyExistsContributionException,
                     data: alreadyExistsContributionException.Data);
 
             this.dateTimeBrokerMock.Setup(broker =>
