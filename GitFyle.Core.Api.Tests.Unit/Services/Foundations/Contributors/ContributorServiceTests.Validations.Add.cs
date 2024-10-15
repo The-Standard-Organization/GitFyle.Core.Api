@@ -5,6 +5,8 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using Moq;
@@ -169,6 +171,9 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             var invalidContributor = CreateRandomContributor(dateTimeOffset: randomDateTimeOffset);
             invalidContributor.Name = GetRandomStringWithLengthOf(256);
+            invalidContributor.Email = GetRandomStringWithLengthOf(256);
+            invalidContributor.Username = GetRandomStringWithLengthOf(256);
+            invalidContributor.ExternalId = GetRandomStringWithLengthOf(256);
 
             var invalidContributorException =
                 new InvalidContributorException(
@@ -177,6 +182,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
             invalidContributorException.AddData(
                 key: nameof(Contributor.Name),
                 values: $"Text exceeds max length of {invalidContributor.Name.Length - 1} characters");
+
+            invalidContributorException.AddData(
+               key: nameof(Contributor.Email),
+               values: $"Text exceeds max length of {invalidContributor.Email.Length - 1} characters");
+
+            invalidContributorException.AddData(
+               key: nameof(Contributor.Username),
+               values: $"Text exceeds max length of {invalidContributor.Username.Length - 1} characters");
+
+            invalidContributorException.AddData(
+               key: nameof(Contributor.ExternalId),
+               values: $"Text exceeds max length of {invalidContributor.ExternalId.Length - 1} characters");
 
             var expectedContributorValidationException =
                 new ContributorValidationException(
