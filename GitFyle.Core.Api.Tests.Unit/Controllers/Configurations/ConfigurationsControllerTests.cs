@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
@@ -62,8 +63,14 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
             };
         }
 
+        private static IQueryable<Configuration> CreateRandomConfigurations() =>
+            CreateConfigurationFiller().Create(count: GetRandomNumber()).AsQueryable();
+
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();

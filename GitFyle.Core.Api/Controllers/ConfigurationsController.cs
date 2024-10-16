@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
@@ -72,6 +73,26 @@ namespace GitFyle.Core.Api.Controllers
             catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
             {
                 return BadRequest(configurationDependencyValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyException configurationDependencyException)
+            {
+                return InternalServerError(configurationDependencyException);
+            }
+            catch (ConfigurationServiceException configurationServiceException)
+            {
+                return InternalServerError(configurationServiceException);
+            }
+        }
+
+        [HttpGet]
+        public async ValueTask<ActionResult<IQueryable<Configuration>>> GetConfigurationsAsync()
+        {
+            try
+            {
+                IQueryable<Configuration> configurations =
+                    await this.configurationService.RetrieveAllConfigurationsAsync();
+
+                return Ok(configurations);
             }
             catch (ConfigurationDependencyException configurationDependencyException)
             {
