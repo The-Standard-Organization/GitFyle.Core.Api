@@ -103,5 +103,11 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(configurationServiceException);
             }
         }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Configuration>> PutConfigurationAsync(Configuration configuration)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
