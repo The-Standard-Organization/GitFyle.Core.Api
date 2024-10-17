@@ -107,7 +107,10 @@ namespace GitFyle.Core.Api.Controllers
         [HttpPut]
         public async ValueTask<ActionResult<Configuration>> PutConfigurationAsync(Configuration configuration)
         {
-            throw new NotImplementedException();
+            Configuration modifiedConfiguration = 
+                await this.configurationService.ModifyConfigurationAsync(configuration);
+
+            return Ok(modifiedConfiguration);
         }
     }
 }
