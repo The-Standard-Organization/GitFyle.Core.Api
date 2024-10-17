@@ -2,18 +2,12 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Force.DeepCloner;
-using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
-using RESTFulSense.Models;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
 {
@@ -39,7 +33,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
                     .ReturnsAsync(storageConfiguration);
 
             // when
-            ActionResult<Configuration> actualActionResult = 
+            ActionResult<Configuration> actualActionResult =
                 await configurationsController.PutConfigurationAsync(randomConfiguration);
 
             // then

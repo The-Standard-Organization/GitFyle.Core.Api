@@ -3,17 +3,14 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
+using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
 using RESTFulSense.Models;
 using Xeptions;
-using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
 {
