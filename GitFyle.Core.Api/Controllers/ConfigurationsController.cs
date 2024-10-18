@@ -1,4 +1,8 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
@@ -93,6 +97,82 @@ namespace GitFyle.Core.Api.Controllers
                     await this.configurationService.RetrieveAllConfigurationsAsync();
 
                 return Ok(configurations);
+            }
+            catch (ConfigurationDependencyException configurationDependencyException)
+            {
+                return InternalServerError(configurationDependencyException);
+            }
+            catch (ConfigurationServiceException configurationServiceException)
+            {
+                return InternalServerError(configurationServiceException);
+            }
+        }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Configuration>> PutConfigurationAsync(Configuration configuration)
+        {
+            try
+            {
+                Configuration modifiedConfiguration =
+                    await this.configurationService.ModifyConfigurationAsync(configuration);
+
+                return Ok(modifiedConfiguration);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+                when (configurationValidationException.InnerException is NotFoundConfigurationException)
+            {
+                return NotFound(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+            {
+                return BadRequest(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+                when (configurationDependencyValidationException.InnerException is AlreadyExistsConfigurationException)
+            {
+                return Conflict(configurationDependencyValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+            {
+                return BadRequest(configurationDependencyValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyException configurationDependencyException)
+            {
+                return InternalServerError(configurationDependencyException);
+            }
+            catch (ConfigurationServiceException configurationServiceException)
+            {
+                return InternalServerError(configurationServiceException);
+            }
+        }
+
+        [HttpDelete("{configurationId}")]
+        public async ValueTask<ActionResult<Configuration>> DeleteConfigurationByIdAsync(Guid configurationId)
+        {
+            try
+            {
+                Configuration deleteConfiguration =
+                    await this.configurationService.RemoveConfigurationByIdAsync(configurationId);
+
+                return Ok(deleteConfiguration);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+                when (configurationValidationException.InnerException is NotFoundConfigurationException)
+            {
+                return NotFound(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+            {
+                return BadRequest(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+                when (configurationDependencyValidationException.InnerException is LockedConfigurationException)
+            {
+                return Locked(configurationDependencyValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+            {
+                return BadRequest(configurationDependencyValidationException.InnerException);
             }
             catch (ConfigurationDependencyException configurationDependencyException)
             {
