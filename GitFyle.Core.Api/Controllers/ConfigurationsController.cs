@@ -149,7 +149,10 @@ namespace GitFyle.Core.Api.Controllers
         [HttpDelete("{configurationId}")]
         public async ValueTask<ActionResult<Configuration>> DeleteConfigurationByIdAsync(Guid configurationId)
         {
-            throw new NotImplementedException();
+            Configuration deleteConfiguration = 
+                await this.configurationService.RemoveConfigurationByIdAsync(configurationId);
+
+            return Ok(deleteConfiguration);
         }
     }
 }
