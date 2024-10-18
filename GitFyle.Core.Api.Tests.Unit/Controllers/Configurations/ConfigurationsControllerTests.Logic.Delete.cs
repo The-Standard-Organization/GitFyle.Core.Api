@@ -3,12 +3,8 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Force.DeepCloner;
-using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -38,7 +34,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
                     .ReturnsAsync(storageConfiguration);
 
             // when
-            ActionResult<Configuration> actualActionResult = 
+            ActionResult<Configuration> actualActionResult =
                 await configurationsController.DeleteConfigurationByIdAsync(inputId);
 
             // then
