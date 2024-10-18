@@ -145,5 +145,11 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(configurationServiceException);
             }
         }
+
+        [HttpDelete("{configurationId}")]
+        public async ValueTask<ActionResult<Configuration>> DeleteConfigurationByIdAsync(Guid configurationId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
