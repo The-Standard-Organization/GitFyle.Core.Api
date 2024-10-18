@@ -121,5 +121,48 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
 
             this.configurationServiceMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+
+            var lockedConfigurationException =
+                new LockedConfigurationException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var configurationDependencyValidationException =
+                new ConfigurationDependencyValidationException(
+                    message: someMessage,
+                    innerException: lockedConfigurationException);
+
+            LockedObjectResult expectedConflictObjectResult =
+                Locked(lockedConfigurationException);
+
+            var expectedActionResult =
+                new ActionResult<Configuration>(expectedConflictObjectResult);
+
+            this.configurationServiceMock.Setup(service =>
+                service.RemoveConfigurationByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(configurationDependencyValidationException);
+
+            // when
+            ActionResult<Configuration> actualActionResult =
+                await this.configurationsController.DeleteConfigurationByIdAsync(someId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.configurationServiceMock.Verify(service =>
+                service.RemoveConfigurationByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.configurationServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
