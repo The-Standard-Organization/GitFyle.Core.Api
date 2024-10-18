@@ -149,10 +149,31 @@ namespace GitFyle.Core.Api.Controllers
         [HttpDelete("{configurationId}")]
         public async ValueTask<ActionResult<Configuration>> DeleteConfigurationByIdAsync(Guid configurationId)
         {
-            Configuration deleteConfiguration = 
-                await this.configurationService.RemoveConfigurationByIdAsync(configurationId);
+            try
+            {
+                Configuration deleteConfiguration =
+                    await this.configurationService.RemoveConfigurationByIdAsync(configurationId);
 
-            return Ok(deleteConfiguration);
+                return Ok(deleteConfiguration);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+                when (configurationValidationException.InnerException is NotFoundConfigurationException)
+            {
+                return NotFound(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+            {
+                return BadRequest(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+                when (configurationDependencyValidationException.InnerException is LockedConfigurationException)
+            {
+                return Locked(configurationDependencyValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+            {
+                return BadRequest(configurationDependencyValidationException.InnerException);
+            }
         }
     }
 }
