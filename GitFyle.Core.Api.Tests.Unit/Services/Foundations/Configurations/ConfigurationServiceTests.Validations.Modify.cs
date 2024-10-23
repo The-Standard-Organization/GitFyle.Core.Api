@@ -403,7 +403,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
 
             invalidConfigurationException.AddData(
                 key: nameof(Configuration.UpdatedDate),
-                values: $"Date is same as {nameof(Source.UpdatedDate)}");
+                values: $"Date is same as {nameof(Configuration.UpdatedDate)}");
 
             var expectedConfigurationValidationException =
                 new ConfigurationValidationException(
