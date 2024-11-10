@@ -149,7 +149,7 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             return contributionTypeDependencyValidationException;
         }
 
-        private async ValueTask<ContributionTypeDependencyException> 
+        private async ValueTask<ContributionTypeDependencyException>
             CreateAndLogDependencyExceptionAsync(Xeption exception)
         {
             var contributionTypeDependencyException = new ContributionTypeDependencyException(
@@ -161,7 +161,7 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
             return contributionTypeDependencyException;
         }
 
-        private async ValueTask<ContributionTypeServiceException> 
+        private async ValueTask<ContributionTypeServiceException>
             CreateAndLogServiceExceptionAsync(Xeption exception)
         {
             var contributionTypeServiceException = new ContributionTypeServiceException(

@@ -51,7 +51,7 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
                 Parameter: nameof(ContributionType.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(contributionType.CreatedDate), 
+                (Rule: await IsNotRecentAsync(contributionType.CreatedDate),
                     Parameter: nameof(ContributionType.CreatedDate)));
         }
 
