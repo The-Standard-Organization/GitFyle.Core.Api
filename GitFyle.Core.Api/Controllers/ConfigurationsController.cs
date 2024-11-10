@@ -145,5 +145,43 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(configurationServiceException);
             }
         }
+
+        [HttpDelete("{configurationId}")]
+        public async ValueTask<ActionResult<Configuration>> DeleteConfigurationByIdAsync(Guid configurationId)
+        {
+            try
+            {
+                Configuration deleteConfiguration =
+                    await this.configurationService.RemoveConfigurationByIdAsync(configurationId);
+
+                return Ok(deleteConfiguration);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+                when (configurationValidationException.InnerException is NotFoundConfigurationException)
+            {
+                return NotFound(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationValidationException configurationValidationException)
+            {
+                return BadRequest(configurationValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+                when (configurationDependencyValidationException.InnerException is LockedConfigurationException)
+            {
+                return Locked(configurationDependencyValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyValidationException configurationDependencyValidationException)
+            {
+                return BadRequest(configurationDependencyValidationException.InnerException);
+            }
+            catch (ConfigurationDependencyException configurationDependencyException)
+            {
+                return InternalServerError(configurationDependencyException);
+            }
+            catch (ConfigurationServiceException configurationServiceException)
+            {
+                return InternalServerError(configurationServiceException);
+            }
+        }
     }
 }
