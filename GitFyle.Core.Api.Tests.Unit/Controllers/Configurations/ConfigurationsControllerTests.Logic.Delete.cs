@@ -46,6 +46,5 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Configurations
 
             configurationServiceMock.VerifyNoOtherCalls();
         }
-
     }
 }

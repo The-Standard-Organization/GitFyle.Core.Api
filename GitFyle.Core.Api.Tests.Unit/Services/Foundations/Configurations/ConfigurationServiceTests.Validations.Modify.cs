@@ -447,6 +447,5 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
             this.datetimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
-
     }
 }
