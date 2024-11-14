@@ -61,5 +61,52 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfContributorIdNotFoundAndLogitAsync()
+        {
+            //given
+            var someContributorId = Guid.NewGuid();
+            Contributor nullContributor = null;
+            var innerException = new Exception();
+
+            var notFoundContributorException =
+                new NotFoundContributorException(
+                    message: $"Contributor not found with id: {someContributorId}");
+
+            var expectedContributorValidationException =
+                new ContributorValidationException(
+                    message: "Contributor validation error occurred, fix errors and try again.",
+                    innerException: notFoundContributorException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributorByIdAsync(someContributorId))
+                    .ReturnsAsync(nullContributor);
+
+            // when
+            ValueTask<Contributor> retrieveContributorByIdTask =
+                this.contributorService.RetrieveContributorByIdAsync(someContributorId);
+
+            ContributorValidationException actualContributorValidationException =
+                await Assert.ThrowsAsync<ContributorValidationException>(
+                    testCode: retrieveContributorByIdTask.AsTask);
+
+            // then
+            actualContributorValidationException.Should().BeEquivalentTo(
+                expectedContributorValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributorByIdAsync(someContributorId),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributorValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
