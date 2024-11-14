@@ -39,9 +39,17 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
         public ValueTask<IQueryable<Contributor>> RetrieveAllContributorsAsync() =>
         TryCatch(async () => await this.storageBroker.SelectAllContributorsAsync());
 
-        public ValueTask<Contributor> RetrieveContributorByIdAsync(Guid contributorId)
+        public ValueTask<Contributor> RetrieveContributorByIdAsync(Guid contributorId) =>
+        TryCatch(async () =>
         {
-            throw new NotImplementedException();
-        }
+            ValidateContributorIdAsync(contributorId);
+
+            Contributor maybeContributor =
+                await this.storageBroker.SelectContributorByIdAsync(contributorId);
+
+            ValidateStorageContributorAsync(maybeContributor, contributorId);
+
+            return maybeContributor;
+        });
     }
 }
