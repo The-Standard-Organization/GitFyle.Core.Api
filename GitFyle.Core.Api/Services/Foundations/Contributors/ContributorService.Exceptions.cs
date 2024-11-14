@@ -33,6 +33,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidContributorException);
             }
+            catch (NotFoundContributorException notFoundContributorException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundContributorException);
+            }
             catch (SqlException sqlException)
             {
                 var failedStorageContributorException = new FailedStorageContributorException(
