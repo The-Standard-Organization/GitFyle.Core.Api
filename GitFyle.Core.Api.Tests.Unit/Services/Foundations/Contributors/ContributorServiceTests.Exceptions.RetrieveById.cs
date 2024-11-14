@@ -59,5 +59,56 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            //given
+            var someContributorId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedServiceContributorException =
+                new FailedServiceContributorException(
+                    message: "Failed service contributor error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedContributorServiceException =
+                new ContributorServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceContributorException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributorByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            //when
+            ValueTask<Contributor> retrieveContributorByIdTask =
+                this.contributorService.RetrieveContributorByIdAsync(someContributorId);
+
+            ContributorServiceException actualContributorServiceException =
+                await Assert.ThrowsAsync<ContributorServiceException>(
+                    testCode: retrieveContributorByIdTask.AsTask);
+
+            //then
+            actualContributorServiceException.Should().BeEquivalentTo(
+                expectedContributorServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributorByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+            broker.LogErrorAsync(It.Is(SameExceptionAs(
+                expectedContributorServiceException))),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
