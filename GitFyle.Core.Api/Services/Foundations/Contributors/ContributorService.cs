@@ -35,9 +35,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             return await this.storageBroker.InsertContributorAsync(contributor);
         });
 
-        public async ValueTask<IQueryable<Contributor>> RetrieveAllContributorsAsync()
-        {
-            return await this.storageBroker.SelectAllContributorsAsync();  
-        }
+        public ValueTask<IQueryable<Contributor>> RetrieveAllContributorsAsync() =>
+        TryCatch(async () => await this.storageBroker.SelectAllContributorsAsync());
     }
 }
