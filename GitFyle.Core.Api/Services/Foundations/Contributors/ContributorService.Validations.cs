@@ -160,6 +160,18 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             }
         }
 
+        private static void ValidateContributorIdAsync(Guid contributionTypeId) =>
+           Validate((Rule: IsInvalid(contributionTypeId), Parameter: nameof(Contributor.Id)));
+
+        private static void ValidateStorageContributorAsync(Contributor maybeContributor, Guid id)
+        {
+            if (maybeContributor is null)
+            {
+                throw new NotFoundContributorException(
+                    message: $"Contributor not found with id: {id}");
+            }
+        }
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidContributorException =
