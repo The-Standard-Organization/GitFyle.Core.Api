@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
@@ -16,6 +17,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
     internal partial class ContributorService
     {
         private delegate ValueTask<Contributor> ReturningContributorFunction();
+        private delegate ValueTask<IQueryable<Contributor>> ReturningContributorsFunction();
 
         private async ValueTask<Contributor> TryCatch(ReturningContributorFunction returningContributorFunction)
         {
@@ -69,16 +71,42 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             }
         }
 
+        private async ValueTask<IQueryable<Contributor>> TryCatch(
+            ReturningContributorsFunction returningContributorsFunction)
+        {
+            try
+            {
+                return await returningContributorsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageContributorException = new FailedStorageContributorException(
+                    message: "Failed contributor storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageContributorException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceContributorException =
+                    new FailedServiceContributorException(
+                        message: "Failed service contributor error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceContributorException);
+            }
+        }
+
         private async ValueTask<ContributorValidationException>
             CreateAndLogValidationExceptionAsync(Xeption exception)
         {
-            var contributionValidationException = new ContributorValidationException(
+            var contributorValidationException = new ContributorValidationException(
                 message: "Contributor validation error occurred, fix errors and try again.",
                 innerException: exception);
 
-            await this.loggingBroker.LogErrorAsync(contributionValidationException);
+            await this.loggingBroker.LogErrorAsync(contributorValidationException);
 
-            return contributionValidationException;
+            return contributorValidationException;
         }
 
         private async ValueTask<ContributorDependencyException>
