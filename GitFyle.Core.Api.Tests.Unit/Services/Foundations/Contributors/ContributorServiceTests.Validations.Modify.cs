@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using Moq;
@@ -225,6 +226,59 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertContributorAsync(It.IsAny<Contributor>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Contributor randomContributor = CreateRandomContributor(randomDateTimeOffset);
+            Contributor invalidContributor = randomContributor;
+
+            var invalidContributorException = new InvalidContributorException(
+                message: "Contributor is invalid, fix the errors and try again.");
+
+            invalidContributorException.AddData(
+                key: nameof(Contributor.UpdatedDate),
+                values: $"Date is the same as {nameof(Contributor.CreatedDate)}");
+
+            var expectedContributorValidationException = new ContributorValidationException(
+                message: "Contributor validation error occurred, fix errors and try again.",
+                innerException: invalidContributorException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Contributor> modifyContributorTask =
+                this.contributorService.ModifyContributorAsync(invalidContributor);
+
+            ContributorValidationException actualContributorValidationException =
+                await Assert.ThrowsAsync<ContributorValidationException>(
+                    testCode: modifyContributorTask.AsTask);
+
+            // then
+            actualContributorValidationException.Should().BeEquivalentTo(
+                expectedContributorValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedContributorValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributorByIdAsync(It.IsAny<Guid>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
