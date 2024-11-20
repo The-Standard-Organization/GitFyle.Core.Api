@@ -2,11 +2,13 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
@@ -65,6 +67,69 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
+        {
+            // given
+            int minutesInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+
+            Contributor randomContributor =
+                CreateRandomContributor(randomDateTimeOffset);
+
+            randomContributor.CreatedDate =
+                randomDateTimeOffset.AddMinutes(minutesInPast);
+
+            var dbUpdateException = new DbUpdateException();
+
+            var failedOperationContributorException =
+                new FailedOperationContributorException(
+                    message: "Failed operation contributor error occurred, contact support.",
+                    innerException: dbUpdateException);
+
+            var expectedContributorDependencyException =
+                new ContributorDependencyException(
+                    message: "Contributor dependency error occurred, contact support.",
+                    innerException: failedOperationContributorException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributorByIdAsync(randomContributor.Id))
+                    .ThrowsAsync(dbUpdateException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Contributor> modifyContributorTask =
+                this.contributorService.ModifyContributorAsync(randomContributor);
+
+            ContributorDependencyException actualContributorDependencyException =
+                await Assert.ThrowsAsync<ContributorDependencyException>(
+                    testCode: modifyContributorTask.AsTask);
+
+            // then
+            actualContributorDependencyException.Should().BeEquivalentTo(
+                expectedContributorDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributorByIdAsync(randomContributor.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributorDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
