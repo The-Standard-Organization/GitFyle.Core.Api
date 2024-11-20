@@ -51,5 +51,10 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
 
             return maybeContributor;
         });
+
+        public ValueTask<Contributor> ModifyContributorAsync(Contributor contributor)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
