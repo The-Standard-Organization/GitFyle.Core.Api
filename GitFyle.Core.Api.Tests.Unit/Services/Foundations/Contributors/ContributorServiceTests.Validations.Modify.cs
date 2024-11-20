@@ -406,5 +406,72 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfCreatedAuditInfoHasChangedAndLogItAsync()
+        {
+            // given
+            int randomMinutes = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Contributor randomContributor = CreateRandomModifyContributor(randomDateTimeOffset);
+            Contributor invalidContributor = randomContributor;
+            Contributor storedContributor = randomContributor.DeepClone();
+            storedContributor.CreatedBy = GetRandomString();
+            storedContributor.CreatedDate = storedContributor.CreatedDate.AddMinutes(randomMinutes);
+            storedContributor.UpdatedDate = storedContributor.UpdatedDate.AddMinutes(randomMinutes);
+            Guid ContributorId = invalidContributor.Id;
+
+            var invalidContributorException = new InvalidContributorException(
+                message: "Contributor is invalid, fix the errors and try again.");
+
+            invalidContributorException.AddData(
+                key: nameof(Contributor.CreatedBy),
+                values: $"Text is not the same as {nameof(Contributor.CreatedBy)}");
+
+            invalidContributorException.AddData(
+                key: nameof(Contributor.CreatedDate),
+                values: $"Date is not the same as {nameof(Contributor.CreatedDate)}");
+
+            var expectedContributorValidationException = new ContributorValidationException(
+                message: "Contributor validation error occurred, fix errors and try again.",
+                innerException: invalidContributorException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributorByIdAsync(ContributorId))
+                    .ReturnsAsync(storedContributor);
+
+            // when
+            ValueTask<Contributor> modifyContributorTask =
+                this.contributorService.ModifyContributorAsync(invalidContributor);
+
+            ContributorValidationException actualContributorValidationException =
+                await Assert.ThrowsAsync<ContributorValidationException>(
+                    testCode: modifyContributorTask.AsTask);
+
+            // then
+            actualContributorValidationException.Should().BeEquivalentTo(
+                expectedContributorValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributorByIdAsync(invalidContributor.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedContributorValidationException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
