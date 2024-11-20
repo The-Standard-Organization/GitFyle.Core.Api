@@ -348,5 +348,63 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageContributorDoesNotExistAndLogItAsync()
+        {
+            // given
+            int randomNegative = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Contributor randomContributor = CreateRandomContributor(randomDateTimeOffset);
+            Contributor nonExistingContributor = randomContributor;
+            nonExistingContributor.CreatedDate = randomDateTimeOffset.AddMinutes(randomNegative);
+            Contributor nullContributor = null;
+
+            var notFoundContributorException =
+                new NotFoundContributorException(
+                    message: $"Contributor not found with id: {nonExistingContributor.Id}");
+
+            var expectedContributorValidationException =
+                new ContributorValidationException(
+                    message: "Contributor validation error occurred, fix errors and try again.",
+                    innerException: notFoundContributorException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectContributorByIdAsync(nonExistingContributor.Id))
+                    .ReturnsAsync(nullContributor);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<Contributor> modifyContributorTask =
+                this.contributorService.ModifyContributorAsync(nonExistingContributor);
+
+            ContributorValidationException actualContributorValidationException =
+                await Assert.ThrowsAsync<ContributorValidationException>(
+                    testCode: modifyContributorTask.AsTask);
+
+            // then
+            actualContributorValidationException.Should().BeEquivalentTo(
+                expectedContributorValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributorByIdAsync(nonExistingContributor.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributorValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
