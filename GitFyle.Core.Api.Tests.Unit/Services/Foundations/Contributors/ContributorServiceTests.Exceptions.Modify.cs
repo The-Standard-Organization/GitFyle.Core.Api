@@ -132,5 +132,61 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        private async Task ShouldThrowDependencyValidationExceptionOnModifyIfDbUpdateConcurrencyOccursAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Contributor randomContributor = CreateRandomContributor(randomDateTimeOffset);
+
+            var dbUpdateConcurrencyException =
+                new DbUpdateConcurrencyException();
+
+            var lockedContributorException =
+                new LockedContributorException(
+                    message: "Locked contributor record error occurred, please try again.",
+                    innerException: dbUpdateConcurrencyException,
+                    data: dbUpdateConcurrencyException.Data);
+
+            var expectedContributorDependencyValidationException =
+                new ContributorDependencyValidationException(
+                    message: "Contributor dependency validation error occurred, fix errors and try again.",
+                    innerException: lockedContributorException,
+                    data: lockedContributorException.Data);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(dbUpdateConcurrencyException);
+
+            // when
+            ValueTask<Contributor> modifyContributorTask =
+                this.contributorService.ModifyContributorAsync(randomContributor);
+
+            ContributorDependencyValidationException actualContributorDependencyValidationException =
+                await Assert.ThrowsAsync<ContributorDependencyValidationException>(
+                    testCode: modifyContributorTask.AsTask);
+
+            // then
+            actualContributorDependencyValidationException.Should().BeEquivalentTo(
+                expectedContributorDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributorDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributorByIdAsync(randomContributor.Id),
+                    Times.Never());
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
