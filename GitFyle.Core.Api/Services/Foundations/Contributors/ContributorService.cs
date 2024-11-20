@@ -66,9 +66,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             return await this.storageBroker.UpdateContributorAsync(contributor);
         });
 
-        public ValueTask<Contributor> RemoveContributorByIdAsync(Guid contributorId)
+        public ValueTask<Contributor> RemoveContributorByIdAsync(Guid contributorId) =>
+        TryCatch(async () =>
         {
-            throw new NotImplementedException();
-        }
+            ValidateContributorIdAsync(contributorId);
+            Contributor maybeContributor =
+                await this.storageBroker.SelectContributorByIdAsync(contributorId);
+
+            ValidateStorageContributorAsync(maybeContributor, contributorId);
+
+            return await this.storageBroker.DeleteContributorAsync(maybeContributor);
+        });
     }
 }
