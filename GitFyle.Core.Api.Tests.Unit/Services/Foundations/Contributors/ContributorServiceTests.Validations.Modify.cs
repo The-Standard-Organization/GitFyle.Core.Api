@@ -58,7 +58,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
         [InlineData("")]
         [InlineData(" ")]
         public async Task ShouldThrowValidationExceptionOnModifyIfContributorIsInvalidAndLogItAsync(
-        string invalidString)
+            string invalidString)
         {
             // given
             var invalidContributor = new Contributor
