@@ -78,10 +78,18 @@ namespace GitFyle.Core.Api.Controllers
         [HttpPut]
         public async ValueTask<ActionResult<Repository>> PutRepositoryAsync(Repository repository)
         {
+            try
+            {
                 Repository modifiedRepository =
                     await this.repositoryService.ModifyRepositoryAsync(repository);
 
                 return Ok(modifiedRepository);
+            }
+            catch (RepositoryValidationException repositoryValidationException)
+                when (repositoryValidationException.InnerException is NotFoundRepositoryException)
+            {
+                return NotFound(repositoryValidationException.InnerException);
+            }
         }
 
         [HttpDelete("{repositoryId}")]
