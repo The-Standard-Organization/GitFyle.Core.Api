@@ -46,5 +46,37 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
 
             this.repositoryServiceMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(ServerExceptions))]
+        public async Task ShouldReturnInternalServerErrorOnGetByIdIfServerErrorOccursAsync(
+            Xeption validationException)
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+
+            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+                InternalServerError(validationException);
+
+            var expectedActionResult =
+                new ActionResult<Repository>(expectedBadRequestObjectResult);
+
+            this.repositoryServiceMock.Setup(service =>
+                service.RetrieveRepositoryByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(validationException);
+
+            // when
+            ActionResult<Repository> actualActionResult =
+                await this.repositoriesController.GetRepositoryByIdAsync(someId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.repositoryServiceMock.Verify(service =>
+                service.RetrieveRepositoryByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.repositoryServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
