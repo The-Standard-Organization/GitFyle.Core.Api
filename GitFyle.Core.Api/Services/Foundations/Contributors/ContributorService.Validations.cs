@@ -133,6 +133,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
                 (Rule: await IsNotRecentAsync(contributor.UpdatedDate),
                     Parameter: nameof(Contributor.UpdatedDate)));
         }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
