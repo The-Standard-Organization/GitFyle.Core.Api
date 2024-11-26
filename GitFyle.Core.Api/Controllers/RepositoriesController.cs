@@ -74,5 +74,14 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(repositoryServiceException);
             }
         }
+
+        [HttpDelete("{repositoryId}")]
+        public async ValueTask<ActionResult<Repository>> DeleteRepositoryByIdAsync(Guid repositoryId)
+        {
+                Repository deleteRepository =
+                    await this.repositoryService.RemoveRepositoryByIdAsync(repositoryId);
+
+                return Ok(deleteRepository);
+        }
     }
 }
