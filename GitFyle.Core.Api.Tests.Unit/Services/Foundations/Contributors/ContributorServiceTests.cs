@@ -89,6 +89,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
 
             return randomContributor;
         }
+
         private static Filler<Contributor> CreateContributorFiller(DateTimeOffset dateTimeOffset)
         {
             string user = Guid.NewGuid().ToString();

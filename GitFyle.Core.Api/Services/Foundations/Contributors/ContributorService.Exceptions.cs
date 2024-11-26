@@ -54,9 +54,11 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
                         data: duplicateKeyException.Data);
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsContributorException);
+
             }
             catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
+
                 var concurrencyGemException =
                     new LockedContributorException(
                         message: "Locked contributor record error occurred, please try again.",
