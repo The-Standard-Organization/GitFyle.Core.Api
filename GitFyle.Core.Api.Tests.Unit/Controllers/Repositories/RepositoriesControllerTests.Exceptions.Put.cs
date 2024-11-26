@@ -16,6 +16,37 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
 {
     public partial class RepositoriesControllerTests
     {
+        [Theory]
+        [MemberData(nameof(ValidationExceptions))]
+        public async Task ShouldReturnBadRequestOnPutIfValidationErrorOccursAsync(Xeption validationException)
+        {
+            // given
+            Repository someRepository = CreateRandomRepository();
+
+            BadRequestObjectResult expectedBadRequestObjectResult =
+                BadRequest(validationException.InnerException);
+
+            var expectedActionResult =
+                new ActionResult<Repository>(expectedBadRequestObjectResult);
+
+            this.repositoryServiceMock.Setup(service =>
+                service.ModifyRepositoryAsync(It.IsAny<Repository>()))
+                    .ThrowsAsync(validationException);
+
+            // when
+            ActionResult<Repository> actualActionResult =
+                await this.repositoriesController.PutRepositoryAsync(someRepository);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.repositoryServiceMock.Verify(service =>
+                service.ModifyRepositoryAsync(It.IsAny<Repository>()),
+                    Times.Once);
+
+            this.repositoryServiceMock.VerifyNoOtherCalls();
+        }
+
         [Fact]
         public async Task ShouldReturnNotFoundOnPutIfItemDoesNotExistAsync()
         {
