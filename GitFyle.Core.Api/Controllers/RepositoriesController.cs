@@ -90,10 +90,18 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return NotFound(repositoryValidationException.InnerException);
             }
+            catch (RepositoryValidationException repositoryValidationException)
+            {
+                return BadRequest(repositoryValidationException.InnerException);
+            }
             catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
                 when (repositoryDependencyValidationException.InnerException is LockedRepositoryException)
             {
                 return Locked(repositoryDependencyValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
+            {
+                return BadRequest(repositoryDependencyValidationException.InnerException);
             }
             catch (RepositoryDependencyException repositoryDependencyException)
             {
