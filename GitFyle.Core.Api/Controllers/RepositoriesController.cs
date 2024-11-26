@@ -103,6 +103,14 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return BadRequest(repositoryDependencyValidationException.InnerException);
             }
+            catch (RepositoryDependencyException repositoryDependencyException)
+            {
+                return InternalServerError(repositoryDependencyException);
+            }
+            catch (RepositoryServiceException repositoryServiceException)
+            {
+                return InternalServerError(repositoryServiceException);
+            }
         }
 
         [HttpDelete("{repositoryId}")]
