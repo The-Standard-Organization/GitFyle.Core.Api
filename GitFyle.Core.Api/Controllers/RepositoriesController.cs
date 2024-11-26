@@ -95,6 +95,14 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return Locked(repositoryDependencyValidationException.InnerException);
             }
+            catch (RepositoryDependencyException repositoryDependencyException)
+            {
+                return InternalServerError(repositoryDependencyException);
+            }
+            catch (RepositoryServiceException repositoryServiceException)
+            {
+                return InternalServerError(repositoryServiceException);
+            }
         }
     }
 }
