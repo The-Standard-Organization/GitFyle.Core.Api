@@ -78,5 +78,45 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
 
             this.repositoryServiceMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldReturnNotFoundOnGetByIdIfItemDoesNotExistAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            string someMessage = GetRandomString();
+
+            var notFoundRepositoryException =
+                new NotFoundRepositoryException(
+                    message: someMessage);
+
+            var repositoryValidationException =
+                new RepositoryValidationException(
+                    message: someMessage,
+                    innerException: notFoundRepositoryException);
+
+            NotFoundObjectResult expectedNotFoundObjectResult =
+                NotFound(notFoundRepositoryException);
+
+            var expectedActionResult =
+                new ActionResult<Repository>(expectedNotFoundObjectResult);
+
+            this.repositoryServiceMock.Setup(service =>
+                service.RetrieveRepositoryByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(repositoryValidationException);
+
+            // when
+            ActionResult<Repository> actualActionResult =
+                await this.repositoriesController.GetRepositoryByIdAsync(someId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.repositoryServiceMock.Verify(service =>
+                service.RetrieveRepositoryByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.repositoryServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
