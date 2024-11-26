@@ -41,5 +41,14 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(repositoryServiceException);
             }
         }
+
+        [HttpGet("{repositoryId}")]
+        public async ValueTask<ActionResult<Repository>> GetRepositoryByIdAsync(Guid repositoryId)
+        {
+                Repository repository =
+                    await this.repositoryService.RetrieveRepositoryByIdAsync(repositoryId);
+
+                return Ok(repository);
+        }
     }
 }
