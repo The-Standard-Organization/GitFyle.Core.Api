@@ -51,5 +51,19 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
 
             return maybeContributor;
         });
+
+        public ValueTask<Contributor> ModifyContributorAsync(Contributor contributor) =>
+        TryCatch(async () =>
+        {
+            await ValidateContributorOnModifyAsync(contributor);
+
+            Contributor maybeContributor =
+                await this.storageBroker.SelectContributorByIdAsync(contributor.Id);
+
+            ValidateStorageContributor(maybeContributor, contributor.Id);
+            ValidateAgainstStorageContributorOnModify(contributor, maybeContributor);
+
+            return await this.storageBroker.UpdateContributorAsync(contributor);
+        });
     }
 }
