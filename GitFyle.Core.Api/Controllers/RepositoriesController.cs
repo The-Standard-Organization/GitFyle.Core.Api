@@ -22,6 +22,15 @@ namespace GitFyle.Core.Api.Controllers
         public RepositoriesController(IRepositoryService repositoryService) =>
             this.repositoryService = repositoryService;
 
+        [HttpPost]
+        public async ValueTask<ActionResult<Repository>> PostRepositoryAsync(Repository repository)
+        {
+                Repository addedRepository =
+                    await this.repositoryService.AddRepositoryAsync(repository);
+
+                return Created(addedRepository);
+        }
+
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<Repository>>> GetRepositoriesAsync()
         {
