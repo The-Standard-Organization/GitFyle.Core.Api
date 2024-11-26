@@ -55,5 +55,50 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
 
             this.repositoryServiceMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldReturnConflictOnPutIfAlreadyExistsRepositoryErrorOccursAsync()
+        {
+            // given
+            Repository someRepository = CreateRandomRepository();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            var alreadyExistsRepositoryException =
+                new AlreadyExistsRepositoryException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var repositoryDependencyValidationException =
+                new RepositoryDependencyValidationException(
+                    message: someMessage,
+                    innerException: alreadyExistsRepositoryException,
+                    data: someDictionaryData);
+
+            ConflictObjectResult expectedConflictObjectResult =
+                Conflict(alreadyExistsRepositoryException);
+
+            var expectedActionResult =
+                new ActionResult<Repository>(expectedConflictObjectResult);
+
+            this.repositoryServiceMock.Setup(service =>
+                service.ModifyRepositoryAsync(It.IsAny<Repository>()))
+                    .ThrowsAsync(repositoryDependencyValidationException);
+
+            // when
+            ActionResult<Repository> actualActionResult =
+                await this.repositoriesController.PutRepositoryAsync(someRepository);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.repositoryServiceMock.Verify(service =>
+                service.ModifyRepositoryAsync(It.IsAny<Repository>()),
+                    Times.Once);
+
+            this.repositoryServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
