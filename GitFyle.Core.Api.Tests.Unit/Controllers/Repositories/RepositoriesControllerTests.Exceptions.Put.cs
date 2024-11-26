@@ -47,6 +47,38 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
             this.repositoryServiceMock.VerifyNoOtherCalls();
         }
 
+        [Theory]
+        [MemberData(nameof(ServerExceptions))]
+        public async Task ShouldReturnInternalServerErrorOnPutIfServerErrorOccurredAsync(
+            Xeption validationException)
+        {
+            // given
+            Repository someRepository = CreateRandomRepository();
+
+            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+                InternalServerError(validationException);
+
+            var expectedActionResult =
+                new ActionResult<Repository>(expectedBadRequestObjectResult);
+
+            this.repositoryServiceMock.Setup(service =>
+                service.ModifyRepositoryAsync(It.IsAny<Repository>()))
+                    .ThrowsAsync(validationException);
+
+            // when
+            ActionResult<Repository> actualActionResult =
+                await this.repositoriesController.PutRepositoryAsync(someRepository);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.repositoryServiceMock.Verify(service =>
+                service.ModifyRepositoryAsync(It.IsAny<Repository>()),
+                    Times.Once);
+
+            this.repositoryServiceMock.VerifyNoOtherCalls();
+        }
+
         [Fact]
         public async Task ShouldReturnNotFoundOnPutIfItemDoesNotExistAsync()
         {
