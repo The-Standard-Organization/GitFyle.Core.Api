@@ -45,10 +45,26 @@ namespace GitFyle.Core.Api.Controllers
         [HttpGet("{repositoryId}")]
         public async ValueTask<ActionResult<Repository>> GetRepositoryByIdAsync(Guid repositoryId)
         {
+            try
+            {
                 Repository repository =
                     await this.repositoryService.RetrieveRepositoryByIdAsync(repositoryId);
 
                 return Ok(repository);
+            }
+            catch (RepositoryValidationException repositoryValidationException)
+                when (repositoryValidationException.InnerException is NotFoundRepositoryException)
+            {
+                return NotFound(repositoryValidationException.InnerException);
+            }
+            catch (RepositoryValidationException repositoryValidationException)
+            {
+                return BadRequest(repositoryValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
+            {
+                return BadRequest(repositoryDependencyValidationException.InnerException);
+            }
         }
     }
 }
