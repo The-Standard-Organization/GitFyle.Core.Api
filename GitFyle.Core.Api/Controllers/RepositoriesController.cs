@@ -75,6 +75,15 @@ namespace GitFyle.Core.Api.Controllers
             }
         }
 
+        [HttpPut]
+        public async ValueTask<ActionResult<Repository>> PutRepositoryAsync(Repository repository)
+        {
+                Repository modifiedRepository =
+                    await this.repositoryService.ModifyRepositoryAsync(repository);
+
+                return Ok(modifiedRepository);
+        }
+
         [HttpDelete("{repositoryId}")]
         public async ValueTask<ActionResult<Repository>> DeleteRepositoryByIdAsync(Guid repositoryId)
         {
