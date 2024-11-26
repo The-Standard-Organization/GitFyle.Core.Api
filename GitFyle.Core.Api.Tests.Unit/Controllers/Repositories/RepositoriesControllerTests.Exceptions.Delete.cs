@@ -55,5 +55,50 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
 
             this.repositoryServiceMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            var lockedRepositoryException =
+                new LockedRepositoryException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var repositoryDependencyValidationException =
+                new RepositoryDependencyValidationException(
+                    message: someMessage,
+                    innerException: lockedRepositoryException,
+                    data: someDictionaryData);
+
+            LockedObjectResult expectedConflictObjectResult =
+                Locked(lockedRepositoryException);
+
+            var expectedActionResult =
+                new ActionResult<Repository>(expectedConflictObjectResult);
+
+            this.repositoryServiceMock.Setup(service =>
+                service.RemoveRepositoryByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(repositoryDependencyValidationException);
+
+            // when
+            ActionResult<Repository> actualActionResult =
+                await this.repositoriesController.DeleteRepositoryByIdAsync(someId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.repositoryServiceMock.Verify(service =>
+                service.RemoveRepositoryByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.repositoryServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
