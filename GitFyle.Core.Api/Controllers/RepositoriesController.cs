@@ -37,10 +37,14 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(configurationValidationException.InnerException);
             }
             catch (RepositoryDependencyValidationException configurationDependencyValidationException)
+                when(configurationDependencyValidationException.InnerException is AlreadyExistsRepositoryException)
+            {
+                return Conflict(configurationDependencyValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException configurationDependencyValidationException)
             {
                 return BadRequest(configurationDependencyValidationException.InnerException);
             }
-
         }
 
         [HttpGet]
