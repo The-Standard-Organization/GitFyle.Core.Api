@@ -45,6 +45,14 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return BadRequest(configurationDependencyValidationException.InnerException);
             }
+            catch (RepositoryDependencyException configurationDependencyException)
+            {
+                return InternalServerError(configurationDependencyException);
+            }
+            catch (RepositoryServiceException configurationServiceException)
+            {
+                return InternalServerError(configurationServiceException);
+            }
         }
 
         [HttpGet]
