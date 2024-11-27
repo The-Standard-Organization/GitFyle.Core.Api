@@ -5,6 +5,7 @@ using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
+using RESTFulSense.Models;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
@@ -27,6 +28,38 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
             this.repositoryServiceMock.Setup(service =>
                 service.AddRepositoryAsync(It.IsAny<Repository>()))
                     .ThrowsAsync(validationException);
+
+            // when
+            ActionResult<Repository> actualActionResult =
+                await this.repositoriesController.PostRepositoryAsync(someRepository);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.repositoryServiceMock.Verify(service =>
+                service.AddRepositoryAsync(It.IsAny<Repository>()),
+                    Times.Once);
+
+            this.repositoryServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [MemberData(nameof(ServerExceptions))]
+        public async Task ShouldReturnInternalServerErrorOnPostIfServerErrorOccurredAsync(
+            Xeption serverException)
+        {
+            // given
+            Repository someRepository = CreateRandomRepository();
+
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
+                InternalServerError(serverException);
+
+            var expectedActionResult =
+                new ActionResult<Repository>(expectedInternalServerErrorObjectResult);
+
+            this.repositoryServiceMock.Setup(service =>
+                service.AddRepositoryAsync(It.IsAny<Repository>()))
+                    .ThrowsAsync(serverException);
 
             // when
             ActionResult<Repository> actualActionResult =
