@@ -9,7 +9,6 @@ using System.Runtime.CompilerServices;
 using GitFyle.Core.Api.Brokers.DateTimes;
 using GitFyle.Core.Api.Brokers.Loggings;
 using GitFyle.Core.Api.Brokers.Storages;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Services.Foundations.Contributors;
 using Microsoft.Data.SqlClient;
@@ -66,6 +65,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static int GetRandomNegativeNumber() =>
+             -1 * new IntRange(min: 2, max: 10).GetValue();
 
         private static Contributor CreateRandomContributor() =>
             CreateRandomContributor(dateTimeOffset: GetRandomDateTimeOffset());
@@ -79,6 +80,15 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
 
         private static Contributor CreateRandomContributor(DateTimeOffset dateTimeOffset) =>
             CreateContributorFiller(dateTimeOffset).Create();
+
+        private static Contributor CreateRandomModifyContributor(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInThePast = GetRandomNegativeNumber();
+            Contributor randomContributor = CreateRandomContributor(dateTimeOffset);
+            randomContributor.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
+
+            return randomContributor;
+        }
 
         private static Filler<Contributor> CreateContributorFiller(DateTimeOffset dateTimeOffset)
         {
