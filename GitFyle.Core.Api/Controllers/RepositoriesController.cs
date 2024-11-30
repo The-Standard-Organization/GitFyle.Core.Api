@@ -22,6 +22,39 @@ namespace GitFyle.Core.Api.Controllers
         public RepositoriesController(IRepositoryService repositoryService) =>
             this.repositoryService = repositoryService;
 
+        [HttpPost]
+        public async ValueTask<ActionResult<Repository>> PostRepositoryAsync(Repository repository)
+        {
+            try 
+            { 
+                Repository addedRepository =
+                    await this.repositoryService.AddRepositoryAsync(repository);
+
+                return Created(addedRepository);
+             }
+            catch (RepositoryValidationException configurationValidationException)
+            {
+                return BadRequest(configurationValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException configurationDependencyValidationException)
+                when(configurationDependencyValidationException.InnerException is AlreadyExistsRepositoryException)
+            {
+                return Conflict(configurationDependencyValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException configurationDependencyValidationException)
+            {
+                return BadRequest(configurationDependencyValidationException.InnerException);
+            }
+            catch (RepositoryDependencyException configurationDependencyException)
+            {
+                return InternalServerError(configurationDependencyException);
+            }
+            catch (RepositoryServiceException configurationServiceException)
+            {
+                return InternalServerError(configurationServiceException);
+            }
+        }
+
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<Repository>>> GetRepositoriesAsync()
         {
