@@ -32,6 +32,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
             this.repositoryServiceMock.Setup(service =>
                 service.RetrieveRepositoryByIdAsync(inputId))
                     .ReturnsAsync(storageRepository);
+                    
             // when
             ActionResult<Repository> actualActionResult =
                 await repositoriesController.GetRepositoryByIdAsync(inputId);
