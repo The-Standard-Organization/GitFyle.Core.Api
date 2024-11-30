@@ -75,6 +75,44 @@ namespace GitFyle.Core.Api.Controllers
             }
         }
 
+        [HttpPut]
+        public async ValueTask<ActionResult<Repository>> PutRepositoryAsync(Repository repository)
+        {
+            try
+            {
+                Repository modifiedRepository =
+                    await this.repositoryService.ModifyRepositoryAsync(repository);
+
+                return Ok(modifiedRepository);
+            }
+            catch (RepositoryValidationException repositoryValidationException)
+                when (repositoryValidationException.InnerException is NotFoundRepositoryException)
+            {
+                return NotFound(repositoryValidationException.InnerException);
+            }
+            catch (RepositoryValidationException repositoryValidationException)
+            {
+                return BadRequest(repositoryValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
+                when (repositoryDependencyValidationException.InnerException is AlreadyExistsRepositoryException)
+            {
+                return Conflict(repositoryDependencyValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
+            {
+                return BadRequest(repositoryDependencyValidationException.InnerException);
+            }
+            catch (RepositoryDependencyException repositoryDependencyException)
+            {
+                return InternalServerError(repositoryDependencyException);
+            }
+            catch (RepositoryServiceException repositoryServiceException)
+            {
+                return InternalServerError(repositoryServiceException);
+            }
+        }
+
         [HttpDelete("{repositoryId}")]
         public async ValueTask<ActionResult<Repository>> DeleteRepositoryByIdAsync(Guid repositoryId)
         {
