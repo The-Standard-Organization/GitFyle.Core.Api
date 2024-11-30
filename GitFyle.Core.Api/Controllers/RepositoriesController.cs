@@ -74,5 +74,43 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(repositoryServiceException);
             }
         }
+
+        [HttpDelete("{repositoryId}")]
+        public async ValueTask<ActionResult<Repository>> DeleteRepositoryByIdAsync(Guid repositoryId)
+        {
+            try
+            {
+                Repository deleteRepository =
+                    await this.repositoryService.RemoveRepositoryByIdAsync(repositoryId);
+
+                return Ok(deleteRepository);
+            }
+            catch (RepositoryValidationException repositoryValidationException)
+                when (repositoryValidationException.InnerException is NotFoundRepositoryException)
+            {
+                return NotFound(repositoryValidationException.InnerException);
+            }
+            catch (RepositoryValidationException repositoryValidationException)
+            {
+                return BadRequest(repositoryValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
+                when (repositoryDependencyValidationException.InnerException is LockedRepositoryException)
+            {
+                return Locked(repositoryDependencyValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
+            {
+                return BadRequest(repositoryDependencyValidationException.InnerException);
+            }
+            catch (RepositoryDependencyException repositoryDependencyException)
+            {
+                return InternalServerError(repositoryDependencyException);
+            }
+            catch (RepositoryServiceException repositoryServiceException)
+            {
+                return InternalServerError(repositoryServiceException);
+            }
+        }
     }
 }
