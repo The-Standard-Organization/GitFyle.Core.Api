@@ -167,7 +167,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             string secondDateName) => new
             {
                 Condition = firstDate == secondDate,
-                
+
                 Message = $"Date is the same as {secondDateName}"
             };
 

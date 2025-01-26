@@ -8,7 +8,6 @@ using FluentAssertions;
 using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Models.Foundations.Configurations.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
 using Moq;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Configurations
