@@ -150,7 +150,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
             return contributorDependencyValidationException;
         }
 
-        private async ValueTask<ContributorDependencyException> 
+        private async ValueTask<ContributorDependencyException>
             CreateAndLogDependencyExceptionAsync(Xeption exception)
         {
             var contributorDependencyException = new ContributorDependencyException(

@@ -11,28 +11,28 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
 {
     internal partial class ConfigurationService
     {
-        private async ValueTask ValidateConfigurationOnAdd(Configuration configuration)
+        private async ValueTask ValidateConfigurationOnAddAsync(Configuration configuration)
         {
             ValidateConfigurationIsNotNull(configuration);
 
             Validate(
-                (Rule: await IsInvalidAsync(configuration.Id), Parameter: nameof(configuration.Id)),
-                (Rule: await IsInvalidAsync(configuration.Name), Parameter: nameof(configuration.Name)),
-                (Rule: await IsInvalidAsync(configuration.Value), Parameter: nameof(configuration.Value)),
-                (Rule: await IsInvalidAsync(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
-                (Rule: await IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
-                (Rule: await IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
-                (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
-                (Rule: await IsInvalidLengthAsync(configuration.Name, 450), Parameter: nameof(Configuration.Name)),
+                (Rule: IsInvalid(configuration.Id), Parameter: nameof(configuration.Id)),
+                (Rule: IsInvalid(configuration.Name), Parameter: nameof(configuration.Name)),
+                (Rule: IsInvalid(configuration.Value), Parameter: nameof(configuration.Value)),
+                (Rule: IsInvalid(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
+                (Rule: IsInvalid(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
+                (Rule: IsInvalid(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
+                (Rule: IsInvalid(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
+                (Rule: IsInvalidLength(configuration.Name, 450), Parameter: nameof(Configuration.Name)),
 
-                (Rule: await IsNotSameAsync(
+                (Rule: IsNotSame(
                     first: configuration.CreatedBy,
                     second: configuration.UpdatedBy,
                     secondName: nameof(configuration.CreatedBy)),
 
                     Parameter: nameof(configuration.UpdatedBy)),
 
-                (Rule: await IsNotSameAsync(
+                (Rule: IsNotSame(
                     firstDate: configuration.CreatedDate,
                     secondDate: configuration.UpdatedDate,
                     secondDateName: nameof(configuration.CreatedDate)),
@@ -48,29 +48,29 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             ValidateConfigurationIsNotNull(configuration);
 
             Validate(
-                (Rule: await IsInvalidAsync(configuration.Id), Parameter: nameof(configuration.Id)),
-                (Rule: await IsInvalidAsync(configuration.Name), Parameter: nameof(configuration.Name)),
-                (Rule: await IsInvalidAsync(configuration.Value), Parameter: nameof(configuration.Value)),
-                (Rule: await IsInvalidAsync(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
-                (Rule: await IsInvalidAsync(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
-                (Rule: await IsInvalidAsync(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
-                (Rule: await IsInvalidAsync(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
+                (Rule: IsInvalid(configuration.Id), Parameter: nameof(configuration.Id)),
+                (Rule: IsInvalid(configuration.Name), Parameter: nameof(configuration.Name)),
+                (Rule: IsInvalid(configuration.Value), Parameter: nameof(configuration.Value)),
+                (Rule: IsInvalid(configuration.CreatedBy), Parameter: nameof(configuration.CreatedBy)),
+                (Rule: IsInvalid(configuration.CreatedDate), Parameter: nameof(configuration.CreatedDate)),
+                (Rule: IsInvalid(configuration.UpdatedBy), Parameter: nameof(configuration.UpdatedBy)),
+                (Rule: IsInvalid(configuration.UpdatedDate), Parameter: nameof(configuration.UpdatedDate)),
 
-                (Rule: await IsSameAsync(
+                (Rule: IsSame(
                     firstDate: configuration.UpdatedDate,
                     secondDate: configuration.CreatedDate,
                     secondDateName: nameof(Configuration.CreatedDate)),
                     Parameter: nameof(configuration.UpdatedDate)),
 
-                (Rule: await IsInvalidLengthAsync(configuration.Name, 450), Parameter: nameof(Configuration.Name)),
+                (Rule: IsInvalidLength(configuration.Name, 450), Parameter: nameof(Configuration.Name)),
 
                 (Rule: await IsNotRecentAsync(configuration.UpdatedDate),
                 Parameter: nameof(configuration.UpdatedDate)));
         }
-        private static async ValueTask ValidateConfigurationIdAsync(Guid configurationId) =>
-            Validate((Rule: await IsInvalidAsync(configurationId), Parameter: nameof(Configuration.Id)));
+        private static void ValidateConfigurationId(Guid configurationId) =>
+            Validate((Rule: IsInvalid(configurationId), Parameter: nameof(Configuration.Id)));
 
-        private static async ValueTask ValidateStorageConfigurationAsync(Configuration configuration, Guid id)
+        private static void ValidateStorageConfiguration(Configuration configuration, Guid id)
         {
             if (configuration is null)
             {
@@ -79,25 +79,25 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             }
         }
 
-        private static async ValueTask ValidateAgainstStorageConfigurationOnModifyAsync(
+        private static void ValidateAgainstStorageConfigurationOnModify(
             Configuration inputConfiguration, Configuration storageConfiguration)
         {
             Validate(
-                (Rule: await IsNotSameAsync(
+                (Rule: IsNotSame(
                     first: inputConfiguration.CreatedBy,
                     second: storageConfiguration.CreatedBy,
                     secondName: nameof(Configuration.CreatedBy)),
 
                 Parameter: nameof(Configuration.CreatedBy)),
 
-                (Rule: await IsNotSameAsync(
+                (Rule: IsNotSame(
                     firstDate: inputConfiguration.CreatedDate,
                     secondDate: storageConfiguration.CreatedDate,
                     secondDateName: nameof(Configuration.CreatedDate)),
 
                 Parameter: nameof(Configuration.CreatedDate)),
 
-                (Rule: await IsSameAsync(
+                (Rule: IsSame(
                     firstDate: inputConfiguration.UpdatedDate,
                     secondDate: storageConfiguration.UpdatedDate,
                     secondDateName: nameof(Configuration.UpdatedDate)),
@@ -105,7 +105,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 Parameter: nameof(Configuration.UpdatedDate)));
         }
 
-        private static async ValueTask<dynamic> IsSameAsync(
+        private static dynamic IsSame(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
             string secondDateName) => new
@@ -114,13 +114,13 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 Message = $"Date is same as {secondDateName}"
             };
 
-        private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new
+        private static dynamic IsInvalidLength(string text, int maxLength) => new
         {
-            Condition = await IsExceedingLengthAsync(text, maxLength),
+            Condition = IsExceedingLength(text, maxLength),
             Message = $"Text exceed max length of {maxLength} characters"
         };
 
-        private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
+        private static bool IsExceedingLength(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
@@ -156,7 +156,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
             return (isNotRecent, startDate, endDate);
         }
 
-        private static async ValueTask<dynamic> IsNotSameAsync(
+        private static dynamic IsNotSame(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
             string secondDateName) => new
@@ -165,7 +165,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 Message = $"Date is not same as {secondDateName}"
             };
 
-        private static async ValueTask<dynamic> IsNotSameAsync(
+        private static dynamic IsNotSame(
             string first,
             string second,
             string secondName) => new
@@ -174,19 +174,19 @@ namespace GitFyle.Core.Api.Services.Foundations.Configurations
                 Message = $"Text is not same as {secondName}"
             };
 
-        private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
+        private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
             Message = "Id is invalid."
         };
 
-        private static async ValueTask<dynamic> IsInvalidAsync(string name) => new
+        private static dynamic IsInvalid(string name) => new
         {
             Condition = String.IsNullOrWhiteSpace(name),
             Message = "Text is required."
         };
 
-        private static async ValueTask<dynamic> IsInvalidAsync(DateTimeOffset date) => new
+        private static dynamic IsInvalid(DateTimeOffset date) => new
         {
             Condition = date == default,
             Message = "Date is invalid."
