@@ -44,6 +44,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionServiceMock.Verify(service =>
+                service.RetrieveAllContributionsAsync(),
+                    Times.Once);
+
+            this.contributionServiceMock.VerifyNoOtherCalls();
         }
     }
 }

@@ -2,7 +2,6 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
@@ -24,7 +23,10 @@ namespace GitFyle.Core.Api.Controllers
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<Contribution>>> GetAllContributionsAsync()
         {
-            throw new NotImplementedException();
+            IQueryable<Contribution> contributions =
+                 await this.contributionService.RetrieveAllContributionsAsync();
+
+            return Ok(contributions);
         }
     }
 }
