@@ -6,10 +6,12 @@ using System;
 using System.Linq;
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Contributions;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 {
@@ -25,6 +27,26 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             this.contributionsController = new ContributionsController(
                 contributionService: this.contributionServiceMock.Object);
         }
+
+        public static TheoryData<Xeption> ServerExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new ContributionDependencyException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new ContributionServiceException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
 
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 9).GetValue();
@@ -49,9 +71,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                 .OnProperty(contribution =>
                     contribution.Repository).IgnoreIt()
 
-                .OnType<DateTimeOffset>().Use(GetRandomDateTimeOffset);
-
-
+                .OnType<DateTimeOffset>().Use(
+                    GetRandomDateTimeOffset);
 
             return filler;
         }
