@@ -56,7 +56,7 @@ namespace GitFyle.Core.Api.Controllers
         }
 
         [HttpGet]
-        public async ValueTask<ActionResult<IQueryable<Source>>> GetAsync()
+        public async ValueTask<ActionResult<IQueryable<Source>>> GetAllSourcesAsync()
         {
             try
             {

@@ -18,29 +18,38 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
         public async Task ShouldReturnOkWithRecordsOnGetAsync()
         {
             // given
-            IQueryable<Source> randomSources = CreateRandomSources();
-            IQueryable<Source> storageSources = randomSources.DeepClone();
-            IQueryable<Source> expectedSource = storageSources.DeepClone();
+            IQueryable<Source> randomSources =
+                CreateRandomSources();
+
+            IQueryable<Source> storageSources =
+                randomSources.DeepClone();
+
+            IQueryable<Source> expectedSource =
+                storageSources.DeepClone();
 
             var expectedObjectResult =
                 new OkObjectResult(expectedSource);
 
             var expectedActionResult =
-                new ActionResult<IQueryable<Source>>(expectedObjectResult);
+                new ActionResult<IQueryable<Source>>(
+                    expectedObjectResult);
 
-            sourceServiceMock
-                .Setup(service => service.RetrieveAllSourcesAsync())
+            sourceServiceMock.Setup(service =>
+                service.RetrieveAllSourcesAsync())
                     .ReturnsAsync(storageSources);
 
             // when
-            ActionResult<IQueryable<Source>> actualActionResult = await sourcesController.GetAsync();
+            ActionResult<IQueryable<Source>> actualActionResult =
+                await sourcesController.GetAllSourcesAsync();
 
             // then
-            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+            actualActionResult.ShouldBeEquivalentTo(
+                expectedActionResult);
 
             sourceServiceMock
-               .Verify(service => service.RetrieveAllSourcesAsync(),
-                   Times.Once);
+                .Verify(service =>
+                    service.RetrieveAllSourcesAsync(),
+                        Times.Once);
 
             sourceServiceMock.VerifyNoOtherCalls();
         }
