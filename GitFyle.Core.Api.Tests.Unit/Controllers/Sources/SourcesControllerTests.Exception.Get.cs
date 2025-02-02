@@ -25,7 +25,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
                 InternalServerError(serverException);
 
             var expectedActionResult =
-                new ActionResult<IQueryable<Source>>(expectedInternalServerErrorObjectResult);
+                new ActionResult<IQueryable<Source>>(
+                    expectedInternalServerErrorObjectResult);
 
             this.sourceServiceMock.Setup(service =>
                 service.RetrieveAllSourcesAsync())
@@ -33,7 +34,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
 
             // when
             ActionResult<IQueryable<Source>> actualActionResult =
-                await this.sourcesController.GetAsync();
+                await this.sourcesController.GetAllSourcesAsync();
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
