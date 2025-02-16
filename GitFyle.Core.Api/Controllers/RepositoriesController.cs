@@ -25,19 +25,19 @@ namespace GitFyle.Core.Api.Controllers
         [HttpPost]
         public async ValueTask<ActionResult<Repository>> PostRepositoryAsync(Repository repository)
         {
-            try 
-            { 
+            try
+            {
                 Repository addedRepository =
                     await this.repositoryService.AddRepositoryAsync(repository);
 
                 return Created(addedRepository);
-             }
+            }
             catch (RepositoryValidationException configurationValidationException)
             {
                 return BadRequest(configurationValidationException.InnerException);
             }
             catch (RepositoryDependencyValidationException configurationDependencyValidationException)
-                when(configurationDependencyValidationException.InnerException is AlreadyExistsRepositoryException)
+                when (configurationDependencyValidationException.InnerException is AlreadyExistsRepositoryException)
             {
                 return Conflict(configurationDependencyValidationException.InnerException);
             }
