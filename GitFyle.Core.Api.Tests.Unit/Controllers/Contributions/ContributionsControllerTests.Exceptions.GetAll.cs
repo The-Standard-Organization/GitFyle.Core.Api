@@ -4,46 +4,46 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using GitFyle.Core.Api.Models.Foundations.Sources;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
 using RESTFulSense.Models;
 using Xeptions;
 
-namespace GitFyle.Core.Api.Tests.Unit.Controllers.Sources
+namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 {
-    public partial class SourcesControllerTests
+    public partial class ContributionsControllerTests
     {
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnGetIfServerErrorOccurredAsync(
+        public async Task ShouldReturnInternalServerErrorOnGetAllIfServerExceptionOccursAsync(
             Xeption serverException)
         {
             // given
-            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
+            InternalServerErrorObjectResult expectedObjectResult =
                 InternalServerError(serverException);
 
             var expectedActionResult =
-                new ActionResult<IQueryable<Source>>(
-                    expectedInternalServerErrorObjectResult);
+                new ActionResult<IQueryable<Contribution>>(
+                    expectedObjectResult);
 
-            this.sourceServiceMock.Setup(service =>
-                service.RetrieveAllSourcesAsync())
+            this.contributionServiceMock.Setup(service =>
+                service.RetrieveAllContributionsAsync())
                     .ThrowsAsync(serverException);
 
             // when
-            ActionResult<IQueryable<Source>> actualActionResult =
-                await this.sourcesController.GetAllSourcesAsync();
+            ActionResult<IQueryable<Contribution>> actualActionResult =
+                await this.contributionsController.GetAllContributionsAsync();
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.sourceServiceMock.Verify(service =>
-                service.RetrieveAllSourcesAsync(),
+            this.contributionServiceMock.Verify(service =>
+                service.RetrieveAllContributionsAsync(),
                     Times.Once);
 
-            this.sourceServiceMock.VerifyNoOtherCalls();
+            this.contributionServiceMock.VerifyNoOtherCalls();
         }
     }
 }
