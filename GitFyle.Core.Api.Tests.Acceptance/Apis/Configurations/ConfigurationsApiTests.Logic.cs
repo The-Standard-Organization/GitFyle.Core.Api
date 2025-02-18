@@ -15,8 +15,8 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Configurations
         public async Task ShouldPostConfigurationAsync()
         {
             // given
-            DateTimeOffset randomDate = DateTimeOffset.UtcNow;
-            Configuration randomConfiguration = CreateRandomConfiguration(randomDate);
+            DateTimeOffset currentDate = DateTimeOffset.UtcNow;
+            Configuration randomConfiguration = CreateRandomConfiguration(currentDate);
             Configuration inputConfiguration = randomConfiguration;
             Configuration expectedConfiguration = inputConfiguration;
 
