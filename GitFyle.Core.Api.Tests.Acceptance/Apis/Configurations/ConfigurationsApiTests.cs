@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
 using Tynamix.ObjectFiller;
@@ -16,6 +17,16 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Configurations
 
         public ConfigurationsApiTests(GitFyleCoreApiBroker gitFyleCoreApiBroker) =>
             this.gitFyleCoreApiBroker = gitFyleCoreApiBroker;
+
+        private static IQueryable<Configuration> CreateRandomConfigurations()
+        {
+            return CreateConfigurationFiller(DateTimeOffset.UtcNow)
+                .Create(2)
+                .AsQueryable();
+        }
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
 
         private static Configuration CreateRandomConfiguration(DateTimeOffset dateTimeOffset) =>
             CreateConfigurationFiller(dateTimeOffset).Create();
