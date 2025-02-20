@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
 using Tynamix.ObjectFiller;
@@ -21,8 +22,24 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Configurations
         private static IQueryable<Configuration> CreateRandomConfigurations()
         {
             return CreateConfigurationFiller(DateTimeOffset.UtcNow)
-                .Create(2)
+                .Create(GetRandomNumber())
                 .AsQueryable();
+        }
+
+        private async ValueTask<Configuration> PostRandomConfigurationAsync()
+        {
+            Configuration randomConfiguration = CreateRandomConfiguration(DateTimeOffset.UtcNow);
+            await this.gitFyleCoreApiBroker.PostConfigurationAsync(randomConfiguration);
+
+            return randomConfiguration;
+        }
+
+        private static Configuration UpdateConfigurationRandom(Configuration configuration)
+        {
+            var now = DateTimeOffset.UtcNow;
+            configuration.UpdatedDate = now;
+
+            return configuration;
         }
 
         private static int GetRandomNumber() =>

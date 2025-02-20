@@ -16,8 +16,14 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Brokers
         public async ValueTask<Configuration> PostConfigurationAsync(Configuration configuration) =>
             await this.apiFactoryClient.PostContentAsync(ConfigurationRelativeUrl, configuration);
 
+        public async ValueTask<Configuration> GetConfigurationByIdAsync(Guid configurationId) =>
+            await this.apiFactoryClient.GetContentAsync<Configuration>($"{ConfigurationRelativeUrl}/{configurationId}");
+
         public async ValueTask<IEnumerable<Configuration>> GetAllConfigurationsAsync() =>
             await this.apiFactoryClient.GetContentAsync<IEnumerable<Configuration>>(ConfigurationRelativeUrl);
+
+        public async ValueTask<Configuration> PutConfigurationAsync(Configuration configuration) =>
+            await this.apiFactoryClient.PutContentAsync(ConfigurationRelativeUrl, configuration);
 
         public async ValueTask<Configuration> DeleteConfigurationByIdAsync(Guid configurationId) =>
             await this.apiFactoryClient.DeleteContentAsync<Configuration>($"{ConfigurationRelativeUrl}/{configurationId}");
