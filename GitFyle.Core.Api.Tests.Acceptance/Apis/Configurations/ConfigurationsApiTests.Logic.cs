@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Configurations;
+using RESTFulSense.Exceptions;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Configurations
 {
@@ -73,6 +74,28 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Configurations
             // then
             actualConfiguration.Should().BeEquivalentTo(modifiedConfiguration);
             await this.gitFyleCoreApiBroker.DeleteConfigurationByIdAsync(actualConfiguration.Id);
+        }
+
+        [Fact]
+        public async Task ShouldDeleteConfigurationAsync()
+        {
+            // given
+            Configuration randomConfiguration = await PostRandomConfigurationAsync();
+            Configuration inputConfiguration = randomConfiguration;
+            Configuration expectedConfiguration = inputConfiguration;
+
+            // when 
+            Configuration deletedConfiguration =
+                await this.gitFyleCoreApiBroker.DeleteConfigurationByIdAsync(inputConfiguration.Id);
+
+            ValueTask<Configuration> getConfigurationByIdTask =
+                this.gitFyleCoreApiBroker.GetConfigurationByIdAsync(inputConfiguration.Id);
+
+            // then
+            deletedConfiguration.Should().BeEquivalentTo(expectedConfiguration);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+               getConfigurationByIdTask.AsTask());
         }
     }
 }
