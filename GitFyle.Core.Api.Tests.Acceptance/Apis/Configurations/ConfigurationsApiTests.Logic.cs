@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using GitFyle.Core.Api.Models.Foundations.Configurations;
+using GitFyle.Core.Api.Tests.Acceptance.Models.Configurations;
 using RESTFulSense.Exceptions;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Configurations

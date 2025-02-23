@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GitFyle.Core.Api.Models.Foundations.Configurations;
+using GitFyle.Core.Api.Tests.Acceptance.Models.Configurations;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Brokers
 {
