@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using GitFyle.Core.Api.Models.Foundations.Configurations;
+using GitFyle.Core.Api.Tests.Acceptance.Models.Configurations;
+using RESTFulSense.Exceptions;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Configurations
 {
@@ -55,6 +56,46 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Configurations
                 actualConfiguration.Should().BeEquivalentTo(expectedConfiguration);
                 await this.gitFyleCoreApiBroker.DeleteConfigurationByIdAsync(actualConfiguration.Id);
             }
+        }
+
+        [Fact]
+        public async Task ShouldPutConfigurationAsync()
+        {
+            // given
+            Configuration randomConfiguration = await PostRandomConfigurationAsync();
+            Configuration modifiedConfiguration = UpdateConfigurationRandom(randomConfiguration);
+
+            // when
+            await this.gitFyleCoreApiBroker.PutConfigurationAsync(modifiedConfiguration);
+
+            Configuration actualConfiguration =
+                await this.gitFyleCoreApiBroker.GetConfigurationByIdAsync(randomConfiguration.Id);
+
+            // then
+            actualConfiguration.Should().BeEquivalentTo(modifiedConfiguration);
+            await this.gitFyleCoreApiBroker.DeleteConfigurationByIdAsync(actualConfiguration.Id);
+        }
+
+        [Fact]
+        public async Task ShouldDeleteConfigurationAsync()
+        {
+            // given
+            Configuration randomConfiguration = await PostRandomConfigurationAsync();
+            Configuration inputConfiguration = randomConfiguration;
+            Configuration expectedConfiguration = inputConfiguration;
+
+            // when 
+            Configuration deletedConfiguration =
+                await this.gitFyleCoreApiBroker.DeleteConfigurationByIdAsync(inputConfiguration.Id);
+
+            ValueTask<Configuration> getConfigurationByIdTask =
+                this.gitFyleCoreApiBroker.GetConfigurationByIdAsync(inputConfiguration.Id);
+
+            // then
+            deletedConfiguration.Should().BeEquivalentTo(expectedConfiguration);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+               getConfigurationByIdTask.AsTask());
         }
     }
 }

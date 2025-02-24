@@ -4,7 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
-using GitFyle.Core.Api.Models.Foundations.Sources;
+using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Brokers
 {
