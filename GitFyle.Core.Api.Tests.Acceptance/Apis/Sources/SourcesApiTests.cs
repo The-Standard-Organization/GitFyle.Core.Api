@@ -1,6 +1,10 @@
-﻿using System;
-using GitFyle.Core.Api.Models.Foundations.Sources;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
+using System;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
+using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
 using Tynamix.ObjectFiller;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources

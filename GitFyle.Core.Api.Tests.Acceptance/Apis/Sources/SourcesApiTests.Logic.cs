@@ -5,8 +5,8 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
+using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources
 {
