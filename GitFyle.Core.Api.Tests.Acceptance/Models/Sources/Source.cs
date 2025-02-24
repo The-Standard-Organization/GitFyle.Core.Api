@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 
