@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
 using Tynamix.ObjectFiller;
@@ -18,6 +19,19 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources
 
         private static Source CreateRandomSource(DateTimeOffset dateTimeOffset) =>
             CreateSourceFiller(dateTimeOffset).Create();
+
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private static IQueryable<Source> CreateRandomSources()
+        {
+            return CreateSourceFiller(DateTimeOffset.UtcNow)
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
 
         private static Filler<Source> CreateSourceFiller(DateTimeOffset dateTimeOffset)
         {
