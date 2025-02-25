@@ -3,6 +3,8 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
@@ -29,6 +31,32 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources
             // then
             actualSource.Should().BeEquivalentTo(expectedSource);
             await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(actualSource.Id);
+        }
+
+        [Fact]
+        public async Task ShouldGetAllSourcesAsync()
+        {
+            // given
+            IEnumerable<Source> randomSources = CreateRandomSources();
+            IEnumerable<Source> inputSources = randomSources;
+
+            foreach (Source source in inputSources)
+            {
+                await this.gitFyleCoreApiBroker.PostSourceAsync(source);
+            }
+
+            IEnumerable<Source> expectedSources = inputSources;
+
+            // when
+            IEnumerable<Source> actualSources = await this.gitFyleCoreApiBroker.GetAllSourcesAsync();
+
+            // then
+            foreach (Source expectedSource in expectedSources)
+            {
+                Source actualSource = actualSources.Single(source => source.Id == expectedSource.Id);
+                actualSource.Should().BeEquivalentTo(expectedSource);
+                await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(actualSource.Id);
+            }
         }
     }
 }
