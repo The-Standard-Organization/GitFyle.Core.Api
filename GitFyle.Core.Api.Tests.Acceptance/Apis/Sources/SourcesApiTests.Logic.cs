@@ -58,5 +58,23 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources
                 await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(actualSource.Id);
             }
         }
+
+        [Fact]
+        public async Task ShouldPutSourceAsync()
+        {
+            // given
+            Source randomSource = await PostRandomSourceAsync();
+            Source modifiedSource = UpdateRandomSource(randomSource);
+
+            // when
+            await this.gitFyleCoreApiBroker.PutSourceAsync(modifiedSource);
+
+            Source actualSource =
+                await this.gitFyleCoreApiBroker.GetSourceByIdAsync(randomSource.Id);
+
+            // then
+            actualSource.Should().BeEquivalentTo(modifiedSource);
+            await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(actualSource.Id);
+        }
     }
 }
