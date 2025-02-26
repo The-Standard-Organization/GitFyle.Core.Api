@@ -64,7 +64,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources
         {
             // given
             Source randomSource = await PostRandomSourceAsync();
-            Source modifiedSource = UpdateSourceRandom(randomSource);
+            Source modifiedSource = UpdateRandomSource(randomSource);
 
             // when
             await this.gitFyleCoreApiBroker.PutSourceAsync(modifiedSource);

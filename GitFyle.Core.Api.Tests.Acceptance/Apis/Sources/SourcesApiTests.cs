@@ -35,7 +35,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources
             return randomSource;
         }
 
-        private static Source UpdateSourceRandom(Source source)
+        private static Source UpdateRandomSource(Source source)
         {
             var now = DateTimeOffset.UtcNow;
             source.UpdatedDate = now;
