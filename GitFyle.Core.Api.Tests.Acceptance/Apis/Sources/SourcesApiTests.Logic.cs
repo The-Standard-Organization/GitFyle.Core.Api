@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
+using RESTFulSense.Exceptions;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources
 {
@@ -75,6 +76,28 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources
             // then
             actualSource.Should().BeEquivalentTo(modifiedSource);
             await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(actualSource.Id);
+        }
+
+        [Fact]
+        public async Task ShouldDeleteSourceAsync()
+        {
+            // given
+            Source randomSource = await PostRandomSourceAsync();
+            Source inputSource = randomSource;
+            Source expectedSource = inputSource;
+
+            // when 
+            Source deletedSource =
+                await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(inputSource.Id);
+
+            ValueTask<Source> getSourceByIdTask =
+                this.gitFyleCoreApiBroker.GetSourceByIdAsync(inputSource.Id);
+
+            // then
+            deletedSource.Should().BeEquivalentTo(expectedSource);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+               getSourceByIdTask.AsTask());
         }
     }
 }
