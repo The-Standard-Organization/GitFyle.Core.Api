@@ -35,6 +35,25 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources
         }
 
         [Fact]
+        public async Task ShouldGetSourceByIdAsync()
+        {
+            // given
+            DateTimeOffset currentdate = DateTimeOffset.UtcNow;
+            Source randomSource = CreateRandomSource(currentdate);
+            Source inputSource = randomSource;
+
+            Source expectedSource = await this.gitFyleCoreApiBroker.PostSourceAsync(inputSource);
+
+            // when
+            Source actualSource = 
+                await this.gitFyleCoreApiBroker.GetSourceByIdAsync(expectedSource.Id);
+
+            // then
+            actualSource.Should().BeEquivalentTo(expectedSource);
+            await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(actualSource.Id);
+        }
+
+        [Fact]
         public async Task ShouldGetAllSourcesAsync()
         {
             // given
