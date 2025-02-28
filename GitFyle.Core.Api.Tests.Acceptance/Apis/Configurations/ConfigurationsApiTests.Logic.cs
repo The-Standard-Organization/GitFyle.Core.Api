@@ -33,6 +33,25 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Configurations
         }
 
         [Fact]
+        public async Task ShouldGetConfigurationByIdAsync()
+        {
+            // given
+            DateTimeOffset currentdate = DateTimeOffset.UtcNow;
+            Configuration randomConfiguration = CreateRandomConfiguration(currentdate);
+            Configuration inputConfiguration = randomConfiguration;
+
+            Configuration expectedConfiguration = await this.gitFyleCoreApiBroker.PostConfigurationAsync(inputConfiguration);
+
+            // when
+            Configuration actualConfiguration =
+                await this.gitFyleCoreApiBroker.GetConfigurationByIdAsync(expectedConfiguration.Id);
+
+            // then
+            actualConfiguration.Should().BeEquivalentTo(expectedConfiguration);
+            await this.gitFyleCoreApiBroker.DeleteConfigurationByIdAsync(actualConfiguration.Id);
+        }
+
+        [Fact]
         public async Task ShouldGetAllConfigurationsAsync()
         {
             // given
