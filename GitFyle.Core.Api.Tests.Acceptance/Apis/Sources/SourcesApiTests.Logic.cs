@@ -45,7 +45,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Sources
             Source expectedSource = await this.gitFyleCoreApiBroker.PostSourceAsync(inputSource);
 
             // when
-            Source actualSource = 
+            Source actualSource =
                 await this.gitFyleCoreApiBroker.GetSourceByIdAsync(expectedSource.Id);
 
             // then
