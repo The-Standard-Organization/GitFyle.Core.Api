@@ -78,7 +78,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
 
             var expectedRepositoryServiceException =
                 new RepositoryServiceException(
-                    message: "Service error occurred, contact support.",
+                    message: "Repository service error occurred, contact support.",
                     innerException: failedServiceRepositoryException);
 
             this.storageBrokerMock.Setup(broker =>
