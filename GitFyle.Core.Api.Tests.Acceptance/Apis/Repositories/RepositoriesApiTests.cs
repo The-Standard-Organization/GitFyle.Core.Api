@@ -1,4 +1,8 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------------
+// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
+// ----------------------------------------------------------------------------------
+
+using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Repositories;
