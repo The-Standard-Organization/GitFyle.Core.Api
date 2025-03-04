@@ -163,7 +163,7 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
            Xeption exception)
         {
             var repositoryServiceException = new RepositoryServiceException(
-                message: "Service error occurred, contact support.",
+                message: "Repository service error occurred, contact support.",
                 innerException: exception);
 
             await this.loggingBroker.LogErrorAsync(repositoryServiceException);
