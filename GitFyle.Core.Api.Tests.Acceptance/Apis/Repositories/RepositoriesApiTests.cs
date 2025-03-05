@@ -3,10 +3,12 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Repositories;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
+using Newtonsoft.Json.Linq;
 using Tynamix.ObjectFiller;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
@@ -18,6 +20,16 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
 
         public RepositoriesApiTests(GitFyleCoreApiBroker gitFyleCoreApiBroker) =>
             this.gitFyleCoreApiBroker = gitFyleCoreApiBroker;
+
+        private static IQueryable<Repository> CreateRandomRepositories()
+        {
+            return CreateRepositoryFiller(DateTimeOffset.UtcNow)
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
 
         private static Repository CreateRandomRepository(DateTimeOffset dateTimeOffset) =>
             CreateRepositoryFiller(dateTimeOffset).Create();

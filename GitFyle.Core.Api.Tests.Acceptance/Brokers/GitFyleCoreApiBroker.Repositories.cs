@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Repositories;
 
@@ -17,6 +18,9 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Brokers
 
         public async ValueTask<Repository> GetRepositoryByIdAsync(Guid repositoryId) =>
             await this.apiFactoryClient.GetContentAsync<Repository>($"{RepositoryRelativeUrl}/{repositoryId}");
+
+        public async ValueTask<IEnumerable<Repository>> GetAllRepositoriesAsync() =>
+            await this.apiFactoryClient.GetContentAsync<IEnumerable<Repository>>(RepositoryRelativeUrl);
 
         public async ValueTask<Repository> DeleteRepositoryByIdAsync(Guid repositoryId) =>
             await this.apiFactoryClient.DeleteContentAsync<Repository>($"{RepositoryRelativeUrl}/{repositoryId}");
