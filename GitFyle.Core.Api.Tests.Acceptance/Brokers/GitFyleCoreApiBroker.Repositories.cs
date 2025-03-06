@@ -22,6 +22,9 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Brokers
         public async ValueTask<IEnumerable<Repository>> GetAllRepositoriesAsync() =>
             await this.apiFactoryClient.GetContentAsync<IEnumerable<Repository>>(RepositoryRelativeUrl);
 
+        public async ValueTask<Repository> PutRepositoryAsync(Repository repository) =>
+            await this.apiFactoryClient.PutContentAsync(RepositoryRelativeUrl, repository);
+
         public async ValueTask<Repository> DeleteRepositoryByIdAsync(Guid repositoryId) =>
             await this.apiFactoryClient.DeleteContentAsync<Repository>($"{RepositoryRelativeUrl}/{repositoryId}");
     }

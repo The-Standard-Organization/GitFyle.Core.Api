@@ -28,6 +28,14 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
                 .AsQueryable();
         }
 
+        private static Repository UpdateRandomRepository(Repository repository)
+        {
+            var now = DateTimeOffset.UtcNow;
+            repository.UpdatedDate = now;
+
+            return repository;
+        }
+
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 

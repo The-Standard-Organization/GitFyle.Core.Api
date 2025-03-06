@@ -103,6 +103,36 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
                 actualRepository.Should().BeEquivalentTo(expectedRepository);
                 await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
             }
+
+            await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(inputSource.Id);
         }
+
+        [Fact]
+        public async Task ShouldPutRepositoryAsync()
+        {
+            // given
+            DateTimeOffset currentPostDate = DateTimeOffset.UtcNow;
+            Source randomSource = CreateRandomSource(currentPostDate);
+            Source inputSource = randomSource;
+            await this.gitFyleCoreApiBroker.PostSourceAsync(inputSource);
+
+            Repository randomRepository = CreateRandomRepository(currentPostDate);
+            randomRepository.SourceId = inputSource.Id;
+            await this.gitFyleCoreApiBroker.PostRepositoryAsync(randomRepository);
+
+            Repository modifiedRepository = UpdateRandomRepository(randomRepository);
+
+            // when
+            await this.gitFyleCoreApiBroker.PutRepositoryAsync(modifiedRepository);
+
+            Repository actualRepository =
+                await this.gitFyleCoreApiBroker.GetRepositoryByIdAsync(randomRepository.Id);
+
+            // then
+            actualRepository.Should().BeEquivalentTo(modifiedRepository);
+            await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
+            await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(inputSource.Id);
+        }
+
     }
 }
