@@ -127,7 +127,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             await this.gitFyleCoreApiBroker.PutRepositoryAsync(modifiedRepository);
 
             Repository actualRepository =
-                await this.gitFyleCoreApiBroker.GetRepositoryByIdAsync(randomRepository.Id);
+                await this.gitFyleCoreApiBroker.GetRepositoryByIdAsync(modifiedRepository.Id);
 
             // then
             actualRepository.Should().BeEquivalentTo(modifiedRepository);
