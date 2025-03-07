@@ -116,13 +116,13 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             Source inputSource = randomSource;
 
             Repository randomRepository = CreateRandomRepository(currentPostDate);
-            Repository modifiedRepository = UpdateRandomRepository(randomRepository);
 
             // when
             await this.gitFyleCoreApiBroker.PostSourceAsync(inputSource);
             randomRepository.SourceId = inputSource.Id;
 
             await this.gitFyleCoreApiBroker.PostRepositoryAsync(randomRepository);
+            Repository modifiedRepository = UpdateRandomRepository(randomRepository);
 
             await this.gitFyleCoreApiBroker.PutRepositoryAsync(modifiedRepository);
 

@@ -32,26 +32,26 @@ namespace GitFyle.Core.Api.Controllers
 
                 return Created(addedRepository);
             }
-            catch (RepositoryValidationException configurationValidationException)
+            catch (RepositoryValidationException repositoryValidationException)
             {
-                return BadRequest(configurationValidationException.InnerException);
+                return BadRequest(repositoryValidationException.InnerException);
             }
-            catch (RepositoryDependencyValidationException configurationDependencyValidationException)
-                when (configurationDependencyValidationException.InnerException is AlreadyExistsRepositoryException)
+            catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
+                when (repositoryDependencyValidationException.InnerException is AlreadyExistsRepositoryException)
             {
-                return Conflict(configurationDependencyValidationException.InnerException);
+                return Conflict(repositoryDependencyValidationException.InnerException);
             }
-            catch (RepositoryDependencyValidationException configurationDependencyValidationException)
+            catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
             {
-                return BadRequest(configurationDependencyValidationException.InnerException);
+                return BadRequest(repositoryDependencyValidationException.InnerException);
             }
-            catch (RepositoryDependencyException configurationDependencyException)
+            catch (RepositoryDependencyException repositoryDependencyException)
             {
-                return InternalServerError(configurationDependencyException);
+                return InternalServerError(repositoryDependencyException);
             }
-            catch (RepositoryServiceException configurationServiceException)
+            catch (RepositoryServiceException repositoryServiceException)
             {
-                return InternalServerError(configurationServiceException);
+                return InternalServerError(repositoryServiceException);
             }
         }
 
