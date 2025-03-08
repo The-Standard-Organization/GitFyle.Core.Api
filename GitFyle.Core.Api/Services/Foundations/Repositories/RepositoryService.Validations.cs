@@ -55,7 +55,8 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
                 Parameter: nameof(Repository.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(repository.CreatedDate), Parameter: nameof(Repository.CreatedDate)));
+                (Rule: await IsNotRecentAsync(repository.CreatedDate),
+                    Parameter: nameof(Repository.CreatedDate)));
         }
 
         private async ValueTask ValidateRepositoryOnModifyAsync(Repository repository)
@@ -119,11 +120,11 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
         private static dynamic IsInvalidLength(string text, int maxLength) => new
         {
-            Condition = IsExceedingLengthAsync(text, maxLength),
+            Condition = IsExceedingLength(text, maxLength),
             Message = $"Text exceeds max length of {maxLength} characters"
         };
 
-        private static bool IsExceedingLengthAsync(string text, int maxLength) =>
+        private static bool IsExceedingLength(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
 
         private static dynamic IsSame(
