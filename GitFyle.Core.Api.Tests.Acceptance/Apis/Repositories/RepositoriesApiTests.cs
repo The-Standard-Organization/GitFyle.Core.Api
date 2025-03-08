@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Repositories;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
-using Newtonsoft.Json.Linq;
 using Tynamix.ObjectFiller;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories

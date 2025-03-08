@@ -10,7 +10,6 @@ using FluentAssertions;
 using Force.DeepCloner;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Repositories;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
-using RESTFulSense.Exceptions;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
 {
@@ -35,7 +34,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
 
             await this.gitFyleCoreApiBroker.PostRepositoryAsync(inputRepository);
 
-            Repository actualRepository = 
+            Repository actualRepository =
                 await this.gitFyleCoreApiBroker.GetRepositoryByIdAsync(inputRepository.Id);
 
             // then
@@ -94,7 +93,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             IEnumerable<Repository> expectedRepositories = inputRepositories;
 
             // when
-            IEnumerable<Repository> actualRepositories = 
+            IEnumerable<Repository> actualRepositories =
                 await this.gitFyleCoreApiBroker.GetAllRepositoriesAsync();
 
             // then
@@ -161,7 +160,5 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             deletedRepository.Should().BeEquivalentTo(expectedRepository);
             await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(inputSource.Id);
         }
-
-
     }
 }
