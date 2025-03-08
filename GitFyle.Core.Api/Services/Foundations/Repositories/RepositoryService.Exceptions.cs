@@ -114,13 +114,13 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         private async ValueTask<RepositoryValidationException> CreateAndLogValidationExceptionAsync(
             Xeption exception)
         {
-            var RepositoryValidationException = new RepositoryValidationException(
+            var repositoryValidationException = new RepositoryValidationException(
                 message: "Repository validation error occurred, fix errors and try again.",
                 innerException: exception);
 
-            await this.loggingBroker.LogErrorAsync(RepositoryValidationException);
+            await this.loggingBroker.LogErrorAsync(repositoryValidationException);
 
-            return RepositoryValidationException;
+            return repositoryValidationException;
         }
 
         private async Task<RepositoryDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
@@ -138,37 +138,37 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
         private async ValueTask<RepositoryDependencyValidationException>
             CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
         {
-            var RepositoryDependencyValidationException = new RepositoryDependencyValidationException(
-                message: "Repository dependency validation error occurred, fix errors and try again.",
+            var repositoryDependencyValidationException = new RepositoryDependencyValidationException(
+                message: "Repository validation error occurred, fix errors and try again.",
                 innerException: exception,
                 data: exception.Data);
 
-            await this.loggingBroker.LogErrorAsync(RepositoryDependencyValidationException);
+            await this.loggingBroker.LogErrorAsync(repositoryDependencyValidationException);
 
-            return RepositoryDependencyValidationException;
+            return repositoryDependencyValidationException;
         }
 
         private async ValueTask<RepositoryDependencyException> CreateAndLogDependencyExceptionAsync(Xeption exception)
         {
-            var RepositoryDependencyException = new RepositoryDependencyException(
+            var repositoryDependencyException = new RepositoryDependencyException(
                 message: "Repository dependency error occurred, contact support.",
                 innerException: exception);
 
-            await this.loggingBroker.LogErrorAsync(RepositoryDependencyException);
+            await this.loggingBroker.LogErrorAsync(repositoryDependencyException);
 
-            return RepositoryDependencyException;
+            return repositoryDependencyException;
         }
 
         private async ValueTask<RepositoryServiceException> CreateAndLogServiceExceptionAsync(
            Xeption exception)
         {
-            var RepositoryServiceException = new RepositoryServiceException(
-                message: "Service error occurred, contact support.",
+            var repositoryServiceException = new RepositoryServiceException(
+                message: "Repository service error occurred, contact support.",
                 innerException: exception);
 
-            await this.loggingBroker.LogErrorAsync(RepositoryServiceException);
+            await this.loggingBroker.LogErrorAsync(repositoryServiceException);
 
-            return RepositoryServiceException;
+            return repositoryServiceException;
         }
     }
 }
