@@ -10,6 +10,7 @@ using FluentAssertions;
 using Force.DeepCloner;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Repositories;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
+using RESTFulSense.Exceptions;
 
 namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
 {
@@ -134,6 +135,33 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
             await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(inputSource.Id);
         }
+
+        [Fact]
+        public async Task ShouldDeleteRepositoryAsync()
+        {
+            // given
+            DateTimeOffset currentPostDate = DateTimeOffset.UtcNow;
+            Source randomSource = CreateRandomSource(currentPostDate);
+            Source inputSource = randomSource;
+
+            Repository randomRepository = CreateRandomRepository(currentPostDate);
+            Repository inputRepository = randomRepository;
+            Repository expectedRepository = inputRepository;
+
+            // when 
+            await this.gitFyleCoreApiBroker.PostSourceAsync(inputSource);
+            inputRepository.SourceId = inputSource.Id;
+
+            await this.gitFyleCoreApiBroker.PostRepositoryAsync(inputRepository);
+
+            Repository deletedRepository =
+                await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(inputRepository.Id);
+
+            // then
+            deletedRepository.Should().BeEquivalentTo(expectedRepository);
+            await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(inputSource.Id);
+        }
+
 
     }
 }
