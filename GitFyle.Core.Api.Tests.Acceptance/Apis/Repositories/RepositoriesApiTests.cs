@@ -3,8 +3,10 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Repositories;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
@@ -20,6 +22,32 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         public RepositoriesApiTests(GitFyleCoreApiBroker gitFyleCoreApiBroker) =>
             this.gitFyleCoreApiBroker = gitFyleCoreApiBroker;
 
+        private async Task<List<Repository>> GeneratePostedRepositoriesAsync(Source source)
+        {
+            List<Repository> repositories = CreateRandomRepositories().ToList();
+
+            foreach (var repository in repositories)
+            {
+                repository.SourceId = source.Id;
+                await this.gitFyleCoreApiBroker.PostRepositoryAsync(repository);
+            }
+
+            return repositories;
+
+        }
+
+        private async Task RemovePostedRepositoriesAsync(
+            IEnumerable<Repository> expectedRepositories,
+            IEnumerable<Repository> actualRepositories)
+        {
+            foreach (Repository expectedRepository in expectedRepositories)
+            {
+                Repository actualRepository =
+                    actualRepositories.Single(repository => repository.Id == expectedRepository.Id);
+                actualRepository.Should().BeEquivalentTo(expectedRepository);
+                await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
+            }
+        }
         private static IQueryable<Repository> CreateRandomRepositories()
         {
             return CreateRepositoryFiller(DateTimeOffset.UtcNow)
@@ -27,10 +55,11 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
                 .AsQueryable();
         }
 
-        private static Repository UpdateRandomRepository(Repository repository)
+        private static Repository ModifyRandomRepository(Repository repository)
         {
             var now = DateTimeOffset.UtcNow;
             repository.UpdatedDate = now;
+            repository.UpdatedBy = Guid.NewGuid().ToString();
 
             return repository;
         }
@@ -82,6 +111,5 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
 
             return filler;
         }
-
     }
 }
