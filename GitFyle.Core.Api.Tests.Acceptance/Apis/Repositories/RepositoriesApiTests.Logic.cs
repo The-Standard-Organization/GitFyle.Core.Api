@@ -2,7 +2,6 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -107,7 +106,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             await this.gitFyleCoreApiBroker.PostRepositoryAsync(randomRepository);
 
             // when
-            Repository deleteRepository = 
+            Repository deleteRepository =
                 await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(inputRepository.Id);
 
             // then
