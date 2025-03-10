@@ -54,19 +54,29 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
                 .AsQueryable();
         }
 
-        private static Repository ModifyRandomRepository(Repository repository)
+        private async ValueTask<Repository> ModifyRandomRepository(Guid repositoryId)
         {
-            var now = DateTimeOffset.UtcNow;
-            repository.UpdatedDate = now;
-            repository.UpdatedBy = Guid.NewGuid().ToString();
+            Repository someRepository = 
+                await this.gitFyleCoreApiBroker.GetRepositoryByIdAsync(repositoryId);
 
-            return repository;
+            someRepository.UpdatedDate = DateTime.UtcNow;
+            someRepository.UpdatedBy = Guid.NewGuid().ToString();
+
+            return someRepository;
         }
 
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
-        private static Repository PostRandomRepository(Guid sourceId) =>
+        private async ValueTask<Repository> PostRandomRepository(Guid sourceId)
+        {
+            Repository randomRepository = CreateRandomRepository(sourceId);
+            await this.gitFyleCoreApiBroker.PostRepositoryAsync(randomRepository);
+
+            return randomRepository;
+        }
+        
+         private static Repository CreateRandomRepository(Guid sourceId) =>
             CreateRepositoryFiller(sourceId).Create();
 
         private static Filler<Repository> CreateRepositoryFiller(Guid sourceId)
