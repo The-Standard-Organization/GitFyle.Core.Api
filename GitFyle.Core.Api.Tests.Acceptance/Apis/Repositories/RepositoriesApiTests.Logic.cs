@@ -19,7 +19,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         {
             // given
             Source randomSource = await PostRandomSourceAsync();
-            Repository randomRepository = CreateRandomRepository(sourceId: randomSource.Id);
+            Repository randomRepository = PostRandomRepository(sourceId: randomSource.Id);
             Repository inputRepository = randomRepository;
             Repository expectedRepository = inputRepository.DeepClone();
 
@@ -40,13 +40,11 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         {
             // given
             Source randomSource = await PostRandomSourceAsync();
-            Repository randomRepository = CreateRandomRepository(sourceId: randomSource.Id);
+            Repository randomRepository = PostRandomRepository(sourceId: randomSource.Id);
             Repository inputRepository = randomRepository;
             Repository expectedRepository = inputRepository.DeepClone();
 
             // when
-            await this.gitFyleCoreApiBroker.PostRepositoryAsync(inputRepository);
-
             Repository actualRepository =
                 await this.gitFyleCoreApiBroker.GetRepositoryByIdAsync(inputRepository.Id);
 
@@ -88,7 +86,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         {
             // given
             Source randomSource = await PostRandomSourceAsync();
-            Repository randomRepository = CreateRandomRepository(sourceId: randomSource.Id);
+            Repository randomRepository = PostRandomRepository(sourceId: randomSource.Id);
             await this.gitFyleCoreApiBroker.PostRepositoryAsync(randomRepository);
             Repository modifiedRepository = ModifyRandomRepository(randomRepository);
 
@@ -109,7 +107,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         {
             // given
             Source randomSource = await PostRandomSourceAsync();
-            Repository randomRepository = CreateRandomRepository(sourceId: randomSource.Id);
+            Repository randomRepository = PostRandomRepository(sourceId: randomSource.Id);
             Repository inputRepository = randomRepository;
             Repository expectedRepository = inputRepository.DeepClone();
             await this.gitFyleCoreApiBroker.PostRepositoryAsync(randomRepository);

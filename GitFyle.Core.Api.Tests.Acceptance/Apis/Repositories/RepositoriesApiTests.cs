@@ -66,7 +66,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
-        private static Repository CreateRandomRepository(Guid sourceId) =>
+        private static Repository PostRandomRepository(Guid sourceId) =>
             CreateRepositoryFiller(sourceId).Create();
 
         private static Filler<Repository> CreateRepositoryFiller(Guid sourceId)
