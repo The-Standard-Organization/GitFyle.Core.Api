@@ -22,7 +22,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         public RepositoriesApiTests(GitFyleCoreApiBroker gitFyleCoreApiBroker) =>
             this.gitFyleCoreApiBroker = gitFyleCoreApiBroker;
 
-        private async Task<List<Repository>> GeneratePostedRepositoriesAsync(Guid sourceId)
+        private async Task<List<Repository>> PostRandomRepositoriesAsync(Guid sourceId)
         {
             List<Repository> repositories = CreateRandomRepositories(sourceId).ToList();
 

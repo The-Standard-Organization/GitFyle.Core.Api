@@ -61,7 +61,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             Source randomSource = await PostRandomSourceAsync();
 
             List<Repository> inputRepositories =
-                await GeneratePostedRepositoriesAsync(sourceId: randomSource.Id);
+                await PostRandomRepositoriesAsync(sourceId: randomSource.Id);
 
             IEnumerable<Repository> expectedRepositories = inputRepositories;
 
