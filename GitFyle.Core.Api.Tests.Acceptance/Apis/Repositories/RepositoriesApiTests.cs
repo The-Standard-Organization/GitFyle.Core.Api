@@ -34,19 +34,6 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             return repositories;
         }
 
-        private async Task RemovePostedRepositoriesAsync(
-            IEnumerable<Repository> expectedRepositories,
-            IEnumerable<Repository> actualRepositories)
-        {
-            foreach (Repository expectedRepository in expectedRepositories)
-            {
-                Repository actualRepository =
-                    actualRepositories.Single(repository => repository.Id == expectedRepository.Id);
-                actualRepository.Should().BeEquivalentTo(expectedRepository);
-                await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
-            }
-        }
-
         private static IQueryable<Repository> CreateRandomRepositories(Guid sourceId)
         {
             return CreateRepositoryFiller(sourceId)
@@ -54,15 +41,14 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
                 .AsQueryable();
         }
 
-        private async ValueTask<Repository> ModifyRandomRepository(Guid repositoryId)
+        private async ValueTask<Repository> ModifyRandomRepository(Guid sourceId)
         {
-            Repository someRepository = 
-                await this.gitFyleCoreApiBroker.GetRepositoryByIdAsync(repositoryId);
+            Repository randomRepository = await PostRandomRepository(sourceId);
 
-            someRepository.UpdatedDate = DateTime.UtcNow;
-            someRepository.UpdatedBy = Guid.NewGuid().ToString();
+            randomRepository.UpdatedDate = DateTime.UtcNow;
+            randomRepository.UpdatedBy = Guid.NewGuid().ToString();
 
-            return someRepository;
+            return randomRepository;
         }
 
         private static int GetRandomNumber() =>
