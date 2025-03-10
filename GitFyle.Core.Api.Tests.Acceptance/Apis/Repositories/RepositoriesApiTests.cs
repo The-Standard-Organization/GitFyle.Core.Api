@@ -22,13 +22,12 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         public RepositoriesApiTests(GitFyleCoreApiBroker gitFyleCoreApiBroker) =>
             this.gitFyleCoreApiBroker = gitFyleCoreApiBroker;
 
-        private async Task<List<Repository>> GeneratePostedRepositoriesAsync(Source source)
+        private async Task<List<Repository>> GeneratePostedRepositoriesAsync(Guid sourceId)
         {
-            List<Repository> repositories = CreateRandomRepositories().ToList();
+            List<Repository> repositories = CreateRandomRepositories(sourceId).ToList();
 
             foreach (var repository in repositories)
             {
-                repository.SourceId = source.Id;
                 await this.gitFyleCoreApiBroker.PostRepositoryAsync(repository);
             }
 
@@ -48,9 +47,9 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
                 await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
             }
         }
-        private static IQueryable<Repository> CreateRandomRepositories()
+        private static IQueryable<Repository> CreateRandomRepositories(Guid sourceId)
         {
-            return CreateRepositoryFiller(DateTimeOffset.UtcNow)
+            return CreateRepositoryFiller(sourceId)
                 .Create(GetRandomNumber())
                 .AsQueryable();
         }
@@ -67,16 +66,17 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
-        private static Repository CreateRandomRepository(DateTimeOffset dateTimeOffset) =>
-            CreateRepositoryFiller(dateTimeOffset).Create();
+        private static Repository CreateRandomRepository(Guid sourceId) =>
+            CreateRepositoryFiller(sourceId).Create();
 
-        private static Filler<Repository> CreateRepositoryFiller(DateTimeOffset dateTimeOffset)
+        private static Filler<Repository> CreateRepositoryFiller(Guid sourceId)
         {
             string someUser = Guid.NewGuid().ToString();
             var filler = new Filler<Repository>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset>().Use(DateTimeOffset.UtcNow)
+                .OnProperty(repository => repository.SourceId).Use(sourceId)
                 .OnProperty(repository => repository.CreatedBy).Use(someUser)
                 .OnProperty(repository => repository.UpdatedBy).Use(someUser)
                 .OnProperty(repository => repository.Source).IgnoreIt()
