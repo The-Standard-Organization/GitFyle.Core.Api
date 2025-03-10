@@ -32,7 +32,6 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             }
 
             return repositories;
-
         }
 
         private async Task RemovePostedRepositoriesAsync(
@@ -47,6 +46,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
                 await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
             }
         }
+
         private static IQueryable<Repository> CreateRandomRepositories(Guid sourceId)
         {
             return CreateRepositoryFiller(sourceId)

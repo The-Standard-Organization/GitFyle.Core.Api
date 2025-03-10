@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -63,6 +64,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
 
             List<Repository> inputRepositories =
                 await GeneratePostedRepositoriesAsync(sourceId: randomSource.Id);
+
             IEnumerable<Repository> expectedRepositories = inputRepositories;
 
             // when
@@ -70,7 +72,14 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
                 await this.gitFyleCoreApiBroker.GetAllRepositoriesAsync();
 
             // then
-            await RemovePostedRepositoriesAsync(expectedRepositories, actualRepositories);
+            foreach (Repository expectedRepository in expectedRepositories)
+            {
+                Repository actualRepository = 
+                    actualRepositories.Single(repository => repository.Id == expectedRepository.Id);
+
+                actualRepository.Should().BeEquivalentTo(expectedRepository);
+                await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
+            }
             await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(randomSource.Id);
         }
 
