@@ -76,6 +76,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
                 actualRepository.Should().BeEquivalentTo(expectedRepository);
                 await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
             }
+
             await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(randomSource.Id);
         }
 

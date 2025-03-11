@@ -44,7 +44,6 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         private async ValueTask<Repository> ModifyRandomRepository(Guid sourceId)
         {
             Repository randomRepository = await PostRandomRepository(sourceId);
-
             randomRepository.UpdatedDate = DateTime.UtcNow;
             randomRepository.UpdatedBy = Guid.NewGuid().ToString();
 
