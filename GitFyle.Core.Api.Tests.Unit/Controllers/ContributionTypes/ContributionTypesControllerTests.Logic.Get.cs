@@ -34,7 +34,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<IQueryable<ContributionType>> actualActionResult =
-                await repositoriesController.GetContributionTypesAsync();
+                await contributionTypesController.GetContributionTypesAsync();
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);

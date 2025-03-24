@@ -2,49 +2,47 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
-using RESTFulSense.Models;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 {
     public partial class ContributionTypesControllerTests
     {
         [Fact]
-        public async Task ShouldReturnCreatedOnPostAsync()
+        public async Task ShouldReturnOkWithRecordOnGetByIdAsync()
         {
             // given
             ContributionType randomContributionType = CreateRandomContributionType();
-            ContributionType inputContributionType = randomContributionType;
-            ContributionType addedContributionType = inputContributionType;
-            ContributionType expectedContributionType = addedContributionType.DeepClone();
+            Guid inputId = randomContributionType.Id;
+            ContributionType storageContributionType = randomContributionType;
+            ContributionType expectedContributionType = storageContributionType.DeepClone();
 
             var expectedObjectResult =
-                new CreatedObjectResult(expectedContributionType);
+                new OkObjectResult(expectedContributionType);
 
             var expectedActionResult =
                 new ActionResult<ContributionType>(expectedObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
-                service.AddContributionTypeAsync(inputContributionType))
-                    .ReturnsAsync(addedContributionType);
+                service.RetrieveContributionTypeByIdAsync(inputId))
+                    .ReturnsAsync(storageContributionType);
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.PostContributionTypeAsync(
-                    inputContributionType);
+                await contributionTypesController.GetContributionTypeByIdAsync(inputId);
 
             // then
-            actualActionResult.ShouldBeEquivalentTo(
-                expectedActionResult);
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionTypeServiceMock.Verify(service =>
-                service.AddContributionTypeAsync(inputContributionType),
-                    Times.Once);
+                service.RetrieveContributionTypeByIdAsync(inputId),
+                    Times.Once());
 
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
         }
