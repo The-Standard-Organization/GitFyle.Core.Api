@@ -22,6 +22,15 @@ namespace GitFyle.Core.Api.Controllers
         public ContributionsController(IContributionService contributionService) =>
             this.contributionService = contributionService;
 
+        [HttpPost]
+        public async ValueTask<ActionResult<Contribution>> PostContributionAsync(Contribution contribution)
+        {
+                Contribution addedContribution =
+                    await this.contributionService.AddContributionAsync(contribution);
+
+                return Created(addedContribution);
+        }
+
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<Contribution>>> GetAllContributionsAsync()
         {
