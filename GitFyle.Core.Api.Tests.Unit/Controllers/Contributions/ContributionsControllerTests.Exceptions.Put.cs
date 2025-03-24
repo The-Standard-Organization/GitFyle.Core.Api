@@ -118,5 +118,50 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             this.contributionServiceMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldReturnConflictOnPutIfAlreadyExistsContributionErrorOccursAsync()
+        {
+            // given
+            Contribution someContribution = CreateRandomContribution();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            var alreadyExistsContributionException =
+                new AlreadyExistsContributionException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributionDependencyValidationException =
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: alreadyExistsContributionException,
+                    data: someDictionaryData);
+
+            ConflictObjectResult expectedConflictObjectResult =
+                Conflict(alreadyExistsContributionException);
+
+            var expectedActionResult =
+                new ActionResult<Contribution>(expectedConflictObjectResult);
+
+            this.contributionServiceMock.Setup(service =>
+                service.ModifyContributionAsync(It.IsAny<Contribution>()))
+                    .ThrowsAsync(contributionDependencyValidationException);
+
+            // when
+            ActionResult<Contribution> actualActionResult =
+                await this.contributionsController.PutContributionAsync(someContribution);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionServiceMock.Verify(service =>
+                service.ModifyContributionAsync(It.IsAny<Contribution>()),
+                    Times.Once);
+
+            this.contributionServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
