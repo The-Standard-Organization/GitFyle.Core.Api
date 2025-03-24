@@ -397,4 +397,3 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /GitFyle.Core.Api/GitFyle.Core.Api/appsettings.Development.json
-/GitFyle.Core.Api/appsettings.Development.json
