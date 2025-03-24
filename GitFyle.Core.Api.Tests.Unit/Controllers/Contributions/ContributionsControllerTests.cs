@@ -7,6 +7,7 @@ using System.Linq;
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Sources;
 using GitFyle.Core.Api.Services.Foundations.Contributions;
 using Moq;
 using RESTFulSense.Controllers;
@@ -55,9 +56,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
 
         private static IQueryable<Contribution> CreateRandomnContributions() =>
-            CreateRandomContributions().Create(count: GetRandomNumber()).AsQueryable();
+            CreateContributionFiller().Create(count: GetRandomNumber()).AsQueryable();
 
-        private static Filler<Contribution> CreateRandomContributions()
+        private static Contribution CreateRandomContribution() =>
+            CreateContributionFiller().Create();
+
+        private static Filler<Contribution> CreateContributionFiller()
         {
             var filler = new Filler<Contribution>();
 

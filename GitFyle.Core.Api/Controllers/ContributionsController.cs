@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
@@ -39,6 +40,14 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return InternalServerError(contributionServiceException);
             }
+        }
+
+        [HttpGet("{contributionId}")]
+        public async ValueTask<ActionResult<Contribution>> GetContributionByIdAsync(Guid contributionId)
+        {
+                Contribution contribution = await this.contributionService.RetrieveContributionByIdAsync(contributionId);
+
+                return Ok(contribution);
         }
     }
 }
