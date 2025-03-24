@@ -80,10 +80,21 @@ namespace GitFyle.Core.Api.Controllers
         [HttpGet("{contributionTypeId}")]
         public async ValueTask<ActionResult<ContributionType>> GetContributionTypeByIdAsync(Guid contributionTypeId)
         {
+            try
+            {
                 ContributionType contributionType =
                     await this.contributionTypeService.RetrieveContributionTypeByIdAsync(contributionTypeId);
 
                 return Ok(contributionType);
+            }
+            catch (ContributionTypeValidationException contributionTypeValidationException)
+            {
+                return BadRequest(contributionTypeValidationException.InnerException);
+            }
+            catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
+            {
+                return BadRequest(contributionTypeDependencyValidationException.InnerException);
+            }
         }
 
     }
