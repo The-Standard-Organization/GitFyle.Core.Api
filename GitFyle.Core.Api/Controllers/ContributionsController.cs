@@ -117,10 +117,21 @@ namespace GitFyle.Core.Api.Controllers
         [HttpDelete("{contributionId}")]
         public async ValueTask<ActionResult<Contribution>> DeleteContributionByIdAsync(Guid contributionId)
         {
+            try
+            {
                 Contribution deleteContribution =
                     await this.contributionService.RemoveContributionByIdAsync(contributionId);
 
                 return Ok(deleteContribution);
+            }
+            catch (ContributionValidationException contributionValidationException)
+            {
+                return BadRequest(contributionValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException contributionDependencyValidationException)
+            {
+                return BadRequest(contributionDependencyValidationException.InnerException);
+            }
         }
     }
 }
