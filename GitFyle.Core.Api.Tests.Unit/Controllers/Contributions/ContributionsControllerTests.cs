@@ -83,7 +83,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
-            new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static IQueryable<Contribution> CreateRandomnContributions() =>
             CreateContributionFiller().Create(count: GetRandomNumber()).AsQueryable();

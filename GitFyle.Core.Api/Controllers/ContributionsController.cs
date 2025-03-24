@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Contributions;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -25,10 +26,22 @@ namespace GitFyle.Core.Api.Controllers
         [HttpPost]
         public async ValueTask<ActionResult<Contribution>> PostContributionAsync(Contribution contribution)
         {
+            try
+            {
                 Contribution addedContribution =
                     await this.contributionService.AddContributionAsync(contribution);
 
                 return Created(addedContribution);
+            }
+            catch (ContributionValidationException repositoryValidationException)
+            {
+                return BadRequest(repositoryValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException repositoryDependencyValidationException)
+            {
+                return BadRequest(repositoryDependencyValidationException.InnerException);
+            }
+
         }
 
         [HttpGet]
