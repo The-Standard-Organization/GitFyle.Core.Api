@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
@@ -71,6 +72,26 @@ namespace GitFyle.Core.Api.Controllers
             catch (ContributionTypeServiceException contributionTypeServiceException)
             {
                 return InternalServerError(contributionTypeServiceException);
+            }
+        }
+
+        [HttpGet("{contributionTypeId}")]
+        public async ValueTask<ActionResult<ContributionType>> GetContributionTypeByIdAsync(Guid contributionTypeId)
+        {
+            try
+            {
+                ContributionType contributionType =
+                    await this.contributionTypeService.RetrieveContributionTypeByIdAsync(contributionTypeId);
+
+                return Ok(contributionType);
+            }
+            catch (ContributionTypeValidationException contributionTypeValidationException)
+            {
+                return BadRequest(contributionTypeValidationException.InnerException);
+            }
+            catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
+            {
+                return BadRequest(contributionTypeDependencyValidationException.InnerException);
             }
         }
 

@@ -4,47 +4,46 @@
 
 using System;
 using System.Threading.Tasks;
-using Force.DeepCloner;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
+using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 {
     public partial class ContributionTypesControllerTests
     {
-        [Fact]
-        public async Task ShouldReturnOkWithRecordOnGetByIdAsync()
+        [Theory]
+        [MemberData(nameof(ValidationExceptions))]
+        public async Task ShouldReturnBadRequestOnGetByIdIfValidationErrorOccursAsync(Xeption validationException)
         {
             // given
-            ContributionType randomContributionType = CreateRandomContributionType();
-            Guid inputId = randomContributionType.Id;
-            ContributionType storageContributionType = randomContributionType;
-            ContributionType expectedContributionType = storageContributionType.DeepClone();
+            Guid someId = Guid.NewGuid();
 
-            var expectedObjectResult =
-                new OkObjectResult(expectedContributionType);
+            BadRequestObjectResult expectedBadRequestObjectResult =
+                BadRequest(validationException.InnerException);
 
             var expectedActionResult =
-                new ActionResult<ContributionType>(expectedObjectResult);
+                new ActionResult<ContributionType>(expectedBadRequestObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
-                service.RetrieveContributionTypeByIdAsync(inputId))
-                    .ReturnsAsync(storageContributionType);
+                service.RetrieveContributionTypeByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(validationException);
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await repositoriesController.GetContributionTypeByIdAsync(inputId);
+                await this.repositoriesController.GetContributionTypeByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionTypeServiceMock.Verify(service =>
-                service.RetrieveContributionTypeByIdAsync(inputId),
-                    Times.Once());
+                service.RetrieveContributionTypeByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
 
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
         }
+
     }
 }
