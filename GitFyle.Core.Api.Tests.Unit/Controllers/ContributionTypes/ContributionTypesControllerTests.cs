@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
@@ -63,6 +64,12 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     innerException: someInnerException)
             };
         }
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private static IQueryable<ContributionType> CreateRandomContributionTypes() =>
+            CreateContributionTypeFiller().Create(count: GetRandomNumber()).AsQueryable();
 
         private static ContributionType CreateRandomContributionType() =>
             CreateContributionTypeFiller().Create();

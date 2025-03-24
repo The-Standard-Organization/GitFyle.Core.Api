@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
@@ -51,6 +52,15 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return InternalServerError(contributionTypeServiceException);
             }
+        }
+
+        [HttpGet]
+        public async ValueTask<ActionResult<IQueryable<ContributionType>>> GetContributionTypesAsync()
+        {
+                IQueryable<ContributionType> repositories =
+                    await this.contributionTypeService.RetrieveAllContributionTypesAsync();
+
+                return Ok(repositories);
         }
 
     }
