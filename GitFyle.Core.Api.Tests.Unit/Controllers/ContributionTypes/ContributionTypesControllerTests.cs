@@ -18,13 +18,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     public partial class ContributionTypesControllerTests : RESTFulController
     {
         private readonly Mock<IContributionTypeService> contributionTypeServiceMock;
-        private readonly ContributionTypesController repositoriesController;
+        private readonly ContributionTypesController contributionTypesController;
 
         public ContributionTypesControllerTests()
         {
             this.contributionTypeServiceMock = new Mock<IContributionTypeService>();
 
-            this.repositoriesController = new ContributionTypesController(
+            this.contributionTypesController = new ContributionTypesController(
                 contributionTypeService: this.contributionTypeServiceMock.Object);
         }
 
