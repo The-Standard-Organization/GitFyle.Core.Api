@@ -7,12 +7,15 @@ using System.Linq;
 using GitFyle.Core.Api.Controllers;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Sources;
+using GitFyle.Core.Api.Models.Foundations.Contributions;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Contributions;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
+using System.Collections.Generic;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 {
@@ -27,6 +30,26 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             this.contributionsController = new ContributionsController(
                 contributionService: this.contributionServiceMock.Object);
+        }
+
+
+        public static TheoryData<Xeption> ValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            return new TheoryData<Xeption>
+            {
+                new ContributionValidationException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someDictionaryData)
+            };
         }
 
         public static TheoryData<Xeption> ServerExceptions()
@@ -51,6 +74,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 9).GetValue();
+
+        private static Dictionary<string, string[]> GetRandomDictionaryData()
+        {
+            var filler = new Filler<Dictionary<string, string[]>>();
+
+            filler.Setup()
+                .DictionaryItemCount(maxCount: 10);
+
+            return filler.Create();
+        }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();

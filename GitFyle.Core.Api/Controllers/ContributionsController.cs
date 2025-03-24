@@ -45,9 +45,25 @@ namespace GitFyle.Core.Api.Controllers
         [HttpGet("{contributionId}")]
         public async ValueTask<ActionResult<Contribution>> GetContributionByIdAsync(Guid contributionId)
         {
+            try
+            {
                 Contribution contribution = await this.contributionService.RetrieveContributionByIdAsync(contributionId);
 
                 return Ok(contribution);
+            }
+            catch (ContributionValidationException contributionValidationException)
+                when (contributionValidationException.InnerException is NotFoundContributionException)
+            {
+                return NotFound(contributionValidationException.InnerException);
+            }
+            catch (ContributionValidationException contributionValidationException)
+            {
+                return BadRequest(contributionValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException contributionDependencyValidationException)
+            {
+                return BadRequest(contributionDependencyValidationException.InnerException);
+            }
         }
     }
 }
