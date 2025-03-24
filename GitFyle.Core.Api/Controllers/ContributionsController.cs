@@ -85,6 +85,11 @@ namespace GitFyle.Core.Api.Controllers
                 return Ok(modifiedContribution);
             }
             catch (ContributionValidationException contributionValidationException)
+                when (contributionValidationException.InnerException is NotFoundContributionException)
+            {
+                return NotFound(contributionValidationException.InnerException);
+            }
+            catch (ContributionValidationException contributionValidationException)
             {
                 return BadRequest(contributionValidationException.InnerException);
             }
