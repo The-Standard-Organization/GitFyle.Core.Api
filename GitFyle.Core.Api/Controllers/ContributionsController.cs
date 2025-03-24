@@ -73,5 +73,14 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(contributionServiceException);
             }
         }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Contribution>> PutContributionAsync(Contribution contribution)
+        {
+                Contribution modifiedContribution =
+                    await this.contributionService.ModifyContributionAsync(contribution);
+
+                return Ok(modifiedContribution);
+        }
     }
 }
