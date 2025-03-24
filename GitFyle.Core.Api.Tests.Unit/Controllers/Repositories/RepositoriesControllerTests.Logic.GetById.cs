@@ -5,46 +5,46 @@
 using System;
 using System.Threading.Tasks;
 using Force.DeepCloner;
-using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
+using GitFyle.Core.Api.Models.Foundations.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
 
-namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
+namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
 {
-    public partial class ContributionTypesControllerTests
+    public partial class RepositoriesControllerTests
     {
         [Fact]
         public async Task ShouldReturnOkWithRecordOnGetByIdAsync()
         {
             // given
-            ContributionType randomContributionType = CreateRandomContributionType();
-            Guid inputId = randomContributionType.Id;
-            ContributionType storageContributionType = randomContributionType;
-            ContributionType expectedContributionType = storageContributionType.DeepClone();
+            Repository randomRepository = CreateRandomRepository();
+            Guid inputId = randomRepository.Id;
+            Repository storageRepository = randomRepository;
+            Repository expectedRepository = storageRepository.DeepClone();
 
             var expectedObjectResult =
-                new OkObjectResult(expectedContributionType);
+                new OkObjectResult(expectedRepository);
 
             var expectedActionResult =
-                new ActionResult<ContributionType>(expectedObjectResult);
+                new ActionResult<Repository>(expectedObjectResult);
 
-            this.contributionTypeServiceMock.Setup(service =>
-                service.RetrieveContributionTypeByIdAsync(inputId))
-                    .ReturnsAsync(storageContributionType);
+            this.repositoryServiceMock.Setup(service =>
+                service.RetrieveRepositoryByIdAsync(inputId))
+                    .ReturnsAsync(storageRepository);
 
             // when
-            ActionResult<ContributionType> actualActionResult =
-                await repositoriesController.GetContributionTypeByIdAsync(inputId);
+            ActionResult<Repository> actualActionResult =
+                await repositoriesController.GetRepositoryByIdAsync(inputId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.contributionTypeServiceMock.Verify(service =>
-                service.RetrieveContributionTypeByIdAsync(inputId),
+            this.repositoryServiceMock.Verify(service =>
+                service.RetrieveRepositoryByIdAsync(inputId),
                     Times.Once());
 
-            this.contributionTypeServiceMock.VerifyNoOtherCalls();
+            this.repositoryServiceMock.VerifyNoOtherCalls();
         }
     }
 }
