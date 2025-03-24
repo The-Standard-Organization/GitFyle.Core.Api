@@ -46,5 +46,37 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(ServerExceptions))]
+        public async Task ShouldReturnInternalServerErrorOnGetByIdIfServerErrorOccursAsync(
+            Xeption validationException)
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+
+            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+                InternalServerError(validationException);
+
+            var expectedActionResult =
+                new ActionResult<ContributionType>(expectedBadRequestObjectResult);
+
+            this.contributionTypeServiceMock.Setup(service =>
+                service.RetrieveContributionTypeByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(validationException);
+
+            // when
+            ActionResult<ContributionType> actualActionResult =
+                await this.contributionTypesController.GetContributionTypeByIdAsync(someId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionTypeServiceMock.Verify(service =>
+                service.RetrieveContributionTypeByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.contributionTypeServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
