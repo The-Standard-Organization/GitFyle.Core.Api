@@ -57,10 +57,21 @@ namespace GitFyle.Core.Api.Controllers
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<ContributionType>>> GetContributionTypesAsync()
         {
+            try
+            {
                 IQueryable<ContributionType> repositories =
                     await this.contributionTypeService.RetrieveAllContributionTypesAsync();
 
                 return Ok(repositories);
+            }
+            catch (ContributionTypeDependencyException contributionTypeDependencyException)
+            {
+                return InternalServerError(contributionTypeDependencyException);
+            }
+            catch (ContributionTypeServiceException contributionTypeServiceException)
+            {
+                return InternalServerError(contributionTypeServiceException);
+            }
         }
 
     }
