@@ -119,5 +119,49 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             this.contributionServiceMock.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            var lockedContributionException =
+                new LockedContributionException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributionDependencyValidationException =
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: lockedContributionException,
+                    data: someDictionaryData);
+
+            LockedObjectResult expectedConflictObjectResult =
+                Locked(lockedContributionException);
+
+            var expectedActionResult =
+                new ActionResult<Contribution>(expectedConflictObjectResult);
+
+            this.contributionServiceMock.Setup(service =>
+                service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(contributionDependencyValidationException);
+
+            // when
+            ActionResult<Contribution> actualActionResult =
+                await this.contributionsController.DeleteContributionByIdAsync(someId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionServiceMock.Verify(service =>
+                service.RemoveContributionByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.contributionServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
