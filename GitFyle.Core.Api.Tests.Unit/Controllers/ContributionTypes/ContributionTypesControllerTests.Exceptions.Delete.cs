@@ -5,9 +5,11 @@
 using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
+using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
+using RESTFulSense.Models;
 using Xeptions;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
@@ -23,6 +25,38 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
+
+            var expectedActionResult =
+                new ActionResult<ContributionType>(expectedBadRequestObjectResult);
+
+            this.contributionTypeServiceMock.Setup(service =>
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(validationException);
+
+            // when
+            ActionResult<ContributionType> actualActionResult =
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionTypeServiceMock.Verify(service =>
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.contributionTypeServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [MemberData(nameof(ServerExceptions))]
+        public async Task ShouldReturnInternalServerErrorOnDeleteIfServerErrorOccurredAsync(
+            Xeption validationException)
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+
+            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+                InternalServerError(validationException);
 
             var expectedActionResult =
                 new ActionResult<ContributionType>(expectedBadRequestObjectResult);
