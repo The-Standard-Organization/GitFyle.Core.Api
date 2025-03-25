@@ -110,5 +110,14 @@ namespace GitFyle.Core.Api.Controllers
             }
         }
 
+        [HttpPut]
+        public async ValueTask<ActionResult<ContributionType>> PutContributionTypeAsync(ContributionType contributionType)
+        {
+                ContributionType modifiedContributionType =
+                    await this.contributionTypeService.ModifyContributionTypeAsync(contributionType);
+
+                return Ok(modifiedContributionType);
+        }
+
     }
 }
