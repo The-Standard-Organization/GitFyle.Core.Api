@@ -35,7 +35,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.repositoriesController.PostContributionTypeAsync(
+                await this.contributionTypesController.PostContributionTypeAsync(
                     inputContributionType);
 
             // then

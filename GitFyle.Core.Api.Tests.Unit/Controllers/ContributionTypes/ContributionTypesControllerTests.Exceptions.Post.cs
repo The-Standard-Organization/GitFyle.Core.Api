@@ -35,7 +35,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.repositoriesController.PostContributionTypeAsync(someContributionType);
+                await this.contributionTypesController.PostContributionTypeAsync(someContributionType);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -67,7 +67,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.repositoriesController.PostContributionTypeAsync(someContributionType);
+                await this.contributionTypesController.PostContributionTypeAsync(someContributionType);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -112,7 +112,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.repositoriesController.PostContributionTypeAsync(someContributionType);
+                await this.contributionTypesController.PostContributionTypeAsync(someContributionType);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
