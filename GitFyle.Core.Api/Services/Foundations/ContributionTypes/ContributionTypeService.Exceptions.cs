@@ -56,6 +56,16 @@ namespace GitFyle.Core.Api.Services.Foundations.ContributionTypes
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsContributionTypeException);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidReferenceContributionTypeException =
+                    new InvalidReferenceContributionTypeException(
+                        message: "Invalid contributionType reference error occurred.",
+                        innerException: foreignKeyConstraintConflictException,
+                        data: foreignKeyConstraintConflictException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(invalidReferenceContributionTypeException);
+            }
             catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
                 var concurrencyGemException =
