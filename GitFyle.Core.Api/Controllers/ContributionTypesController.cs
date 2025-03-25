@@ -148,5 +148,14 @@ namespace GitFyle.Core.Api.Controllers
             }
         }
 
+        [HttpDelete("{contributionTypeId}")]
+        public async ValueTask<ActionResult<ContributionType>> DeleteContributionTypeByIdAsync(Guid contributionTypeId)
+        {
+                ContributionType deleteContributionType =
+                    await this.contributionTypeService.RemoveContributionTypeByIdAsync(contributionTypeId);
+
+                return Ok(deleteContributionType);
+        }
+
     }
 }
