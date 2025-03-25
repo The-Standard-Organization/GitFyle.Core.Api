@@ -119,5 +119,49 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            var lockedContributionTypeException =
+                new LockedContributionTypeException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributionTypeDependencyValidationException =
+                new ContributionTypeDependencyValidationException(
+                    message: someMessage,
+                    innerException: lockedContributionTypeException,
+                    data: someDictionaryData);
+
+            LockedObjectResult expectedConflictObjectResult =
+                Locked(lockedContributionTypeException);
+
+            var expectedActionResult =
+                new ActionResult<ContributionType>(expectedConflictObjectResult);
+
+            this.contributionTypeServiceMock.Setup(service =>
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(contributionTypeDependencyValidationException);
+
+            // when
+            ActionResult<ContributionType> actualActionResult =
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionTypeServiceMock.Verify(service =>
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.contributionTypeServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
