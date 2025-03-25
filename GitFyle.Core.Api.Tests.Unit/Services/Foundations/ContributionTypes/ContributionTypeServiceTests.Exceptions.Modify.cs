@@ -10,9 +10,7 @@ using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyModel;
 using Moq;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
 {
