@@ -123,5 +123,51 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldReturnFailedDependencyOnPostIfReferenceErrorOccursAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            ContributionType someContributionType = CreateRandomContributionType();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+
+            var invalidReferenceContributionTypeException =
+                new InvalidReferenceContributionTypeException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributionTypeDependencyValidationException =
+                new ContributionTypeDependencyValidationException(
+                    message: someMessage,
+                    innerException: invalidReferenceContributionTypeException,
+                    data: invalidReferenceContributionTypeException.Data);
+
+            FailedDependencyObjectResult expectedConflictObjectResult =
+               FailedDependency(invalidReferenceContributionTypeException);
+
+            var expectedActionResult =
+                new ActionResult<ContributionType>(expectedConflictObjectResult);
+
+
+            this.contributionTypeServiceMock.Setup(service =>
+                service.AddContributionTypeAsync(It.IsAny<ContributionType>()))
+                    .ThrowsAsync(contributionTypeDependencyValidationException);
+
+            // when
+            ActionResult<ContributionType> actualActionResult =
+                await this.contributionTypesController.PostContributionTypeAsync(someContributionType);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionTypeServiceMock.Verify(service =>
+                service.AddContributionTypeAsync(It.IsAny<ContributionType>()),
+                    Times.Once);
+
+            this.contributionTypeServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
