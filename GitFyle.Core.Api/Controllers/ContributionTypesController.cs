@@ -113,10 +113,21 @@ namespace GitFyle.Core.Api.Controllers
         [HttpPut]
         public async ValueTask<ActionResult<ContributionType>> PutContributionTypeAsync(ContributionType contributionType)
         {
+            try
+            {
                 ContributionType modifiedContributionType =
                     await this.contributionTypeService.ModifyContributionTypeAsync(contributionType);
 
                 return Ok(modifiedContributionType);
+            }
+            catch (ContributionTypeValidationException contributionTypeValidationException)
+            {
+                return BadRequest(contributionTypeValidationException.InnerException);
+            }
+            catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
+            {
+                return BadRequest(contributionTypeDependencyValidationException.InnerException);
+            }
         }
 
     }
