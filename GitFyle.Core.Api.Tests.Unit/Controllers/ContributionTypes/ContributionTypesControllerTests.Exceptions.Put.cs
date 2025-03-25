@@ -79,5 +79,45 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldReturnNotFoundOnPutIfItemDoesNotExistAsync()
+        {
+            // given
+            ContributionType someContributionType = CreateRandomContributionType();
+            string someMessage = GetRandomString();
+
+            var notFoundContributionTypeException =
+                new NotFoundContributionTypeException(
+                    message: someMessage);
+
+            var contributionTypeValidationException =
+                new ContributionTypeValidationException(
+                    message: someMessage,
+                    innerException: notFoundContributionTypeException);
+
+            NotFoundObjectResult expectedNotFoundObjectResult =
+                NotFound(notFoundContributionTypeException);
+
+            var expectedActionResult =
+                new ActionResult<ContributionType>(expectedNotFoundObjectResult);
+
+            this.contributionTypeServiceMock.Setup(service =>
+                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
+                    .ThrowsAsync(contributionTypeValidationException);
+
+            // when
+            ActionResult<ContributionType> actualActionResult =
+                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionTypeServiceMock.Verify(service =>
+                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()),
+                    Times.Once);
+
+            this.contributionTypeServiceMock.VerifyNoOtherCalls();
+        }
+
     }
 }
