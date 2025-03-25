@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
@@ -63,6 +64,67 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributions
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateContributionAsync(someContribution),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Contribution foreignKeyConflictedContribution = CreateRandomContribution();
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(message: exceptionMessage);
+
+            var invalidContributionReferenceException =
+                new InvalidReferenceContributionException(
+                    message: "Invalid contribution reference error occurred.",
+                    innerException: foreignKeyConstraintConflictException,
+                    data: foreignKeyConstraintConflictException.Data);
+
+            var expectedContributionDependencyValidationException =
+            new ContributionDependencyValidationException(
+                    message: "Contribution dependency validation error occurred, fix errors and try again.",
+                    innerException: invalidContributionReferenceException,
+                    data: invalidContributionReferenceException.Data);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .Throws(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Contribution> modifyContributionTask =
+                this.contributionService.ModifyContributionAsync(foreignKeyConflictedContribution);
+
+            ContributionDependencyValidationException actualContributionDependencyValidationException =
+                await Assert.ThrowsAsync<ContributionDependencyValidationException>(
+                    modifyContributionTask.AsTask);
+
+            // then
+            actualContributionDependencyValidationException.Should().BeEquivalentTo(
+                expectedContributionDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributionByIdAsync(foreignKeyConflictedContribution.Id),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributionDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateContributionAsync(foreignKeyConflictedContribution),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
