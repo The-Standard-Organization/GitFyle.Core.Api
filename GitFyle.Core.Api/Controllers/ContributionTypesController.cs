@@ -7,8 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Services.Foundations.ContributionTypes;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -151,10 +149,21 @@ namespace GitFyle.Core.Api.Controllers
         [HttpDelete("{contributionTypeId}")]
         public async ValueTask<ActionResult<ContributionType>> DeleteContributionTypeByIdAsync(Guid contributionTypeId)
         {
+            try
+            {
                 ContributionType deleteContributionType =
                     await this.contributionTypeService.RemoveContributionTypeByIdAsync(contributionTypeId);
 
                 return Ok(deleteContributionType);
+            }
+            catch (ContributionTypeValidationException contributionTypeValidationException)
+            {
+                return BadRequest(contributionTypeValidationException.InnerException);
+            }
+            catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
+            {
+                return BadRequest(contributionTypeDependencyValidationException.InnerException);
+            }
         }
 
     }
