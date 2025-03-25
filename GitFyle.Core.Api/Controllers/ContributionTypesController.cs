@@ -12,6 +12,7 @@ using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Services.Foundations.ContributionTypes;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
+using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 
 namespace GitFyle.Core.Api.Controllers
 {
@@ -133,6 +134,11 @@ namespace GitFyle.Core.Api.Controllers
                 when (contributionTypeDependencyValidationException.InnerException is AlreadyExistsContributionTypeException)
             {
                 return Conflict(contributionTypeDependencyValidationException.InnerException);
+            }
+            catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
+              when (contributionTypeDependencyValidationException.InnerException is InvalidReferenceContributionTypeException)
+            {
+                return FailedDependency(contributionTypeDependencyValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
             {
