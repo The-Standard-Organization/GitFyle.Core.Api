@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Contributions;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -97,6 +98,11 @@ namespace GitFyle.Core.Api.Controllers
                 when (contributionDependencyValidationException.InnerException is AlreadyExistsContributionException)
             {
                 return Conflict(contributionDependencyValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException contributionDependencyValidationException)
+                when (contributionDependencyValidationException.InnerException is InvalidReferenceContributionException)
+            {
+                return FailedDependency(contributionDependencyValidationException.InnerException);
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
             {

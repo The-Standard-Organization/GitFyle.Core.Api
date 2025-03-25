@@ -6,6 +6,8 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
@@ -32,6 +34,51 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             this.contributionServiceMock.Setup(service =>
                 service.ModifyContributionAsync(It.IsAny<Contribution>()))
                     .ThrowsAsync(validationException);
+
+            // when
+            ActionResult<Contribution> actualActionResult =
+                await this.contributionsController.PutContributionAsync(someContribution);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionServiceMock.Verify(service =>
+                service.ModifyContributionAsync(It.IsAny<Contribution>()),
+                    Times.Once);
+
+            this.contributionServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldReturnFailedDependencyOnPutIfReferenceErrorOccursAsync()
+        {
+            // given
+            Contribution someContribution = CreateRandomContribution();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            var invalidReferenceContributionException =
+                new InvalidReferenceContributionException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributionDependencyValidationException =
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: invalidReferenceContributionException,
+                    data: someDictionaryData);
+
+            FailedDependencyObjectResult expectedConflictObjectResult =
+               FailedDependency(invalidReferenceContributionException);
+
+            var expectedActionResult =
+                new ActionResult<Contribution>(expectedConflictObjectResult);
+
+            this.contributionServiceMock.Setup(service =>
+                service.ModifyContributionAsync(It.IsAny<Contribution>()))
+                    .ThrowsAsync(contributionDependencyValidationException);
 
             // when
             ActionResult<Contribution> actualActionResult =
