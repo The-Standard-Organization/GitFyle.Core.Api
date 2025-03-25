@@ -157,6 +157,11 @@ namespace GitFyle.Core.Api.Controllers
                 return Ok(deleteContributionType);
             }
             catch (ContributionTypeValidationException contributionTypeValidationException)
+                when (contributionTypeValidationException.InnerException is NotFoundContributionTypeException)
+            {
+                return NotFound(contributionTypeValidationException.InnerException);
+            }
+            catch (ContributionTypeValidationException contributionTypeValidationException)
             {
                 return BadRequest(contributionTypeValidationException.InnerException);
             }
