@@ -119,5 +119,49 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldReturnConflictOnPutIfAlreadyExistsContributionTypeErrorOccursAsync()
+        {
+            // given
+            ContributionType someContributionType = CreateRandomContributionType();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            var alreadyExistsContributionTypeException =
+                new AlreadyExistsContributionTypeException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributionTypeDependencyValidationException =
+                new ContributionTypeDependencyValidationException(
+                    message: someMessage,
+                    innerException: alreadyExistsContributionTypeException,
+                    data: someDictionaryData);
+
+            ConflictObjectResult expectedConflictObjectResult =
+                Conflict(alreadyExistsContributionTypeException);
+
+            var expectedActionResult =
+                new ActionResult<ContributionType>(expectedConflictObjectResult);
+
+            this.contributionTypeServiceMock.Setup(service =>
+                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
+                    .ThrowsAsync(contributionTypeDependencyValidationException);
+
+            // when
+            ActionResult<ContributionType> actualActionResult =
+                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionTypeServiceMock.Verify(service =>
+                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()),
+                    Times.Once);
+
+            this.contributionTypeServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
