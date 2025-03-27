@@ -3,10 +3,9 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GitFyle.Core.Api.Controllers;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
-using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributions;
 using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Contributions;
@@ -14,8 +13,6 @@ using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
 using Xeptions;
-using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
-using System.Collections.Generic;
 
 namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 {
@@ -31,7 +28,6 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             this.contributionsController = new ContributionsController(
                 contributionService: this.contributionServiceMock.Object);
         }
-
 
         public static TheoryData<Xeption> ValidationExceptions()
         {
