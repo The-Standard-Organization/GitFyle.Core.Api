@@ -47,5 +47,37 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributors
             this.contributorServiceMock.VerifyNoOtherCalls();
         }
 
+        [Theory]
+        [MemberData(nameof(ServerExceptions))]
+        public async Task ShouldReturnInternalServerErrorOnPostIfServerErrorOccurredAsync(
+            Xeption serverException)
+        {
+            // given
+            Contributor someContributor = CreateRandomContributor();
+
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
+                InternalServerError(serverException);
+
+            var expectedActionResult =
+                new ActionResult<Contributor>(expectedInternalServerErrorObjectResult);
+
+            this.contributorServiceMock.Setup(service =>
+                service.AddContributorAsync(It.IsAny<Contributor>()))
+                    .ThrowsAsync(serverException);
+
+            // when
+            ActionResult<Contributor> actualActionResult =
+                await this.contributorsController.PostContributorAsync(someContributor);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributorServiceMock.Verify(service =>
+                service.AddContributorAsync(It.IsAny<Contributor>()),
+                    Times.Once);
+
+            this.contributorServiceMock.VerifyNoOtherCalls();
+        }
+
     }
 }
