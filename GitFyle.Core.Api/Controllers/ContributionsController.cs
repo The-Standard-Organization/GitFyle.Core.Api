@@ -82,7 +82,8 @@ namespace GitFyle.Core.Api.Controllers
         {
             try
             {
-                Contribution contribution = await this.contributionService.RetrieveContributionByIdAsync(contributionId);
+                Contribution contribution = 
+                        await this.contributionService.RetrieveContributionByIdAsync(contributionId);
 
                 return Ok(contribution);
             }

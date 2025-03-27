@@ -6,27 +6,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GitFyle.Core.Api.Controllers;
-using GitFyle.Core.Api.Models.Foundations.Contributions;
-using GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions;
-using GitFyle.Core.Api.Services.Foundations.Contributions;
+using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
+using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
+using GitFyle.Core.Api.Services.Foundations.ContributionTypes;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
+namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 {
-    public partial class ContributionsControllerTests : RESTFulController
+    public partial class ContributionTypesControllerTests : RESTFulController
     {
-        private readonly Mock<IContributionService> contributionServiceMock;
-        private readonly ContributionsController contributionsController;
+        private readonly Mock<IContributionTypeService> contributionTypeServiceMock;
+        private readonly ContributionTypesController contributionTypesController;
 
-        public ContributionsControllerTests()
+        public ContributionTypesControllerTests()
         {
-            this.contributionServiceMock = new Mock<IContributionService>();
+            this.contributionTypeServiceMock = new Mock<IContributionTypeService>();
 
-            this.contributionsController = new ContributionsController(
-                contributionService: this.contributionServiceMock.Object);
+            this.contributionTypesController = new ContributionTypesController(
+                contributionTypeService: this.contributionTypeServiceMock.Object);
         }
 
         public static TheoryData<Xeption> ValidationExceptions()
@@ -37,11 +37,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             return new TheoryData<Xeption>
             {
-                new ContributionValidationException(
+                new ContributionTypeValidationException(
                     message: someMessage,
                     innerException: someInnerException),
 
-                new ContributionDependencyValidationException(
+                new ContributionTypeDependencyValidationException(
                     message: someMessage,
                     innerException: someInnerException,
                     data: someDictionaryData)
@@ -55,21 +55,27 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             return new TheoryData<Xeption>
             {
-                new ContributionDependencyException(
+                new ContributionTypeDependencyException(
                     message: someMessage,
                     innerException: someInnerException),
 
-                new ContributionServiceException(
+                new ContributionTypeServiceException(
                     message: someMessage,
                     innerException: someInnerException)
             };
         }
 
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private static IQueryable<ContributionType> CreateRandomContributionTypes() =>
+            CreateContributionTypeFiller().Create(count: GetRandomNumber()).AsQueryable();
+
+        private static ContributionType CreateRandomContributionType() =>
+            CreateContributionTypeFiller().Create();
+
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
-
-        private static int GetRandomNumber() =>
-            new IntRange(min: 2, max: 9).GetValue();
 
         private static Dictionary<string, string[]> GetRandomDictionaryData()
         {
@@ -84,28 +90,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static IQueryable<Contribution> CreateRandomnContributions() =>
-            CreateContributionFiller().Create(count: GetRandomNumber()).AsQueryable();
-
-        private static Contribution CreateRandomContribution() =>
-            CreateContributionFiller().Create();
-
-        private static Filler<Contribution> CreateContributionFiller()
+        private static Filler<ContributionType> CreateContributionTypeFiller()
         {
-            var filler = new Filler<Contribution>();
+            var filler = new Filler<ContributionType>();
 
             filler.Setup()
-                .OnProperty(contribution =>
-                    contribution.ContributionType).IgnoreIt()
-
-                .OnProperty(contribution =>
-                    contribution.Contributor).IgnoreIt()
-
-                .OnProperty(contribution =>
-                    contribution.Repository).IgnoreIt()
-
-                .OnType<DateTimeOffset>().Use(
-                    GetRandomDateTimeOffset);
+                .OnType<DateTimeOffset>().Use(GetRandomDateTimeOffset)
+                .OnProperty(contributionType => contributionType.Contributions).IgnoreIt();
 
             return filler;
         }
