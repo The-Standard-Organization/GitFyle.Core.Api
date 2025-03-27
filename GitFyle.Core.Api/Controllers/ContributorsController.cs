@@ -38,6 +38,14 @@ namespace GitFyle.Core.Api.Controllers
             {
                 return BadRequest(contributorDependencyValidationException.InnerException);
             }
+            catch (ContributorDependencyException contributorDependencyException)
+            {
+                return InternalServerError(contributorDependencyException);
+            }
+            catch (ContributorServiceException contributorServiceException)
+            {
+                return InternalServerError(contributorServiceException);
+            }
         }
     }
 }
