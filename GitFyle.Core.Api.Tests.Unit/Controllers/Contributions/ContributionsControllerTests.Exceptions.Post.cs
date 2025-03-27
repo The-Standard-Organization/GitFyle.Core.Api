@@ -47,6 +47,51 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             this.contributionServiceMock.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldReturnFailedDependencyOnPostIfReferenceErrorOccursAsync()
+        {
+            // given
+            Contribution someContribution = CreateRandomContribution();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+
+            var invalidReferenceContributionException =
+                new InvalidReferenceContributionException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributionDependencyValidationException =
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: invalidReferenceContributionException,
+                    data: invalidReferenceContributionException.Data);
+
+            FailedDependencyObjectResult expectedConflictObjectResult =
+               FailedDependency(invalidReferenceContributionException);
+
+            var expectedActionResult =
+                new ActionResult<Contribution>(expectedConflictObjectResult);
+
+
+            this.contributionServiceMock.Setup(service =>
+                service.AddContributionAsync(It.IsAny<Contribution>()))
+                    .ThrowsAsync(contributionDependencyValidationException);
+
+            // when
+            ActionResult<Contribution> actualActionResult =
+                await this.contributionsController.PostContributionAsync(someContribution);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionServiceMock.Verify(service =>
+                service.AddContributionAsync(It.IsAny<Contribution>()),
+                    Times.Once);
+
+            this.contributionServiceMock.VerifyNoOtherCalls();
+        }
+    
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnPostIfServerErrorOccurredAsync(
