@@ -79,5 +79,49 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributors
             this.contributorServiceMock.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldReturnConflictOnPostIfAlreadyExistsContributorErrorOccurredAsync()
+        {
+            // given
+            Contributor someContributor = CreateRandomContributor();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            var alreadyExistsContributorException =
+                new AlreadyExistsContributorException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributorDependencyValidationException =
+                new ContributorDependencyValidationException(
+                    message: someMessage,
+                    innerException: alreadyExistsContributorException,
+                    data: someDictionaryData);
+
+            ConflictObjectResult expectedConflictObjectResult =
+                Conflict(alreadyExistsContributorException);
+
+            var expectedActionResult =
+                new ActionResult<Contributor>(expectedConflictObjectResult);
+
+            this.contributorServiceMock.Setup(service =>
+                service.AddContributorAsync(It.IsAny<Contributor>()))
+                    .ThrowsAsync(contributorDependencyValidationException);
+
+            // when
+            ActionResult<Contributor> actualActionResult =
+                await this.contributorsController.PostContributorAsync(someContributor);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributorServiceMock.Verify(service =>
+                service.AddContributorAsync(It.IsAny<Contributor>()),
+                    Times.Once);
+
+            this.contributorServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
