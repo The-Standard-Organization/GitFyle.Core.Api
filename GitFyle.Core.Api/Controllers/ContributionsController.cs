@@ -133,6 +133,11 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionValidationException.InnerException);
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
+               when (contributionDependencyValidationException.InnerException is InvalidReferenceContributionException)
+            {
+                return FailedDependency(contributionDependencyValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException contributionDependencyValidationException)
                 when (contributionDependencyValidationException.InnerException is LockedContributionException)
             {
                 return Locked(contributionDependencyValidationException.InnerException);
