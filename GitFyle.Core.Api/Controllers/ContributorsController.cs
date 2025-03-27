@@ -4,6 +4,7 @@
 
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
+using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using GitFyle.Core.Api.Services.Foundations.Contributors;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -22,10 +23,21 @@ namespace GitFyle.Core.Api.Controllers
         [HttpPost]
         public async ValueTask<ActionResult<Contributor>> PostContributorAsync(Contributor contributor)
         {
+            try
+            {
                 Contributor addedContributor =
                     await this.contributorService.AddContributorAsync(contributor);
 
                 return Created(addedContributor);
+            }
+            catch (ContributorValidationException contributorValidationException)
+            {
+                return BadRequest(contributorValidationException.InnerException);
+            }
+            catch (ContributorDependencyValidationException contributorDependencyValidationException)
+            {
+                return BadRequest(contributorDependencyValidationException.InnerException);
+            }
         }
     }
 }
