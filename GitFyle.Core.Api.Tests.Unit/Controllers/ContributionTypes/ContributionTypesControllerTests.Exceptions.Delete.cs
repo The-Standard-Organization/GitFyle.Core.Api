@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
@@ -18,10 +19,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnPutIfValidationErrorOccursAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnDeleteIfValidationErrorOccursAsync(Xeption validationException)
         {
             // given
-            ContributionType someContributionType = CreateRandomContributionType();
+            Guid someId = Guid.NewGuid();
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
@@ -30,18 +31,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                 new ActionResult<ContributionType>(expectedBadRequestObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
-                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(validationException);
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionTypeServiceMock.Verify(service =>
-                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()),
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
@@ -49,11 +50,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnPutIfServerErrorOccurredAsync(
+        public async Task ShouldReturnInternalServerErrorOnDeleteIfServerErrorOccurredAsync(
             Xeption validationException)
         {
             // given
-            ContributionType someContributionType = CreateRandomContributionType();
+            Guid someId = Guid.NewGuid();
 
             InternalServerErrorObjectResult expectedBadRequestObjectResult =
                 InternalServerError(validationException);
@@ -62,28 +63,28 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                 new ActionResult<ContributionType>(expectedBadRequestObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
-                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(validationException);
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionTypeServiceMock.Verify(service =>
-                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()),
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldReturnNotFoundOnPutIfItemDoesNotExistAsync()
+        public async Task ShouldReturnNotFoundOnDeleteIfItemDoesNotExistAsync()
         {
             // given
-            ContributionType someContributionType = CreateRandomContributionType();
+            Guid someId = Guid.NewGuid();
             string someMessage = GetRandomString();
 
             var notFoundContributionTypeException =
@@ -102,34 +103,34 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                 new ActionResult<ContributionType>(expectedNotFoundObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
-                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(contributionTypeValidationException);
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionTypeServiceMock.Verify(service =>
-                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()),
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldReturnConflictOnPutIfAlreadyExistsContributionTypeErrorOccursAsync()
+        public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
         {
             // given
-            ContributionType someContributionType = CreateRandomContributionType();
+            Guid someId = Guid.NewGuid();
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
             var someDictionaryData = GetRandomDictionaryData();
 
-            var alreadyExistsContributionTypeException =
-                new AlreadyExistsContributionTypeException(
+            var lockedContributionTypeException =
+                new LockedContributionTypeException(
                     message: someMessage,
                     innerException: someInnerException,
                     data: someInnerException.Data);
@@ -137,41 +138,41 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             var contributionTypeDependencyValidationException =
                 new ContributionTypeDependencyValidationException(
                     message: someMessage,
-                    innerException: alreadyExistsContributionTypeException,
+                    innerException: lockedContributionTypeException,
                     data: someDictionaryData);
 
-            ConflictObjectResult expectedConflictObjectResult =
-                Conflict(alreadyExistsContributionTypeException);
+            LockedObjectResult expectedConflictObjectResult =
+                Locked(lockedContributionTypeException);
 
             var expectedActionResult =
                 new ActionResult<ContributionType>(expectedConflictObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
-                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(contributionTypeDependencyValidationException);
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionTypeServiceMock.Verify(service =>
-                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()),
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldReturnFailedDependencyOnPutIfReferenceErrorOccursAsync()
+        public async Task ShouldReturnFailedDependencyOnDeleteIfReferenceErrorOccursAsync()
         {
             // given
+            Guid someId = Guid.NewGuid();
             ContributionType someContributionType = CreateRandomContributionType();
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
-            var someDictionaryData = GetRandomDictionaryData();
 
             var invalidReferenceContributionTypeException =
                 new InvalidReferenceContributionTypeException(
@@ -183,7 +184,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                 new ContributionTypeDependencyValidationException(
                     message: someMessage,
                     innerException: invalidReferenceContributionTypeException,
-                    data: someDictionaryData);
+                    data: invalidReferenceContributionTypeException.Data);
 
             FailedDependencyObjectResult expectedConflictObjectResult =
                FailedDependency(invalidReferenceContributionTypeException);
@@ -191,19 +192,20 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             var expectedActionResult =
                 new ActionResult<ContributionType>(expectedConflictObjectResult);
 
+
             this.contributionTypeServiceMock.Setup(service =>
-                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(contributionTypeDependencyValidationException);
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionTypeServiceMock.Verify(service =>
-                service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()),
+                service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.contributionTypeServiceMock.VerifyNoOtherCalls();
