@@ -22,7 +22,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                 Xeption validationException)
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
@@ -36,7 +36,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.DeleteContributionByIdAsync(someId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -54,7 +54,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             Xeption validationException)
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
 
             InternalServerErrorObjectResult expectedBadRequestObjectResult =
                 InternalServerError(validationException);
@@ -68,7 +68,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.DeleteContributionByIdAsync(someId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -84,7 +84,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         public async Task ShouldReturnNotFoundOnDeleteIfItemDoesNotExistAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
             string someMessage = GetRandomString();
 
             var notFoundContributionException =
@@ -108,7 +108,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.DeleteContributionByIdAsync(someId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -124,7 +124,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
             var someDictionaryData = GetRandomDictionaryData();
@@ -153,7 +153,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.DeleteContributionByIdAsync(someId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
