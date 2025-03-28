@@ -51,20 +51,20 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnDeleteIfServerErrorOccurredAsync(
-            Xeption validationException)
+            Xeption serverException)
         {
             // given
             Guid someContributionId = Guid.NewGuid();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
-                InternalServerError(validationException);
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
+                InternalServerError(serverException);
 
             var expectedActionResult =
-                new ActionResult<Contribution>(expectedBadRequestObjectResult);
+                new ActionResult<Contribution>(expectedInternalServerErrorObjectResult);
 
             this.contributionServiceMock.Setup(service =>
                 service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(validationException);
+                    .ThrowsAsync(serverException);
 
             // when
             ActionResult<Contribution> actualActionResult =
