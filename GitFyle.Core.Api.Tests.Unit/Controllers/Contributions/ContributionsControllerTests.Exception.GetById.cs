@@ -18,10 +18,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnGetByIdIfValidationErrorOccurredAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnGetByIdIfValidationErrorOccurredAsync(
+                Xeption validationException)
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
@@ -35,7 +36,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.GetContributionByIdAsync(someId);
+                await this.contributionsController.GetContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -53,7 +54,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             Xeption validationException)
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
 
             InternalServerErrorObjectResult expectedBadRequestObjectResult =
                 InternalServerError(validationException);
@@ -67,7 +68,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.GetContributionByIdAsync(someId);
+                await this.contributionsController.GetContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -83,7 +84,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         public async Task ShouldReturnNotFoundOnGetByIdIfItemDoesNotExistAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
             string someMessage = GetRandomString();
 
             var notFoundContributionException =
@@ -107,7 +108,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.GetContributionByIdAsync(someId);
+                await this.contributionsController.GetContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
