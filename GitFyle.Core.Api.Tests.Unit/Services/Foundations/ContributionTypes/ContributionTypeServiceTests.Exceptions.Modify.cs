@@ -89,10 +89,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
                     data: foreignKeyConstraintConflictException.Data);
 
             var expectedContributionTypeDependencyValidationException =
-            new ContributionTypeDependencyValidationException(
-                    message: "ContributionType dependency validation error occurred, fix errors and try again.", 
-                    innerException: invalidContributionTypeReferenceException,
-                    data: invalidContributionTypeReferenceException.Data);
+                new ContributionTypeDependencyValidationException(
+                        message: "ContributionType dependency validation error occurred, fix errors and try again.", 
+                        innerException: invalidContributionTypeReferenceException,
+                        data: invalidContributionTypeReferenceException.Data);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
