@@ -23,7 +23,8 @@ namespace GitFyle.Core.Api.Controllers
             this.contributionTypeService = contributionTypeService;
 
         [HttpPost]
-        public async ValueTask<ActionResult<ContributionType>> PostContributionTypeAsync(ContributionType contributionType)
+        public async ValueTask<ActionResult<ContributionType>> PostContributionTypeAsync(
+                ContributionType contributionType)
         {
             try
             {
@@ -37,12 +38,14 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionTypeValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-                when (contributionTypeDependencyValidationException.InnerException is AlreadyExistsContributionTypeException)
+                when (contributionTypeDependencyValidationException.InnerException is 
+                            AlreadyExistsContributionTypeException)
             {
                 return Conflict(contributionTypeDependencyValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-                 when (contributionTypeDependencyValidationException.InnerException is InvalidReferenceContributionTypeException)
+                 when (contributionTypeDependencyValidationException.InnerException is 
+                            InvalidReferenceContributionTypeException)
             {
                 return FailedDependency(contributionTypeDependencyValidationException.InnerException);
             }
@@ -114,7 +117,8 @@ namespace GitFyle.Core.Api.Controllers
         }
 
         [HttpPut]
-        public async ValueTask<ActionResult<ContributionType>> PutContributionTypeAsync(ContributionType contributionType)
+        public async ValueTask<ActionResult<ContributionType>> PutContributionTypeAsync(
+                ContributionType contributionType)
         {
             try
             {
@@ -133,12 +137,14 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionTypeValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-                when (contributionTypeDependencyValidationException.InnerException is AlreadyExistsContributionTypeException)
+                when (contributionTypeDependencyValidationException.InnerException is 
+                            AlreadyExistsContributionTypeException)
             {
                 return Conflict(contributionTypeDependencyValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-              when (contributionTypeDependencyValidationException.InnerException is InvalidReferenceContributionTypeException)
+              when (contributionTypeDependencyValidationException.InnerException is 
+                            InvalidReferenceContributionTypeException)
             {
                 return FailedDependency(contributionTypeDependencyValidationException.InnerException);
             }
@@ -157,7 +163,8 @@ namespace GitFyle.Core.Api.Controllers
         }
 
         [HttpDelete("{contributionTypeId}")]
-        public async ValueTask<ActionResult<ContributionType>> DeleteContributionTypeByIdAsync(Guid contributionTypeId)
+        public async ValueTask<ActionResult<ContributionType>> DeleteContributionTypeByIdAsync(
+                Guid contributionTypeId)
         {
             try
             {
@@ -176,7 +183,8 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionTypeValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-                when (contributionTypeDependencyValidationException.InnerException is InvalidReferenceContributionTypeException)
+                when (contributionTypeDependencyValidationException.InnerException is 
+                            InvalidReferenceContributionTypeException)
             {
                 return FailedDependency(contributionTypeDependencyValidationException.InnerException);
             }
