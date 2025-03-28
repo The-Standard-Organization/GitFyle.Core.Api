@@ -23,7 +23,8 @@ namespace GitFyle.Core.Api.Controllers
             this.contributionTypeService = contributionTypeService;
 
         [HttpPost]
-        public async ValueTask<ActionResult<ContributionType>> PostContributionTypeAsync(ContributionType contributionType)
+        public async ValueTask<ActionResult<ContributionType>> PostContributionTypeAsync(
+                ContributionType contributionType)
         {
             try
             {
