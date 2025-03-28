@@ -18,11 +18,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnGetByIdIfValidationErrorOccurredAsync(
-                Xeption validationException)
+        public async Task ShouldReturnBadRequestOnPutIfValidationErrorOccursAsync(Xeption validationException)
         {
             // given
-            Guid someContributionId = Guid.NewGuid();
+            Contribution someContribution = CreateRandomContribution();
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
@@ -31,18 +30,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                 new ActionResult<Contribution>(expectedBadRequestObjectResult);
 
             this.contributionServiceMock.Setup(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()))
+                service.ModifyContributionAsync(It.IsAny<Contribution>()))
                     .ThrowsAsync(validationException);
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.GetContributionByIdAsync(someContributionId);
+                await this.contributionsController.PutContributionAsync(someContribution);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionServiceMock.Verify(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()),
+                service.ModifyContributionAsync(It.IsAny<Contribution>()),
                     Times.Once);
 
             this.contributionServiceMock.VerifyNoOtherCalls();
@@ -50,11 +49,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnGetByIdIfServerErrorOccurredAsync(
+        public async Task ShouldReturnInternalServerErrorOnPutIfServerErrorOccurredAsync(
             Xeption validationException)
         {
             // given
-            Guid someContributionId = Guid.NewGuid();
+            Contribution someContribution = CreateRandomContribution();
 
             InternalServerErrorObjectResult expectedBadRequestObjectResult =
                 InternalServerError(validationException);
@@ -63,28 +62,28 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                 new ActionResult<Contribution>(expectedBadRequestObjectResult);
 
             this.contributionServiceMock.Setup(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()))
+                service.ModifyContributionAsync(It.IsAny<Contribution>()))
                     .ThrowsAsync(validationException);
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.GetContributionByIdAsync(someContributionId);
+                await this.contributionsController.PutContributionAsync(someContribution);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionServiceMock.Verify(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()),
+                service.ModifyContributionAsync(It.IsAny<Contribution>()),
                     Times.Once);
 
             this.contributionServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldReturnNotFoundOnGetByIdIfItemDoesNotExistAsync()
+        public async Task ShouldReturnNotFoundOnPutIfItemDoesNotExistAsync()
         {
             // given
-            Guid someContributionId = Guid.NewGuid();
+            Contribution someContribution = CreateRandomContribution();
             string someMessage = GetRandomString();
 
             var notFoundContributionException =
@@ -103,18 +102,63 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                 new ActionResult<Contribution>(expectedNotFoundObjectResult);
 
             this.contributionServiceMock.Setup(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()))
+                service.ModifyContributionAsync(It.IsAny<Contribution>()))
                     .ThrowsAsync(contributionValidationException);
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.GetContributionByIdAsync(someContributionId);
+                await this.contributionsController.PutContributionAsync(someContribution);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionServiceMock.Verify(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()),
+                service.ModifyContributionAsync(It.IsAny<Contribution>()),
+                    Times.Once);
+
+            this.contributionServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldReturnConflictOnPutIfAlreadyExistsContributionErrorOccursAsync()
+        {
+            // given
+            Contribution someContribution = CreateRandomContribution();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            var alreadyExistsContributionException =
+                new AlreadyExistsContributionException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributionDependencyValidationException =
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: alreadyExistsContributionException,
+                    data: someDictionaryData);
+
+            ConflictObjectResult expectedConflictObjectResult =
+                Conflict(alreadyExistsContributionException);
+
+            var expectedActionResult =
+                new ActionResult<Contribution>(expectedConflictObjectResult);
+
+            this.contributionServiceMock.Setup(service =>
+                service.ModifyContributionAsync(It.IsAny<Contribution>()))
+                    .ThrowsAsync(contributionDependencyValidationException);
+
+            // when
+            ActionResult<Contribution> actualActionResult =
+                await this.contributionsController.PutContributionAsync(someContribution);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionServiceMock.Verify(service =>
+                service.ModifyContributionAsync(It.IsAny<Contribution>()),
                     Times.Once);
 
             this.contributionServiceMock.VerifyNoOtherCalls();

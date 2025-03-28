@@ -18,7 +18,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnGetByIdIfValidationErrorOccurredAsync(
+        public async Task ShouldReturnBadRequestOnDeleteIfValidationExceptionOccursAsync(
                 Xeption validationException)
         {
             // given
@@ -31,18 +31,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                 new ActionResult<Contribution>(expectedBadRequestObjectResult);
 
             this.contributionServiceMock.Setup(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()))
+                service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(validationException);
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.GetContributionByIdAsync(someContributionId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionServiceMock.Verify(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()),
+                service.RemoveContributionByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.contributionServiceMock.VerifyNoOtherCalls();
@@ -50,38 +50,38 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnGetByIdIfServerErrorOccurredAsync(
-            Xeption validationException)
+        public async Task ShouldReturnInternalServerErrorOnDeleteIfServerErrorOccurredAsync(
+            Xeption serverException)
         {
             // given
             Guid someContributionId = Guid.NewGuid();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
-                InternalServerError(validationException);
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
+                InternalServerError(serverException);
 
             var expectedActionResult =
-                new ActionResult<Contribution>(expectedBadRequestObjectResult);
+                new ActionResult<Contribution>(expectedInternalServerErrorObjectResult);
 
             this.contributionServiceMock.Setup(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(validationException);
+                service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serverException);
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.GetContributionByIdAsync(someContributionId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionServiceMock.Verify(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()),
+                service.RemoveContributionByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.contributionServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldReturnNotFoundOnGetByIdIfItemDoesNotExistAsync()
+        public async Task ShouldReturnNotFoundOnDeleteIfItemDoesNotExistAsync()
         {
             // given
             Guid someContributionId = Guid.NewGuid();
@@ -103,18 +103,63 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                 new ActionResult<Contribution>(expectedNotFoundObjectResult);
 
             this.contributionServiceMock.Setup(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()))
+                service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(contributionValidationException);
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.GetContributionByIdAsync(someContributionId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.contributionServiceMock.Verify(service =>
-                service.RetrieveContributionByIdAsync(It.IsAny<Guid>()),
+                service.RemoveContributionByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.contributionServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
+        {
+            // given
+            Guid someContributionId = Guid.NewGuid();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+            var someDictionaryData = GetRandomDictionaryData();
+
+            var lockedContributionException =
+                new LockedContributionException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributionDependencyValidationException =
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: lockedContributionException,
+                    data: someDictionaryData);
+
+            LockedObjectResult expectedConflictObjectResult =
+                Locked(lockedContributionException);
+
+            var expectedActionResult =
+                new ActionResult<Contribution>(expectedConflictObjectResult);
+
+            this.contributionServiceMock.Setup(service =>
+                service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(contributionDependencyValidationException);
+
+            // when
+            ActionResult<Contribution> actualActionResult =
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionServiceMock.Verify(service =>
+                service.RemoveContributionByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.contributionServiceMock.VerifyNoOtherCalls();
