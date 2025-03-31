@@ -24,11 +24,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             // given
             Guid someContributionId = Guid.NewGuid();
 
-            BadRequestObjectResult expectedInternalServerErrorObjectResult  =
-                BadRequest(validationException.InnerException);
+            BadRequestObjectResult expectedInternalServerErrorObjectResult  = 
+                    BadRequest(validationException.InnerException);
 
-            var expectedActionResult =
-                new ActionResult<Contribution>(expectedInternalServerErrorObjectResult );
+            var expectedActionResult = 
+                    new ActionResult<Contribution>(expectedInternalServerErrorObjectResult );
 
             this.contributionServiceMock.Setup(service =>
                 service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
@@ -69,11 +69,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                         innerException: invalidReferenceContributionException,
                         data: invalidReferenceContributionException.Data);
 
-            FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
+            FailedDependencyObjectResult expectedLockedObjectResult  = 
                     FailedDependency(invalidReferenceContributionException);
 
             var expectedActionResult = 
-                    new ActionResult<Contribution>(expectedFailedDependencyObjectResult);
+                    new ActionResult<Contribution>(expectedLockedObjectResult );
 
 
             this.contributionServiceMock.Setup(service =>
@@ -175,23 +175,23 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             string someMessage = GetRandomString();
             var someDictionaryData = GetRandomDictionaryData();
 
-            var lockedContributionException =
-                new LockedContributionException(
-                    message: someMessage,
-                    innerException: someInnerException,
-                    data: someInnerException.Data);
+            var lockedContributionException = 
+                    new LockedContributionException(
+                        message: someMessage,
+                        innerException: someInnerException,
+                        data: someInnerException.Data);
 
-            var contributionDependencyValidationException =
-                new ContributionDependencyValidationException(
-                    message: someMessage,
-                    innerException: lockedContributionException,
-                    data: someDictionaryData);
+            var contributionDependencyValidationException = 
+                    new ContributionDependencyValidationException(
+                        message: someMessage,
+                        innerException: lockedContributionException,
+                        data: someDictionaryData);
 
-            LockedObjectResult expectedFailedDependencyObjectResult  =
+            LockedObjectResult expectedLockedObjectResult =
                 Locked(lockedContributionException);
 
             var expectedActionResult =
-                new ActionResult<Contribution>(expectedFailedDependencyObjectResult );
+                new ActionResult<Contribution>(expectedLockedObjectResult  );
 
             this.contributionServiceMock.Setup(service =>
                 service.RemoveContributionByIdAsync(It.IsAny<Guid>()))

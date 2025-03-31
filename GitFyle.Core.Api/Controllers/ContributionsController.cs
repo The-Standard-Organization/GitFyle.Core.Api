@@ -125,10 +125,10 @@ namespace GitFyle.Core.Api.Controllers
         {
             try
             {
-                Contribution deleteContribution =
+                Contribution removedContribution =
                     await this.contributionService.RemoveContributionByIdAsync(contributionId);
 
-                return Ok(deleteContribution);
+                return Ok(removedContribution);
             }
             catch (ContributionValidationException contributionValidationException)
                 when (contributionValidationException.InnerException is NotFoundContributionException)

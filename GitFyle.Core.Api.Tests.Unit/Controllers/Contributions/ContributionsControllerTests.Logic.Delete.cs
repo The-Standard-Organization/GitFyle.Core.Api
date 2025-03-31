@@ -19,7 +19,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         {
             // given
             Contribution randomContribution = CreateRandomContribution();
-            Guid inputId = randomContribution.Id;
+            Guid inputContributionId = randomContribution.Id;
             Contribution storageContribution = randomContribution;
             Contribution expectedContribution = storageContribution.DeepClone();
 
@@ -35,7 +35,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await contributionsController.DeleteContributionByIdAsync(inputId);
+                await contributionsController.DeleteContributionByIdAsync(inputContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
