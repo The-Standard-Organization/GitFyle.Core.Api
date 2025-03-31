@@ -18,16 +18,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnDeleteIfValidationErrorOccursAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnDeleteIfValidationErrorOccursAsync(
+                Xeption validationException)
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
 
-            BadRequestObjectResult expectedBadRequestObjectResult =
+            BadRequestObjectResult expectedInternalServerErrorObjectResult  =
                 BadRequest(validationException.InnerException);
 
             var expectedActionResult =
-                new ActionResult<Contribution>(expectedBadRequestObjectResult);
+                new ActionResult<Contribution>(expectedInternalServerErrorObjectResult );
 
             this.contributionServiceMock.Setup(service =>
                 service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
@@ -35,7 +36,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.DeleteContributionByIdAsync(someId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -48,31 +49,31 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         }
 
         [Fact]
-        public async Task ShouldReturnFailedDependencyOnDeleteIfReferenceErrorOccursAsync()
+        public async Task ShouldReturnFailedDependencyOnDeleteIfReferenceExceptionOccursAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
             Contribution someContribution = CreateRandomContribution();
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
 
-            var invalidReferenceContributionException =
-                new InvalidReferenceContributionException(
-                    message: someMessage,
-                    innerException: someInnerException,
-                    data: someInnerException.Data);
+            var invalidReferenceContributionException = 
+                    new InvalidReferenceContributionException(
+                        message: someMessage,
+                        innerException: someInnerException,
+                        data: someInnerException.Data);
 
-            var contributionDependencyValidationException =
-                new ContributionDependencyValidationException(
-                    message: someMessage,
-                    innerException: invalidReferenceContributionException,
-                    data: invalidReferenceContributionException.Data);
+            var contributionDependencyValidationException = 
+                    new ContributionDependencyValidationException(
+                        message: someMessage,
+                        innerException: invalidReferenceContributionException,
+                        data: invalidReferenceContributionException.Data);
 
-            FailedDependencyObjectResult expectedConflictObjectResult =
-               FailedDependency(invalidReferenceContributionException);
+            FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
+                    FailedDependency(invalidReferenceContributionException);
 
-            var expectedActionResult =
-                new ActionResult<Contribution>(expectedConflictObjectResult);
+            var expectedActionResult = 
+                    new ActionResult<Contribution>(expectedFailedDependencyObjectResult);
 
 
             this.contributionServiceMock.Setup(service =>
@@ -81,7 +82,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.DeleteContributionByIdAsync(someId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -96,24 +97,24 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnDeleteIfServerErrorOccurredAsync(
-            Xeption validationException)
+                Xeption serverException)
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
-                InternalServerError(validationException);
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult  = 
+                    InternalServerError(serverException);
 
-            var expectedActionResult =
-                new ActionResult<Contribution>(expectedBadRequestObjectResult);
+            var expectedActionResult = 
+                    new ActionResult<Contribution>(expectedInternalServerErrorObjectResult);
 
             this.contributionServiceMock.Setup(service =>
                 service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(validationException);
+                    .ThrowsAsync(serverException);
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.DeleteContributionByIdAsync(someId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -126,10 +127,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         }
 
         [Fact]
-        public async Task ShouldReturnNotFoundOnDeleteIfItemDoesNotExistAsync()
+        public async Task ShouldReturnNotFoundOnDeleteIfNotFoundContributionExceptionOccursAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
             string someMessage = GetRandomString();
 
             var notFoundContributionException =
@@ -153,7 +154,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.DeleteContributionByIdAsync(someId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -166,10 +167,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         }
 
         [Fact]
-        public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
+        public async Task ShouldReturnLockedOnDeleteIfLockedContributionExceptionOccursAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionId = Guid.NewGuid();
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
             var someDictionaryData = GetRandomDictionaryData();
@@ -186,11 +187,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                     innerException: lockedContributionException,
                     data: someDictionaryData);
 
-            LockedObjectResult expectedConflictObjectResult =
+            LockedObjectResult expectedFailedDependencyObjectResult  =
                 Locked(lockedContributionException);
 
             var expectedActionResult =
-                new ActionResult<Contribution>(expectedConflictObjectResult);
+                new ActionResult<Contribution>(expectedFailedDependencyObjectResult );
 
             this.contributionServiceMock.Setup(service =>
                 service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
@@ -198,7 +199,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.DeleteContributionByIdAsync(someId);
+                await this.contributionsController.DeleteContributionByIdAsync(someContributionId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
