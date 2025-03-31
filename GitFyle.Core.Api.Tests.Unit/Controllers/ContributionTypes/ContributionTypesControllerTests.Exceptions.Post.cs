@@ -18,7 +18,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnPostIfValidationErrorOccursAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnDeleteIfValidationExceptionOccursAsync(
+                Xeption validationException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -49,8 +50,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnPostIfServerErrorOccurredAsync(
-            Xeption serverException)
+        public async Task ShouldReturnInternalServerErrorOnPostIfServerExceptionOccurredAsync(
+                Xeption serverException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -80,7 +81,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnConflictOnPostIfAlreadyExistsContributionTypeErrorOccurredAsync()
+        public async Task ShouldReturnConflictOnPostIfAlreadyExistsContributionTypeExceptionOccurredAsync()
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -89,22 +90,22 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             var someDictionaryData = GetRandomDictionaryData();
 
             var alreadyExistsContributionTypeException =
-                new AlreadyExistsContributionTypeException(
-                    message: someMessage,
-                    innerException: someInnerException,
-                    data: someInnerException.Data);
+                    new AlreadyExistsContributionTypeException(
+                        message: someMessage,
+                        innerException: someInnerException,
+                        data: someInnerException.Data);
 
             var contributionTypeDependencyValidationException =
-                new ContributionTypeDependencyValidationException(
-                    message: someMessage,
-                    innerException: alreadyExistsContributionTypeException,
-                    data: someDictionaryData);
+                    new ContributionTypeDependencyValidationException(
+                        message: someMessage,
+                        innerException: alreadyExistsContributionTypeException,
+                        data: someDictionaryData);
 
             ConflictObjectResult expectedConflictObjectResult =
-                Conflict(alreadyExistsContributionTypeException);
+                    Conflict(alreadyExistsContributionTypeException);
 
             var expectedActionResult =
-                new ActionResult<ContributionType>(expectedConflictObjectResult);
+                     new ActionResult<ContributionType>(expectedConflictObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.AddContributionTypeAsync(It.IsAny<ContributionType>()))
@@ -125,40 +126,38 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnFailedDependencyOnPostIfReferenceErrorOccursAsync()
+        public async Task ShouldReturnFailedDependencyOnPostIfReferenceExceptionOccursAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
             ContributionType someContributionType = CreateRandomContributionType();
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
 
             var invalidReferenceContributionTypeException =
-                new InvalidReferenceContributionTypeException(
-                    message: someMessage,
-                    innerException: someInnerException,
-                    data: someInnerException.Data);
+                    new InvalidReferenceContributionTypeException(
+                        message: someMessage,
+                        innerException: someInnerException,
+                        data: someInnerException.Data);
 
             var contributionTypeDependencyValidationException =
-                new ContributionTypeDependencyValidationException(
-                    message: someMessage,
-                    innerException: invalidReferenceContributionTypeException,
-                    data: invalidReferenceContributionTypeException.Data);
+                    new ContributionTypeDependencyValidationException(
+                        message: someMessage,
+                        innerException: invalidReferenceContributionTypeException,
+                        data: invalidReferenceContributionTypeException.Data);
 
-            FailedDependencyObjectResult expectedConflictObjectResult =
-               FailedDependency(invalidReferenceContributionTypeException);
+            FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
+                    FailedDependency(invalidReferenceContributionTypeException);
 
             var expectedActionResult =
-                new ActionResult<ContributionType>(expectedConflictObjectResult);
-
+                    new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.AddContributionTypeAsync(It.IsAny<ContributionType>()))
                     .ThrowsAsync(contributionTypeDependencyValidationException);
 
             // when
-            ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.PostContributionTypeAsync(someContributionType);
+            ActionResult<ContributionType> actualActionResult = 
+                    await this.contributionTypesController.PostContributionTypeAsync(someContributionType);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
