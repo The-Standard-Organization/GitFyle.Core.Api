@@ -19,7 +19,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnDeleteIfValidationErrorOccursAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnDeleteIfValidationExceptionOccursAsync(
+                Xeption validationException)
         {
             // given
             Guid someContributionTypeId = Guid.NewGuid();
@@ -50,21 +51,21 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnDeleteIfServerErrorOccurredAsync(
-            Xeption validationException)
+        public async Task ShouldReturnInternalServerErrorOnDeleteIfServerExceptionOccurredAsync(
+                Xeption serverException)
         {
             // given
             Guid someContributionTypeId = Guid.NewGuid();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
-                InternalServerError(validationException);
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
+                InternalServerError(serverException);
 
             var expectedActionResult =
-                new ActionResult<ContributionType>(expectedBadRequestObjectResult);
+                new ActionResult<ContributionType>(expectedInternalServerErrorObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(validationException);
+                    .ThrowsAsync(serverException);
 
             // when
             ActionResult<ContributionType> actualActionResult =
@@ -81,7 +82,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnNotFoundOnDeleteIfItemDoesNotExistAsync()
+        public async Task ShouldReturnNotFoundOnDeleteIfContributionTypeDoesNotExistAsync()
         {
             // given
             Guid someContributionTypeId = Guid.NewGuid();
@@ -121,7 +122,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
+        public async Task ShouldReturnLockedOnDeleteIfLockedContributionTypeExceptionOccursAsync()
         {
             // given
             Guid someContributionTypeId = Guid.NewGuid();
@@ -130,22 +131,22 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             var someDictionaryData = GetRandomDictionaryData();
 
             var lockedContributionTypeException =
-                new LockedContributionTypeException(
-                    message: someMessage,
-                    innerException: someInnerException,
-                    data: someInnerException.Data);
+                    new LockedContributionTypeException(
+                        message: someMessage,
+                        innerException: someInnerException,
+                        data: someInnerException.Data);
 
             var contributionTypeDependencyValidationException =
-                new ContributionTypeDependencyValidationException(
-                    message: someMessage,
-                    innerException: lockedContributionTypeException,
-                    data: someDictionaryData);
+                    new ContributionTypeDependencyValidationException(
+                        message: someMessage,
+                        innerException: lockedContributionTypeException,
+                        data: someDictionaryData);
 
-            LockedObjectResult expectedFailedDependencyObjectResult  =
-                Locked(lockedContributionTypeException);
+            LockedObjectResult expectedLockedObjectResult =
+                    Locked(lockedContributionTypeException);
 
             var expectedActionResult =
-                new ActionResult<ContributionType>(expectedFailedDependencyObjectResult );
+                    new ActionResult<ContributionType>(expectedLockedObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))

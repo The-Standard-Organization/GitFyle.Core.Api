@@ -160,10 +160,10 @@ namespace GitFyle.Core.Api.Controllers
         {
             try
             {
-                ContributionType deleteContributionType =
+                ContributionType removedContributionType =
                     await this.contributionTypeService.RemoveContributionTypeByIdAsync(contributionTypeId);
 
-                return Ok(deleteContributionType);
+                return Ok(removedContributionType);
             }
             catch (ContributionTypeValidationException contributionTypeValidationException)
                 when (contributionTypeValidationException.InnerException is NotFoundContributionTypeException)
