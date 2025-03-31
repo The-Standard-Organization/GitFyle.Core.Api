@@ -49,39 +49,38 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         }
 
         [Fact]
-        public async Task ShouldReturnFailedDependencyOnPostIfReferenceErrorOccursAsync()
+        public async Task ShouldReturnFailedDependencyOnPostIfReferenceExceptionOccursAsync()
         {
             // given
             Contribution someContribution = CreateRandomContribution();
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
 
-            var invalidReferenceContributionException =
-                new InvalidReferenceContributionException(
-                    message: someMessage,
-                    innerException: someInnerException,
-                    data: someInnerException.Data);
+            var invalidReferenceContributionException = 
+                    new InvalidReferenceContributionException(
+                        message: someMessage,
+                        innerException: someInnerException,
+                        data: someInnerException.Data);
 
             var contributionDependencyValidationException =
-                new ContributionDependencyValidationException(
-                    message: someMessage,
-                    innerException: invalidReferenceContributionException,
-                    data: invalidReferenceContributionException.Data);
+                    new ContributionDependencyValidationException(
+                        message: someMessage,
+                        innerException: invalidReferenceContributionException,
+                        data: invalidReferenceContributionException.Data);
 
-            FailedDependencyObjectResult expectedConflictObjectResult =
-               FailedDependency(invalidReferenceContributionException);
+            FailedDependencyObjectResult expectedConflictObjectResult = 
+                    FailedDependency(invalidReferenceContributionException);
 
-            var expectedActionResult =
-                new ActionResult<Contribution>(expectedConflictObjectResult);
-
+            var expectedActionResult = 
+                    new ActionResult<Contribution>(expectedConflictObjectResult);
 
             this.contributionServiceMock.Setup(service =>
                 service.AddContributionAsync(It.IsAny<Contribution>()))
                     .ThrowsAsync(contributionDependencyValidationException);
 
             // when
-            ActionResult<Contribution> actualActionResult =
-                await this.contributionsController.PostContributionAsync(someContribution);
+            ActionResult<Contribution> actualActionResult = 
+                    await this.contributionsController.PostContributionAsync(someContribution);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -95,8 +94,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
     
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnPostIfServerErrorOccurredAsync(
-            Xeption serverException)
+        public async Task ShouldReturnInternalServerErrorOnPostIfServerExceptionOccurredAsync(
+                Xeption serverException)
         {
             // given
             Contribution someContribution = CreateRandomContribution();
@@ -126,7 +125,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         }
 
         [Fact]
-        public async Task ShouldReturnConflictOnPostIfAlreadyExistsContributionErrorOccurredAsync()
+        public async Task ShouldReturnConflictOnPostIfAlreadyExistsContributionExceptionOccurredAsync()
         {
             // given
             Contribution someContribution = CreateRandomContribution();
@@ -135,29 +134,29 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             var someDictionaryData = GetRandomDictionaryData();
 
             var alreadyExistsContributionException =
-                new AlreadyExistsContributionException(
-                    message: someMessage,
-                    innerException: someInnerException,
-                    data: someInnerException.Data);
+                    new AlreadyExistsContributionException(
+                        message: someMessage,
+                        innerException: someInnerException,
+                        data: someInnerException.Data);
 
             var contributionDependencyValidationException =
-                new ContributionDependencyValidationException(
-                    message: someMessage,
-                    innerException: alreadyExistsContributionException,
-                    data: someDictionaryData);
+                    new ContributionDependencyValidationException(
+                        message: someMessage,
+                        innerException: alreadyExistsContributionException,
+                        data: someDictionaryData);
 
-            ConflictObjectResult expectedConflictObjectResult =
-                Conflict(alreadyExistsContributionException);
+            ConflictObjectResult expectedConflictObjectResult = 
+                    Conflict(alreadyExistsContributionException);
 
-            var expectedActionResult =
-                new ActionResult<Contribution>(expectedConflictObjectResult);
+            var expectedActionResult = 
+                    new ActionResult<Contribution>(expectedConflictObjectResult);
 
             this.contributionServiceMock.Setup(service =>
                 service.AddContributionAsync(It.IsAny<Contribution>()))
                     .ThrowsAsync(contributionDependencyValidationException);
 
             // when
-            ActionResult<Contribution> actualActionResult =
+            ActionResult<Contribution> actualActionResult = 
                 await this.contributionsController.PostContributionAsync(someContribution);
 
             // then
