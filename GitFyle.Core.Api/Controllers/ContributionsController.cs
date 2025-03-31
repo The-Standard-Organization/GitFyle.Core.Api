@@ -101,6 +101,12 @@ namespace GitFyle.Core.Api.Controllers
                 return Conflict(contributionDependencyValidationException.InnerException);
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
+                when (contributionDependencyValidationException.InnerException is 
+                        InvalidReferenceContributionException)
+            {
+                return FailedDependency(contributionDependencyValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException contributionDependencyValidationException)
             {
                 return BadRequest(contributionDependencyValidationException.InnerException);
             }
