@@ -18,7 +18,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnPutIfValidationErrorOccursAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnPutIfValidationErrorOccursAsync(
+                Xeption validationException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -50,7 +51,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnPutIfServerErrorOccurredAsync(
-            Xeption validationException)
+                Xeption validationException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -185,19 +186,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     innerException: invalidReferenceContributionTypeException,
                     data: someDictionaryData);
 
-            FailedDependencyObjectResult expectedConflictObjectResult =
-               FailedDependency(invalidReferenceContributionTypeException);
+            FailedDependencyObjectResult expectedConflictObjectResult = 
+                    FailedDependency(invalidReferenceContributionTypeException);
 
-            var expectedActionResult =
-                new ActionResult<ContributionType>(expectedConflictObjectResult);
+            var expectedActionResult = 
+                    new ActionResult<ContributionType>(expectedConflictObjectResult);
 
-            this.contributionTypeServiceMock.Setup(service =>
+            this.contributionTypeServiceMock.Setup(service => 
                 service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
                     .ThrowsAsync(contributionTypeDependencyValidationException);
 
             // when
-            ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+            ActionResult<ContributionType> actualActionResult = 
+                    await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
