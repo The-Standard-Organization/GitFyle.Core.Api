@@ -83,13 +83,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
                 new ForeignKeyConstraintConflictException(message: exceptionMessage);
 
             var invalidContributionTypeReferenceException =
-                new InvalidReferenceContributionTypeException(
-                    message: "Invalid contributionType reference error occurred.", 
-                    innerException: foreignKeyConstraintConflictException,
-                    data: foreignKeyConstraintConflictException.Data);
+                    new InvalidReferenceContributionTypeException(
+                        message: "Invalid contributionType reference error occurred.", 
+                        innerException: foreignKeyConstraintConflictException,
+                        data: foreignKeyConstraintConflictException.Data);
 
-            var expectedContributionTypeDependencyValidationException =
-                new ContributionTypeDependencyValidationException(
+            var expectedContributionTypeDependencyValidationException = 
+                    new ContributionTypeDependencyValidationException(
                         message: "ContributionType dependency validation error occurred, fix errors and try again.", 
                         innerException: invalidContributionTypeReferenceException,
                         data: invalidContributionTypeReferenceException.Data);
@@ -205,17 +205,17 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
             var dbUpdateConcurrencyException =
                 new DbUpdateConcurrencyException();
 
-            var lockedContributionTypeException =
-                new LockedContributionTypeException(
-                    message: "Locked contributionType record error occurred, please try again.",
-                    innerException: dbUpdateConcurrencyException,
-                    data: dbUpdateConcurrencyException.Data);
+            var lockedContributionTypeException = 
+                    new LockedContributionTypeException(
+                        message: "Locked contributionType record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException,
+                        data: dbUpdateConcurrencyException.Data);
 
-            var expectedContributionTypeDependencyValidationException =
-                new ContributionTypeDependencyValidationException(
-                    message: "ContributionType dependency validation error occurred, fix errors and try again.",
-                    innerException: lockedContributionTypeException,
-                    data: lockedContributionTypeException.Data);
+            var expectedContributionTypeDependencyValidationException = 
+                    new ContributionTypeDependencyValidationException(
+                        message: "ContributionType dependency validation error occurred, fix errors and try again.",
+                        innerException: lockedContributionTypeException,
+                        data: lockedContributionTypeException.Data);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
