@@ -19,16 +19,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
         public async Task ShouldReturnBadRequestOnDeleteIfValidationExceptionOccursAsync(
-                Xeption validationException)
+            Xeption validationException)
         {
             // given
             Guid someContributionId = Guid.NewGuid();
 
             BadRequestObjectResult expectedInternalServerErrorObjectResult  = 
-                    BadRequest(validationException.InnerException);
+                BadRequest(validationException.InnerException);
 
             var expectedActionResult = 
-                    new ActionResult<Contribution>(expectedInternalServerErrorObjectResult );
+                new ActionResult<Contribution>(expectedInternalServerErrorObjectResult );
 
             this.contributionServiceMock.Setup(service =>
                 service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
@@ -58,22 +58,22 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             string someMessage = GetRandomString();
 
             var invalidReferenceContributionException = 
-                    new InvalidReferenceContributionException(
-                        message: someMessage,
-                        innerException: someInnerException,
-                        data: someInnerException.Data);
+                new InvalidReferenceContributionException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
 
             var contributionDependencyValidationException = 
-                    new ContributionDependencyValidationException(
-                        message: someMessage,
-                        innerException: invalidReferenceContributionException,
-                        data: invalidReferenceContributionException.Data);
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: invalidReferenceContributionException,
+                    data: invalidReferenceContributionException.Data);
 
             FailedDependencyObjectResult expectedLockedObjectResult  = 
-                    FailedDependency(invalidReferenceContributionException);
+                FailedDependency(invalidReferenceContributionException);
 
             var expectedActionResult = 
-                    new ActionResult<Contribution>(expectedLockedObjectResult );
+                new ActionResult<Contribution>(expectedLockedObjectResult );
 
 
             this.contributionServiceMock.Setup(service =>
@@ -97,16 +97,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnDeleteIfServerErrorOccurredAsync(
-                Xeption serverException)
+            Xeption serverException)
         {
             // given
             Guid someContributionId = Guid.NewGuid();
 
             InternalServerErrorObjectResult expectedInternalServerErrorObjectResult  = 
-                    InternalServerError(serverException);
+                InternalServerError(serverException);
 
             var expectedActionResult = 
-                    new ActionResult<Contribution>(expectedInternalServerErrorObjectResult);
+                new ActionResult<Contribution>(expectedInternalServerErrorObjectResult);
 
             this.contributionServiceMock.Setup(service =>
                 service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
@@ -176,16 +176,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             var someDictionaryData = GetRandomDictionaryData();
 
             var lockedContributionException = 
-                    new LockedContributionException(
-                        message: someMessage,
-                        innerException: someInnerException,
-                        data: someInnerException.Data);
+                new LockedContributionException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
 
             var contributionDependencyValidationException = 
-                    new ContributionDependencyValidationException(
-                        message: someMessage,
-                        innerException: lockedContributionException,
-                        data: someDictionaryData);
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: lockedContributionException,
+                    data: someDictionaryData);
 
             LockedObjectResult expectedLockedObjectResult =
                 Locked(lockedContributionException);
