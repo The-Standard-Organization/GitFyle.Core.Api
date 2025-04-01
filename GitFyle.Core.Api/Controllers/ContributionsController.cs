@@ -38,7 +38,7 @@ namespace GitFyle.Core.Api.Controllers
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
                when (contributionDependencyValidationException.InnerException is 
-                        InvalidReferenceContributionException)
+                InvalidReferenceContributionException)
             {
                 return FailedDependency(contributionDependencyValidationException.InnerException);
             }
@@ -140,7 +140,7 @@ namespace GitFyle.Core.Api.Controllers
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
                 when (contributionDependencyValidationException.InnerException is 
-                        InvalidReferenceContributionException)
+                    InvalidReferenceContributionException)
             {
                 return FailedDependency(contributionDependencyValidationException.InnerException);
             }

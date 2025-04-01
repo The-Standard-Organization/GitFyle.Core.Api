@@ -19,7 +19,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
         public async Task ShouldReturnBadRequestOnPostIfValidationExceptionOccursAsync(
-                Xeption validationException)
+            Xeption validationException)
         {
             // given
             Contribution someContribution = CreateRandomContribution();
@@ -94,7 +94,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnPostIfServerExceptionOccurredAsync(
-                Xeption serverException)
+            Xeption serverException)
         {
             // given
             Contribution someContribution = CreateRandomContribution();
@@ -133,10 +133,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             var someDictionaryData = GetRandomDictionaryData();
 
             var alreadyExistsContributionException =
-                    new AlreadyExistsContributionException(
-                        message: someMessage,
-                        innerException: someInnerException,
-                        data: someInnerException.Data);
+                new AlreadyExistsContributionException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
 
             var contributionDependencyValidationException =
                 new ContributionDependencyValidationException(
