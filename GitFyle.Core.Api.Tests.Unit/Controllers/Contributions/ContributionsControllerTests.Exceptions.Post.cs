@@ -57,22 +57,21 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             string someMessage = GetRandomString();
 
             var invalidReferenceContributionException = 
-                    new InvalidReferenceContributionException(
-                        message: someMessage,
-                        innerException: someInnerException,
-                        data: someInnerException.Data);
+                new InvalidReferenceContributionException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
 
             var contributionDependencyValidationException =
-                    new ContributionDependencyValidationException(
-                        message: someMessage,
-                        innerException: invalidReferenceContributionException,
-                        data: invalidReferenceContributionException.Data);
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: invalidReferenceContributionException,
+                    data: invalidReferenceContributionException.Data);
 
             FailedDependencyObjectResult expectedConflictObjectResult = 
-                    FailedDependency(invalidReferenceContributionException);
+                FailedDependency(invalidReferenceContributionException);
 
-            var expectedActionResult = 
-                    new ActionResult<Contribution>(expectedConflictObjectResult);
+            var expectedActionResult = new ActionResult<Contribution>(expectedConflictObjectResult);
 
             this.contributionServiceMock.Setup(service =>
                 service.AddContributionAsync(It.IsAny<Contribution>()))
@@ -140,16 +139,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                         data: someInnerException.Data);
 
             var contributionDependencyValidationException =
-                    new ContributionDependencyValidationException(
-                        message: someMessage,
-                        innerException: alreadyExistsContributionException,
-                        data: someDictionaryData);
+                new ContributionDependencyValidationException(
+                    message: someMessage,
+                    innerException: alreadyExistsContributionException,
+                    data: someDictionaryData);
 
             ConflictObjectResult expectedConflictObjectResult = 
-                    Conflict(alreadyExistsContributionException);
+                Conflict(alreadyExistsContributionException);
 
             var expectedActionResult = 
-                    new ActionResult<Contribution>(expectedConflictObjectResult);
+                new ActionResult<Contribution>(expectedConflictObjectResult);
 
             this.contributionServiceMock.Setup(service =>
                 service.AddContributionAsync(It.IsAny<Contribution>()))
