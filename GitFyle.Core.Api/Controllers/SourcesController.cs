@@ -80,7 +80,8 @@ namespace GitFyle.Core.Api.Controllers
         {
             try
             {
-                Source source = await this.sourceService.RetrieveSourceByIdAsync(sourceId);
+                Source source =
+                    await this.sourceService.RetrieveSourceByIdAsync(sourceId);
 
                 return Ok(source);
             }
@@ -113,7 +114,7 @@ namespace GitFyle.Core.Api.Controllers
             try
             {
                 Source modifiedSource =
-                await this.sourceService.ModifySourceAsync(source);
+                    await this.sourceService.ModifySourceAsync(source);
 
                 return Ok(modifiedSource);
             }
@@ -151,7 +152,7 @@ namespace GitFyle.Core.Api.Controllers
             try
             {
                 Source deletedSource =
-                await this.sourceService.RemoveSourceByIdAsync(sourceId);
+                    await this.sourceService.RemoveSourceByIdAsync(sourceId);
 
                 return Ok(deletedSource);
             }
