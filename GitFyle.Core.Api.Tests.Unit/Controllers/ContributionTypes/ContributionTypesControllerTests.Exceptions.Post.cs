@@ -18,7 +18,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnPostIfValidationErrorOccursAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnPostIfValidationErrorOccursAsync(
+                Xeption validationException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -50,7 +51,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnPostIfServerErrorOccurredAsync(
-            Xeption serverException)
+                Xeption serverException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();

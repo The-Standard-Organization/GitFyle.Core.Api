@@ -18,7 +18,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnGetIfServerErrorOccurredAsync(
-            Xeption serverException)
+                Xeption serverException)
         {
             // given
             InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
