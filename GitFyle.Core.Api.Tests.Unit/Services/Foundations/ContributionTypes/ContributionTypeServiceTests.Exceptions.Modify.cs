@@ -206,16 +206,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.ContributionTypes
                 new DbUpdateConcurrencyException();
 
             var lockedContributionTypeException = 
-                    new LockedContributionTypeException(
-                        message: "Locked contributionType record error occurred, please try again.",
-                        innerException: dbUpdateConcurrencyException,
-                        data: dbUpdateConcurrencyException.Data);
+                new LockedContributionTypeException(
+                    message: "Locked contributionType record error occurred, please try again.",
+                    innerException: dbUpdateConcurrencyException,
+                    data: dbUpdateConcurrencyException.Data);
 
             var expectedContributionTypeDependencyValidationException = 
-                    new ContributionTypeDependencyValidationException(
-                        message: "ContributionType dependency validation error occurred, fix errors and try again.",
-                        innerException: lockedContributionTypeException,
-                        data: lockedContributionTypeException.Data);
+                new ContributionTypeDependencyValidationException(
+                    message: "ContributionType dependency validation error occurred, fix errors and try again.",
+                    innerException: lockedContributionTypeException,
+                    data: lockedContributionTypeException.Data);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
