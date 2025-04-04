@@ -81,7 +81,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnNotFoundOnPutIfItemDoesNotExistAsync()
+        public async Task ShouldReturnNotFoundOnPutIfContributionTypeDoesNotExistAsync()
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -186,11 +186,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     innerException: invalidReferenceContributionTypeException,
                     data: someDictionaryData);
 
-            FailedDependencyObjectResult expectedDependencyObjectResult =
+            FailedDependencyObjectResult expectedFailedDependencyObjectResult =
                FailedDependency(invalidReferenceContributionTypeException);
 
             var expectedActionResult =
-                new ActionResult<ContributionType>(expectedDependencyObjectResult);
+                new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
