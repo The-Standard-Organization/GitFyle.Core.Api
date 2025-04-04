@@ -19,7 +19,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
         public async Task ShouldReturnBadRequestOnPutIfValidationExceptionOccursAsync(
-                Xeption validationException)
+            Xeption validationException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -51,24 +51,24 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnPutIfServerExceptionOccurredAsync(
-                Xeption validationException)
+            Xeption validationException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
 
             InternalServerErrorObjectResult expectedInternalServerErrorObjectResult = 
-                    InternalServerError(validationException);
+                InternalServerError(validationException);
 
-            var expectedActionResult =
-                    new ActionResult<ContributionType>(expectedInternalServerErrorObjectResult);
+            var expectedActionResult = 
+                new ActionResult<ContributionType>(expectedInternalServerErrorObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
                     .ThrowsAsync(validationException);
 
             // when
-            ActionResult<ContributionType> actualActionResult =
-                    await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+            ActionResult<ContributionType> actualActionResult = 
+                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -175,19 +175,19 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             var someDictionaryData = GetRandomDictionaryData();
 
             var invalidReferenceContributionTypeException =
-                    new InvalidReferenceContributionTypeException(
-                        message: someMessage,
-                        innerException: someInnerException,
-                        data: someInnerException.Data);
+                new InvalidReferenceContributionTypeException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
 
             var contributionTypeDependencyValidationException =
-                    new ContributionTypeDependencyValidationException(
-                        message: someMessage,
-                        innerException: invalidReferenceContributionTypeException,
-                        data: someDictionaryData);
+                new ContributionTypeDependencyValidationException(
+                    message: someMessage,
+                    innerException: invalidReferenceContributionTypeException,
+                    data: someDictionaryData);
 
             FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
-                    FailedDependency(invalidReferenceContributionTypeException);
+                FailedDependency(invalidReferenceContributionTypeException);
 
             var expectedActionResult =
                 new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);

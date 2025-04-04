@@ -24,7 +24,7 @@ namespace GitFyle.Core.Api.Controllers
 
         [HttpPost]
         public async ValueTask<ActionResult<ContributionType>> PostContributionTypeAsync(
-                ContributionType contributionType)
+            ContributionType contributionType)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace GitFyle.Core.Api.Controllers
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
                 when (contributionTypeDependencyValidationException.InnerException is 
-                            AlreadyExistsContributionTypeException)
+                    AlreadyExistsContributionTypeException)
             {
                 return Conflict(contributionTypeDependencyValidationException.InnerException);
             }
@@ -112,7 +112,7 @@ namespace GitFyle.Core.Api.Controllers
 
         [HttpPut]
         public async ValueTask<ActionResult<ContributionType>> PutContributionTypeAsync(
-                ContributionType contributionType)
+            ContributionType contributionType)
         {
             try
             {
@@ -132,13 +132,13 @@ namespace GitFyle.Core.Api.Controllers
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
                 when (contributionTypeDependencyValidationException.InnerException is 
-                        AlreadyExistsContributionTypeException)
+                    AlreadyExistsContributionTypeException)
             {
                 return Conflict(contributionTypeDependencyValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
               when (contributionTypeDependencyValidationException.InnerException is 
-                        InvalidReferenceContributionTypeException)
+                InvalidReferenceContributionTypeException)
             {
                 return FailedDependency(contributionTypeDependencyValidationException.InnerException);
             }
