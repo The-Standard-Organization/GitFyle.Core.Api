@@ -95,7 +95,8 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionValidationException.InnerException);
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
-                when (contributionDependencyValidationException.InnerException is AlreadyExistsContributionException)
+                when (contributionDependencyValidationException.InnerException is 
+                        AlreadyExistsContributionException)
             {
                 return Conflict(contributionDependencyValidationException.InnerException);
             }
