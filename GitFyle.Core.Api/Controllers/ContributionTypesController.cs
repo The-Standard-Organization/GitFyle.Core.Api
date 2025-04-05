@@ -198,6 +198,5 @@ namespace GitFyle.Core.Api.Controllers
                 return InternalServerError(contributionTypeServiceException);
             }
         }
-
     }
 }
