@@ -95,7 +95,8 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionValidationException.InnerException);
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
-                when (contributionDependencyValidationException.InnerException is AlreadyExistsContributionException)
+                when (contributionDependencyValidationException.InnerException is 
+                        AlreadyExistsContributionException)
             {
                 return Conflict(contributionDependencyValidationException.InnerException);
             }
@@ -104,6 +105,49 @@ namespace GitFyle.Core.Api.Controllers
                         InvalidReferenceContributionException)
             {
                 return FailedDependency(contributionDependencyValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException contributionDependencyValidationException)
+            {
+                return BadRequest(contributionDependencyValidationException.InnerException);
+            }
+            catch (ContributionDependencyException contributionDependencyException)
+            {
+                return InternalServerError(contributionDependencyException);
+            }
+            catch (ContributionServiceException contributionServiceException)
+            {
+                return InternalServerError(contributionServiceException);
+            }
+        }
+
+        [HttpDelete("{contributionId}")]
+        public async ValueTask<ActionResult<Contribution>> DeleteContributionByIdAsync(Guid contributionId)
+        {
+            try
+            {
+                Contribution removedContribution =
+                    await this.contributionService.RemoveContributionByIdAsync(contributionId);
+
+                return Ok(removedContribution);
+            }
+            catch (ContributionValidationException contributionValidationException)
+                when (contributionValidationException.InnerException is NotFoundContributionException)
+            {
+                return NotFound(contributionValidationException.InnerException);
+            }
+            catch (ContributionValidationException contributionValidationException)
+            {
+                return BadRequest(contributionValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException contributionDependencyValidationException)
+               when (contributionDependencyValidationException.InnerException is InvalidReferenceContributionException)
+            {
+                return FailedDependency(contributionDependencyValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException contributionDependencyValidationException)
+                when (contributionDependencyValidationException.InnerException is LockedContributionException)
+            {
+                return Locked(contributionDependencyValidationException.InnerException);
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
             {
