@@ -18,7 +18,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnGetByIdIfValidationErrorOccursAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnGetByIdIfValidationErrorOccursAsync(
+                Xeption validationException)
         {
             // given
             Guid someId = Guid.NewGuid();
@@ -50,7 +51,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnGetByIdIfServerErrorOccursAsync(
-            Xeption validationException)
+                Xeption validationException)
         {
             // given
             Guid someId = Guid.NewGuid();
