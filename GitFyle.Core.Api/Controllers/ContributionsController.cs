@@ -22,6 +22,45 @@ namespace GitFyle.Core.Api.Controllers
         public ContributionsController(IContributionService contributionService) =>
             this.contributionService = contributionService;
 
+        [HttpPost]
+        public async ValueTask<ActionResult<Contribution>> PostContributionAsync(Contribution contribution)
+        {
+            try
+            {
+                Contribution addedContribution =
+                    await this.contributionService.AddContributionAsync(contribution);
+
+                return Created(addedContribution);
+            }
+            catch (ContributionValidationException repositoryValidationException)
+            {
+                return BadRequest(repositoryValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException contributionDependencyValidationException)
+               when (contributionDependencyValidationException.InnerException is 
+                InvalidReferenceContributionException)
+            {
+                return FailedDependency(contributionDependencyValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException repositoryDependencyValidationException)
+                when (repositoryDependencyValidationException.InnerException is AlreadyExistsContributionException)
+            {
+                return Conflict(repositoryDependencyValidationException.InnerException);
+            }
+            catch (ContributionDependencyValidationException repositoryDependencyValidationException)
+            {
+                return BadRequest(repositoryDependencyValidationException.InnerException);
+            }
+            catch (ContributionDependencyException repositoryDependencyException)
+            {
+                return InternalServerError(repositoryDependencyException);
+            }
+            catch (ContributionServiceException repositoryServiceException)
+            {
+                return InternalServerError(repositoryServiceException);
+            }
+        }
+
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<Contribution>>> GetAllContributionsAsync()
         {
@@ -102,7 +141,7 @@ namespace GitFyle.Core.Api.Controllers
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
                 when (contributionDependencyValidationException.InnerException is 
-                        InvalidReferenceContributionException)
+                    InvalidReferenceContributionException)
             {
                 return FailedDependency(contributionDependencyValidationException.InnerException);
             }
