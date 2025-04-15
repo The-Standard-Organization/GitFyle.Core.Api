@@ -30,7 +30,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                 new ActionResult<ContributionType>(expectedObjectResult);
 
             contributionTypeServiceMock
-                .Setup(service => service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
+                .Setup(service => service.RemoveContributionTypeByIdAsync(inputId))
                     .ReturnsAsync(storageContributionType);
 
             // when
@@ -41,7 +41,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             contributionTypeServiceMock
-                .Verify(service => service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()),
+                .Verify(service => service.RemoveContributionTypeByIdAsync(inputId),
                     Times.Once);
 
             contributionTypeServiceMock.VerifyNoOtherCalls();
