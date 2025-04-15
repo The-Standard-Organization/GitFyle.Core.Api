@@ -19,7 +19,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnDeleteIfValidationErrorOccursAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnDeleteIfValidationErrorOccursAsync(
+            Xeption validationException)
         {
             // given
             Guid someId = Guid.NewGuid();
