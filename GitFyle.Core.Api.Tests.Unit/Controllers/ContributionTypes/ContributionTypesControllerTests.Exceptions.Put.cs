@@ -192,13 +192,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             var expectedActionResult =
                 new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
 
-            this.contributionTypeServiceMock.Setup(service =>
+            this.contributionTypeServiceMock.Setup(service => 
                 service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
                     .ThrowsAsync(contributionTypeDependencyValidationException);
 
             // when
-            ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+            ActionResult<ContributionType> actualActionResult = 
+                    await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
