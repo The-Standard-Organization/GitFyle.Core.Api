@@ -38,10 +38,16 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionTypeValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-                when (contributionTypeDependencyValidationException.InnerException is 
-                    AlreadyExistsContributionTypeException)
+                when (contributionTypeDependencyValidationException.InnerException 
+                    is AlreadyExistsContributionTypeException)
             {
                 return Conflict(contributionTypeDependencyValidationException.InnerException);
+            }
+            catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
+                 when (contributionTypeDependencyValidationException.InnerException 
+                    is InvalidReferenceContributionTypeException)
+            {
+                return FailedDependency(contributionTypeDependencyValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
             {
@@ -137,10 +143,55 @@ namespace GitFyle.Core.Api.Controllers
                 return Conflict(contributionTypeDependencyValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-              when (contributionTypeDependencyValidationException.InnerException 
-                is InvalidReferenceContributionTypeException)
+              when (contributionTypeDependencyValidationException.InnerException is 
+                InvalidReferenceContributionTypeException)
             {
                 return FailedDependency(contributionTypeDependencyValidationException.InnerException);
+            }
+            catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
+            {
+                return BadRequest(contributionTypeDependencyValidationException.InnerException);
+            }
+            catch (ContributionTypeDependencyException contributionTypeDependencyException)
+            {
+                return InternalServerError(contributionTypeDependencyException);
+            }
+            catch (ContributionTypeServiceException contributionTypeServiceException)
+            {
+                return InternalServerError(contributionTypeServiceException);
+            }
+        }
+
+        [HttpDelete("{contributionTypeId}")]
+        public async ValueTask<ActionResult<ContributionType>> DeleteContributionTypeByIdAsync(
+            Guid contributionTypeId)
+        {
+            try
+            {
+                ContributionType removedContributionType =
+                    await this.contributionTypeService.RemoveContributionTypeByIdAsync(contributionTypeId);
+
+                return Ok(removedContributionType);
+            }
+            catch (ContributionTypeValidationException contributionTypeValidationException)
+                when (contributionTypeValidationException.InnerException is NotFoundContributionTypeException)
+            {
+                return NotFound(contributionTypeValidationException.InnerException);
+            }
+            catch (ContributionTypeValidationException contributionTypeValidationException)
+            {
+                return BadRequest(contributionTypeValidationException.InnerException);
+            }
+            catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
+                when (contributionTypeDependencyValidationException.InnerException 
+                    is InvalidReferenceContributionTypeException)
+            {
+                return FailedDependency(contributionTypeDependencyValidationException.InnerException);
+            }
+            catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
+                when (contributionTypeDependencyValidationException.InnerException is LockedContributionTypeException)
+            {
+                return Locked(contributionTypeDependencyValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
             {
