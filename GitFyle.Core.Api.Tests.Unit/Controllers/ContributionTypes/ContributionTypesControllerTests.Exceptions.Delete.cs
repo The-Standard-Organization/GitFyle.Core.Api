@@ -3,7 +3,6 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
@@ -20,7 +19,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
         public async Task ShouldReturnBadRequestOnDeleteIfValidationExceptionOccursAsync(
-                Xeption validationException)
+            Xeption validationException)
         {
             // given
             Guid someContributionTypeId = Guid.NewGuid();
@@ -52,7 +51,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnDeleteIfServerExceptionOccurredAsync(
-                Xeption serverException)
+            Xeption serverException)
         {
             // given
             Guid someContributionTypeId = Guid.NewGuid();
