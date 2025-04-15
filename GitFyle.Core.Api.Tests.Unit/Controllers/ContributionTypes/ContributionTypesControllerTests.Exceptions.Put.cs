@@ -18,8 +18,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnPutIfValidationErrorOccursAsync(
-                Xeption validationException)
+        public async Task ShouldReturnBadRequestOnPutIfValidationExceptionOccursAsync(
+            Xeption validationException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -50,24 +50,24 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnPutIfServerErrorOccurredAsync(
-                Xeption validationException)
+        public async Task ShouldReturnInternalServerErrorOnPutIfServerExceptionOccurredAsync(
+            Xeption validationException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult = 
                 InternalServerError(validationException);
 
-            var expectedActionResult =
-                new ActionResult<ContributionType>(expectedBadRequestObjectResult);
+            var expectedActionResult = 
+                new ActionResult<ContributionType>(expectedInternalServerErrorObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
                     .ThrowsAsync(validationException);
 
             // when
-            ActionResult<ContributionType> actualActionResult =
+            ActionResult<ContributionType> actualActionResult = 
                 await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
 
             // then
@@ -81,7 +81,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnNotFoundOnPutIfItemDoesNotExistAsync()
+        public async Task ShouldReturnNotFoundOnPutIfContributionTypeDoesNotExistAsync()
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -121,7 +121,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnConflictOnPutIfAlreadyExistsContributionTypeErrorOccursAsync()
+        public async Task ShouldReturnConflictOnPutIfAlreadyExistsContributionTypeExceptionOccursAsync()
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -166,7 +166,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnFailedDependencyOnPutIfReferenceErrorOccursAsync()
+        public async Task ShouldReturnFailedDependencyOnPutIfReferenceExceptionOccursAsync()
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -186,11 +186,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     innerException: invalidReferenceContributionTypeException,
                     data: someDictionaryData);
 
-            FailedDependencyObjectResult expectedConflictObjectResult = 
-                    FailedDependency(invalidReferenceContributionTypeException);
+            FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
+                FailedDependency(invalidReferenceContributionTypeException);
 
-            var expectedActionResult = 
-                    new ActionResult<ContributionType>(expectedConflictObjectResult);
+            var expectedActionResult =
+                new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
 
             this.contributionTypeServiceMock.Setup(service => 
                 service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
