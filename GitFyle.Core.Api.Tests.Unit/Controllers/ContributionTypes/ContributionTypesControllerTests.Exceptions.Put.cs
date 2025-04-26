@@ -51,13 +51,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnPutIfServerExceptionOccurredAsync(
-            Xeption validationException)
+            Xeption serverException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
 
             InternalServerErrorObjectResult expectedInternalServerErrorObjectResult = 
-                InternalServerError(validationException);
+                InternalServerError(serverException);
 
             var expectedActionResult = 
                 new ActionResult<ContributionType>(expectedInternalServerErrorObjectResult);
