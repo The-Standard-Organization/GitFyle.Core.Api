@@ -64,7 +64,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
-                    .ThrowsAsync(validationException);
+                    .ThrowsAsync(serverException);
 
             // when
             ActionResult<ContributionType> actualActionResult = 
