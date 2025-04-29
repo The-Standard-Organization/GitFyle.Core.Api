@@ -18,7 +18,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnPostIfValidationErrorOccursAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnDeleteIfValidationExceptionOccursAsync(
+            Xeption validationException)
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -49,7 +50,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnPostIfServerErrorOccurredAsync(
+        public async Task ShouldReturnInternalServerErrorOnPostIfServerExceptionOccurredAsync(
             Xeption serverException)
         {
             // given
@@ -80,7 +81,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnConflictOnPostIfAlreadyExistsContributionTypeErrorOccurredAsync()
+        public async Task ShouldReturnConflictOnPostIfAlreadyExistsContributionTypeExceptionOccurredAsync()
         {
             // given
             ContributionType someContributionType = CreateRandomContributionType();
@@ -103,7 +104,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             ConflictObjectResult expectedConflictObjectResult =
                 Conflict(alreadyExistsContributionTypeException);
 
-            var expectedActionResult =
+            var expectedActionResult = 
                 new ActionResult<ContributionType>(expectedConflictObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
@@ -112,6 +113,50 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
+                await this.contributionTypesController.PostContributionTypeAsync(someContributionType);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributionTypeServiceMock.Verify(service =>
+                service.AddContributionTypeAsync(It.IsAny<ContributionType>()),
+                    Times.Once);
+
+            this.contributionTypeServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldReturnFailedDependencyOnPostIfReferenceExceptionOccursAsync()
+        {
+            // given
+            ContributionType someContributionType = CreateRandomContributionType();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+
+            var invalidReferenceContributionTypeException =
+                new InvalidReferenceContributionTypeException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributionTypeDependencyValidationException =
+                new ContributionTypeDependencyValidationException(
+                    message: someMessage,
+                    innerException: invalidReferenceContributionTypeException,
+                    data: invalidReferenceContributionTypeException.Data);
+
+            FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
+                    FailedDependency(invalidReferenceContributionTypeException);
+
+            var expectedActionResult =
+                new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
+
+            this.contributionTypeServiceMock.Setup(service =>
+                service.AddContributionTypeAsync(It.IsAny<ContributionType>()))
+                    .ThrowsAsync(contributionTypeDependencyValidationException);
+
+            // when
+            ActionResult<ContributionType> actualActionResult = 
                 await this.contributionTypesController.PostContributionTypeAsync(someContributionType);
 
             // then
