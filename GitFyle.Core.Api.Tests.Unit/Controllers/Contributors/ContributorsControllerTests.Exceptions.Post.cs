@@ -18,7 +18,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributors
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnPostIfValidationErrorOccursAsync(Xeption validationException)
+        public async Task ShouldReturnBadRequestOnPostIfValidationErrorOccursAsync(
+            Xeption validationException)
         {
             // given
             Contributor someContributor = CreateRandomContributor();
