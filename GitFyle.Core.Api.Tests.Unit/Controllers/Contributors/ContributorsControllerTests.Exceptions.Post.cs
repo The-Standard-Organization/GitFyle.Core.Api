@@ -6,6 +6,8 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
+using GitFyle.Core.Api.Models.Foundations.Contributors;
+using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
@@ -106,6 +108,50 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributors
 
             var expectedActionResult =
                 new ActionResult<Contributor>(expectedConflictObjectResult);
+
+            this.contributorServiceMock.Setup(service =>
+                service.AddContributorAsync(It.IsAny<Contributor>()))
+                    .ThrowsAsync(contributorDependencyValidationException);
+
+            // when
+            ActionResult<Contributor> actualActionResult =
+                await this.contributorsController.PostContributorAsync(someContributor);
+
+            // then
+            actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
+
+            this.contributorServiceMock.Verify(service =>
+                service.AddContributorAsync(It.IsAny<Contributor>()),
+                    Times.Once);
+
+            this.contributorServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldReturnFailedDependencyOnPostIfReferenceExceptionOccursAsync()
+        {
+            // given
+            Contributor someContributor = CreateRandomContributor();
+            var someInnerException = new Exception();
+            string someMessage = GetRandomString();
+
+            var invalidReferenceContributorException =
+                new InvalidReferenceContributorException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
+
+            var contributorDependencyValidationException =
+                new ContributorDependencyValidationException(
+                    message: someMessage,
+                    innerException: invalidReferenceContributorException,
+                    data: invalidReferenceContributorException.Data);
+
+            FailedDependencyObjectResult expectedFailedDependencyObjectResult =
+                    FailedDependency(invalidReferenceContributorException);
+
+            var expectedActionResult =
+                new ActionResult<Contributor>(expectedFailedDependencyObjectResult);
 
             this.contributorServiceMock.Setup(service =>
                 service.AddContributorAsync(It.IsAny<Contributor>()))
