@@ -56,6 +56,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Contributors
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsContributorException);
 
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidReferenceContributorException =
+                    new InvalidReferenceContributorException(
+                        message: "Invalid contributor reference error occurred.",
+                        innerException: foreignKeyConstraintConflictException,
+                        data: foreignKeyConstraintConflictException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(invalidReferenceContributorException);
+            }
             catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
 

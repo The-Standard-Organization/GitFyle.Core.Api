@@ -6,8 +6,6 @@ using System;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
-using GitFyle.Core.Api.Models.Foundations.Contributors;
-using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
