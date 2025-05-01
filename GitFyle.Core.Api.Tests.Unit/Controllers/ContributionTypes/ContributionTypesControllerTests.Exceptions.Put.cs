@@ -56,18 +56,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             // given
             ContributionType someContributionType = CreateRandomContributionType();
 
-            InternalServerErrorObjectResult expectedInternalServerObjectResult =
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult = 
                 InternalServerError(serverException);
 
-            var expectedActionResult =
-                new ActionResult<ContributionType>(expectedInternalServerObjectResult);
+            var expectedActionResult = 
+                new ActionResult<ContributionType>(expectedInternalServerErrorObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
                     .ThrowsAsync(serverException);
 
             // when
-            ActionResult<ContributionType> actualActionResult =
+            ActionResult<ContributionType> actualActionResult = 
                 await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
 
             // then
@@ -186,8 +186,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     innerException: invalidReferenceContributionTypeException,
                     data: someDictionaryData);
 
-            FailedDependencyObjectResult expectedFailedDependencyObjectResult =
-               FailedDependency(invalidReferenceContributionTypeException);
+            FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
+                FailedDependency(invalidReferenceContributionTypeException);
 
             var expectedActionResult =
                 new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
