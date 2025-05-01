@@ -4,7 +4,10 @@
 
 using System;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
+using GitFyle.Core.Api.Models.Foundations.Contributors;
+using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using GitFyle.Core.Api.Models.Foundations.Contributors;
 using GitFyle.Core.Api.Models.Foundations.Contributors.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -63,6 +66,67 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Contributors
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateContributorAsync(someContributor),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Contributor foreignKeyConflictedContributor = CreateRandomContributor();
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(message: exceptionMessage);
+
+            var invalidContributorReferenceException =
+                new InvalidReferenceContributorException(
+                    message: "Invalid contributor reference error occurred.",
+                    innerException: foreignKeyConstraintConflictException,
+                    data: foreignKeyConstraintConflictException.Data);
+
+            var expectedContributorDependencyValidationException =
+                new ContributorDependencyValidationException(
+                    message: "Contributor dependency validation error occurred, fix errors and try again.",
+                    innerException: invalidContributorReferenceException,
+                    data: invalidContributorReferenceException.Data);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .Throws(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Contributor> modifyContributorTask =
+                this.contributorService.ModifyContributorAsync(foreignKeyConflictedContributor);
+
+            ContributorDependencyValidationException actualContributorDependencyValidationException =
+                await Assert.ThrowsAsync<ContributorDependencyValidationException>(
+                    modifyContributorTask.AsTask);
+
+            // then
+            actualContributorDependencyValidationException.Should().BeEquivalentTo(
+                expectedContributorDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectContributorByIdAsync(foreignKeyConflictedContributor.Id),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedContributorDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateContributorAsync(foreignKeyConflictedContributor),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
