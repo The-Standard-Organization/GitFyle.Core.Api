@@ -36,7 +36,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someContributionTypeId);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(
+                    someContributionTypeId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -68,7 +69,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someContributionTypeId);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(
+                    someContributionTypeId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -108,7 +110,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someContributionTypeId);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(
+                    someContributionTypeId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -153,7 +156,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someContributionTypeId);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(
+                    someContributionTypeId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -190,7 +194,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     FailedDependency(invalidReferenceContributionTypeException);
 
             var expectedActionResult = 
-                    new ActionResult<ContributionType>(expectedFailedDependencyObjectResult );
+                    new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
 
 
             this.contributionTypeServiceMock.Setup(service =>
@@ -199,7 +203,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someContributionTypeId);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(
+                    someContributionTypeId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
