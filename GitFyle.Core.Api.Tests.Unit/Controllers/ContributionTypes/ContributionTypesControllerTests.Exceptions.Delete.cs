@@ -133,22 +133,22 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             var someDictionaryData = GetRandomDictionaryData();
 
             var lockedContributionTypeException =
-                    new LockedContributionTypeException(
-                        message: someMessage,
-                        innerException: someInnerException,
-                        data: someInnerException.Data);
+                new LockedContributionTypeException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
 
             var contributionTypeDependencyValidationException =
-                    new ContributionTypeDependencyValidationException(
-                        message: someMessage,
-                        innerException: lockedContributionTypeException,
-                        data: someDictionaryData);
+                new ContributionTypeDependencyValidationException(
+                    message: someMessage,
+                    innerException: lockedContributionTypeException,
+                    data: someDictionaryData);
 
             LockedObjectResult expectedLockedObjectResult =
-                    Locked(lockedContributionTypeException);
+                Locked(lockedContributionTypeException);
 
             var expectedActionResult =
-                    new ActionResult<ContributionType>(expectedLockedObjectResult);
+                new ActionResult<ContributionType>(expectedLockedObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
@@ -179,23 +179,22 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             string someMessage = GetRandomString();
 
             var invalidReferenceContributionTypeException = 
-                    new InvalidReferenceContributionTypeException(
-                        message: someMessage,
-                        innerException: someInnerException,
-                        data: someInnerException.Data);
+                new InvalidReferenceContributionTypeException(
+                    message: someMessage,
+                    innerException: someInnerException,
+                    data: someInnerException.Data);
 
             var contributionTypeDependencyValidationException = 
-                    new ContributionTypeDependencyValidationException(
-                        message: someMessage,
-                        innerException: invalidReferenceContributionTypeException,
-                        data: invalidReferenceContributionTypeException.Data);
+                new ContributionTypeDependencyValidationException(
+                    message: someMessage,
+                    innerException: invalidReferenceContributionTypeException,
+                    data: invalidReferenceContributionTypeException.Data);
 
             FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
-                    FailedDependency(invalidReferenceContributionTypeException);
+                FailedDependency(invalidReferenceContributionTypeException);
 
             var expectedActionResult = 
-                    new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
-
+                new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
