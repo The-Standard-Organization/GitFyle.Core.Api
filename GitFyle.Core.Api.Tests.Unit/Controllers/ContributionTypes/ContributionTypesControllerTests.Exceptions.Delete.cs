@@ -3,7 +3,6 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes;
 using GitFyle.Core.Api.Models.Foundations.ContributionTypes.Exceptions;
@@ -19,11 +18,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
-        public async Task ShouldReturnBadRequestOnDeleteIfValidationErrorOccursAsync(
+        public async Task ShouldReturnBadRequestOnDeleteIfValidationExceptionOccursAsync(
             Xeption validationException)
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionTypeId = Guid.NewGuid();
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
@@ -37,7 +36,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(
+                    someContributionTypeId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -51,25 +51,26 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
         [Theory]
         [MemberData(nameof(ServerExceptions))]
-        public async Task ShouldReturnInternalServerErrorOnDeleteIfServerErrorOccurredAsync(
-            Xeption validationException)
+        public async Task ShouldReturnInternalServerErrorOnDeleteIfServerExceptionOccurredAsync(
+            Xeption serverException)
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionTypeId = Guid.NewGuid();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
-                InternalServerError(validationException);
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
+                InternalServerError(serverException);
 
             var expectedActionResult =
-                new ActionResult<ContributionType>(expectedBadRequestObjectResult);
+                new ActionResult<ContributionType>(expectedInternalServerErrorObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(validationException);
+                    .ThrowsAsync(serverException);
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(
+                    someContributionTypeId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -82,10 +83,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnNotFoundOnDeleteIfItemDoesNotExistAsync()
+        public async Task ShouldReturnNotFoundOnDeleteIfContributionTypeDoesNotExistAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionTypeId = Guid.NewGuid();
             string someMessage = GetRandomString();
 
             var notFoundContributionTypeException =
@@ -109,7 +110,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(
+                    someContributionTypeId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -122,10 +124,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnLockedOnDeleteIfRecordIsLockedAsync()
+        public async Task ShouldReturnLockedOnDeleteIfLockedContributionTypeExceptionOccursAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionTypeId = Guid.NewGuid();
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
             var someDictionaryData = GetRandomDictionaryData();
@@ -142,11 +144,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     innerException: lockedContributionTypeException,
                     data: someDictionaryData);
 
-            LockedObjectResult expectedConflictObjectResult =
+            LockedObjectResult expectedLockedObjectResult =
                 Locked(lockedContributionTypeException);
 
             var expectedActionResult =
-                new ActionResult<ContributionType>(expectedConflictObjectResult);
+                new ActionResult<ContributionType>(expectedLockedObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
@@ -154,7 +156,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(
+                    someContributionTypeId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
@@ -167,32 +170,31 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
         }
 
         [Fact]
-        public async Task ShouldReturnFailedDependencyOnDeleteIfReferenceErrorOccursAsync()
+        public async Task ShouldReturnFailedDependencyOnDeleteIfReferenceExceptionOccursAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            Guid someContributionTypeId = Guid.NewGuid();
             ContributionType someContributionType = CreateRandomContributionType();
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
 
-            var invalidReferenceContributionTypeException =
+            var invalidReferenceContributionTypeException = 
                 new InvalidReferenceContributionTypeException(
                     message: someMessage,
                     innerException: someInnerException,
                     data: someInnerException.Data);
 
-            var contributionTypeDependencyValidationException =
+            var contributionTypeDependencyValidationException = 
                 new ContributionTypeDependencyValidationException(
                     message: someMessage,
                     innerException: invalidReferenceContributionTypeException,
                     data: invalidReferenceContributionTypeException.Data);
 
-            FailedDependencyObjectResult expectedConflictObjectResult =
-               FailedDependency(invalidReferenceContributionTypeException);
+            FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
+                FailedDependency(invalidReferenceContributionTypeException);
 
-            var expectedActionResult =
-                new ActionResult<ContributionType>(expectedConflictObjectResult);
-
+            var expectedActionResult = 
+                new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
                 service.RemoveContributionTypeByIdAsync(It.IsAny<Guid>()))
@@ -200,7 +202,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                await this.contributionTypesController.DeleteContributionTypeByIdAsync(someId);
+                await this.contributionTypesController.DeleteContributionTypeByIdAsync(
+                    someContributionTypeId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
