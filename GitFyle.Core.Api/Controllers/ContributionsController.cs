@@ -37,7 +37,7 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(repositoryValidationException.InnerException);
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
-               when (contributionDependencyValidationException.InnerException is 
+               when (contributionDependencyValidationException.InnerException is
                 InvalidReferenceContributionException)
             {
                 return FailedDependency(contributionDependencyValidationException.InnerException);
@@ -86,7 +86,7 @@ namespace GitFyle.Core.Api.Controllers
         {
             try
             {
-                Contribution contribution = 
+                Contribution contribution =
                         await this.contributionService.RetrieveContributionByIdAsync(contributionId);
 
                 return Ok(contribution);
@@ -134,13 +134,13 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionValidationException.InnerException);
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
-                when (contributionDependencyValidationException.InnerException is 
+                when (contributionDependencyValidationException.InnerException is
                         AlreadyExistsContributionException)
             {
                 return Conflict(contributionDependencyValidationException.InnerException);
             }
             catch (ContributionDependencyValidationException contributionDependencyValidationException)
-                when (contributionDependencyValidationException.InnerException is 
+                when (contributionDependencyValidationException.InnerException is
                     InvalidReferenceContributionException)
             {
                 return FailedDependency(contributionDependencyValidationException.InnerException);

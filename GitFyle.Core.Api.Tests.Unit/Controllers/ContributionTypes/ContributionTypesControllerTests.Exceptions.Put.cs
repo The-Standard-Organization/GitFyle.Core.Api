@@ -56,10 +56,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             // given
             ContributionType someContributionType = CreateRandomContributionType();
 
-            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult = 
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
                 InternalServerError(serverException);
 
-            var expectedActionResult = 
+            var expectedActionResult =
                 new ActionResult<ContributionType>(expectedInternalServerErrorObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
@@ -67,7 +67,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     .ThrowsAsync(serverException);
 
             // when
-            ActionResult<ContributionType> actualActionResult = 
+            ActionResult<ContributionType> actualActionResult =
                 await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
 
             // then
@@ -186,18 +186,18 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     innerException: invalidReferenceContributionTypeException,
                     data: someDictionaryData);
 
-            FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
+            FailedDependencyObjectResult expectedFailedDependencyObjectResult =
                 FailedDependency(invalidReferenceContributionTypeException);
 
             var expectedActionResult =
                 new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
 
-            this.contributionTypeServiceMock.Setup(service => 
+            this.contributionTypeServiceMock.Setup(service =>
                 service.ModifyContributionTypeAsync(It.IsAny<ContributionType>()))
                     .ThrowsAsync(contributionTypeDependencyValidationException);
 
             // when
-            ActionResult<ContributionType> actualActionResult = 
+            ActionResult<ContributionType> actualActionResult =
                     await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
 
             // then

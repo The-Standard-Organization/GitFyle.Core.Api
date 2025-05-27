@@ -34,7 +34,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                     .ReturnsAsync(storageContribution);
 
             // when
-            ActionResult<Contribution> actualActionResult = 
+            ActionResult<Contribution> actualActionResult =
                     await contributionsController.GetContributionByIdAsync(inputId);
 
             // then

@@ -56,7 +56,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
 
-            var invalidReferenceContributionException = 
+            var invalidReferenceContributionException =
                 new InvalidReferenceContributionException(
                     message: someMessage,
                     innerException: someInnerException,
@@ -68,7 +68,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                     innerException: invalidReferenceContributionException,
                     data: invalidReferenceContributionException.Data);
 
-            FailedDependencyObjectResult expectedConflictObjectResult = 
+            FailedDependencyObjectResult expectedConflictObjectResult =
                 FailedDependency(invalidReferenceContributionException);
 
             var expectedActionResult = new ActionResult<Contribution>(expectedConflictObjectResult);
@@ -78,7 +78,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                     .ThrowsAsync(contributionDependencyValidationException);
 
             // when
-            ActionResult<Contribution> actualActionResult = 
+            ActionResult<Contribution> actualActionResult =
                     await this.contributionsController.PostContributionAsync(someContribution);
 
             // then
@@ -90,7 +90,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             this.contributionServiceMock.VerifyNoOtherCalls();
         }
-    
+
         [Theory]
         [MemberData(nameof(ServerExceptions))]
         public async Task ShouldReturnInternalServerErrorOnPostIfServerExceptionOccurredAsync(
@@ -144,10 +144,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                     innerException: alreadyExistsContributionException,
                     data: someDictionaryData);
 
-            ConflictObjectResult expectedConflictObjectResult = 
+            ConflictObjectResult expectedConflictObjectResult =
                 Conflict(alreadyExistsContributionException);
 
-            var expectedActionResult = 
+            var expectedActionResult =
                 new ActionResult<Contribution>(expectedConflictObjectResult);
 
             this.contributionServiceMock.Setup(service =>
@@ -155,7 +155,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                     .ThrowsAsync(contributionDependencyValidationException);
 
             // when
-            ActionResult<Contribution> actualActionResult = 
+            ActionResult<Contribution> actualActionResult =
                 await this.contributionsController.PostContributionAsync(someContribution);
 
             // then

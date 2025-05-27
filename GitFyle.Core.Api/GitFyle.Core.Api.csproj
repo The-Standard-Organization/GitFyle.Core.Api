@@ -7,6 +7,10 @@
     <NoWarn>CS1998</NoWarn>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Models\Foundations\ContributionTypes\Exceptions\InvalidReferenceContributionTypeException.cs~RF14d2b2c0.TMP" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="EFxceptions" Version="0.4.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
