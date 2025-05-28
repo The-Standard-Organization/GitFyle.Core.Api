@@ -35,7 +35,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                    await contributionsController.GetContributionByIdAsync(inputId);
+                await contributionsController.GetContributionByIdAsync(inputId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);

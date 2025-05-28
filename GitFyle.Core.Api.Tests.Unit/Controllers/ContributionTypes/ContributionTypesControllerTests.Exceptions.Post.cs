@@ -146,7 +146,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     data: invalidReferenceContributionTypeException.Data);
 
             FailedDependencyObjectResult expectedFailedDependencyObjectResult =
-                    FailedDependency(invalidReferenceContributionTypeException);
+                FailedDependency(invalidReferenceContributionTypeException);
 
             var expectedActionResult =
                 new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);

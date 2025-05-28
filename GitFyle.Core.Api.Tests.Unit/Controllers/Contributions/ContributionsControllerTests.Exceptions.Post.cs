@@ -79,7 +79,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
 
             // when
             ActionResult<Contribution> actualActionResult =
-                    await this.contributionsController.PostContributionAsync(someContribution);
+                await this.contributionsController.PostContributionAsync(someContribution);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);

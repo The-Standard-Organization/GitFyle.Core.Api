@@ -198,7 +198,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
 
             // when
             ActionResult<ContributionType> actualActionResult =
-                    await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
+                await this.contributionTypesController.PutContributionTypeAsync(someContributionType);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
