@@ -70,7 +70,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             // then
             foreach (Repository expectedRepository in expectedRepositories)
             {
-                Repository actualRepository = 
+                Repository actualRepository =
                     actualRepositories.Single(repository => repository.Id == expectedRepository.Id);
 
                 actualRepository.Should().BeEquivalentTo(expectedRepository);
