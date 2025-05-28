@@ -60,10 +60,10 @@ namespace GitFyle.Core.Api.Controllers
         {
             try
             {
-                IQueryable<Source> sourcees =
+                IQueryable<Source> sources =
                     await this.sourceService.RetrieveAllSourcesAsync();
 
-                return Ok(sourcees);
+                return Ok(sources);
             }
             catch (SourceDependencyException sourceDependencyException)
             {

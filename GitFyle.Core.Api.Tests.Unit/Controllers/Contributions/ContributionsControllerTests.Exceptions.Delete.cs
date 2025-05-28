@@ -24,11 +24,11 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             // given
             Guid someContributionId = Guid.NewGuid();
 
-            BadRequestObjectResult expectedInternalServerErrorObjectResult  = 
+            BadRequestObjectResult expectedInternalServerErrorObjectResult =
                 BadRequest(validationException.InnerException);
 
-            var expectedActionResult = 
-                new ActionResult<Contribution>(expectedInternalServerErrorObjectResult );
+            var expectedActionResult =
+                new ActionResult<Contribution>(expectedInternalServerErrorObjectResult);
 
             this.contributionServiceMock.Setup(service =>
                 service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
@@ -57,23 +57,23 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
 
-            var invalidReferenceContributionException = 
+            var invalidReferenceContributionException =
                 new InvalidReferenceContributionException(
                     message: someMessage,
                     innerException: someInnerException,
                     data: someInnerException.Data);
 
-            var contributionDependencyValidationException = 
+            var contributionDependencyValidationException =
                 new ContributionDependencyValidationException(
                     message: someMessage,
                     innerException: invalidReferenceContributionException,
                     data: invalidReferenceContributionException.Data);
 
-            FailedDependencyObjectResult expectedLockedObjectResult  = 
+            FailedDependencyObjectResult expectedLockedObjectResult =
                 FailedDependency(invalidReferenceContributionException);
 
-            var expectedActionResult = 
-                new ActionResult<Contribution>(expectedLockedObjectResult );
+            var expectedActionResult =
+                new ActionResult<Contribution>(expectedLockedObjectResult);
 
 
             this.contributionServiceMock.Setup(service =>
@@ -102,10 +102,10 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             // given
             Guid someContributionId = Guid.NewGuid();
 
-            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult  = 
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
                 InternalServerError(serverException);
 
-            var expectedActionResult = 
+            var expectedActionResult =
                 new ActionResult<Contribution>(expectedInternalServerErrorObjectResult);
 
             this.contributionServiceMock.Setup(service =>
@@ -175,13 +175,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
             string someMessage = GetRandomString();
             var someDictionaryData = GetRandomDictionaryData();
 
-            var lockedContributionException = 
+            var lockedContributionException =
                 new LockedContributionException(
                     message: someMessage,
                     innerException: someInnerException,
                     data: someInnerException.Data);
 
-            var contributionDependencyValidationException = 
+            var contributionDependencyValidationException =
                 new ContributionDependencyValidationException(
                     message: someMessage,
                     innerException: lockedContributionException,
@@ -191,7 +191,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Contributions
                 Locked(lockedContributionException);
 
             var expectedActionResult =
-                new ActionResult<Contribution>(expectedLockedObjectResult  );
+                new ActionResult<Contribution>(expectedLockedObjectResult);
 
             this.contributionServiceMock.Setup(service =>
                 service.RemoveContributionByIdAsync(It.IsAny<Guid>()))
