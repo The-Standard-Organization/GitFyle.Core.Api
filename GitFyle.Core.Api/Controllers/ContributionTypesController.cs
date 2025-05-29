@@ -38,13 +38,13 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionTypeValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-                when (contributionTypeDependencyValidationException.InnerException 
+                when (contributionTypeDependencyValidationException.InnerException
                     is AlreadyExistsContributionTypeException)
             {
                 return Conflict(contributionTypeDependencyValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-                 when (contributionTypeDependencyValidationException.InnerException 
+                 when (contributionTypeDependencyValidationException.InnerException
                     is InvalidReferenceContributionTypeException)
             {
                 return FailedDependency(contributionTypeDependencyValidationException.InnerException);
@@ -137,14 +137,14 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionTypeValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-                when (contributionTypeDependencyValidationException.InnerException is 
+                when (contributionTypeDependencyValidationException.InnerException is
                     AlreadyExistsContributionTypeException)
             {
                 return Conflict(contributionTypeDependencyValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-              when (contributionTypeDependencyValidationException.InnerException is 
-                InvalidReferenceContributionTypeException)
+                when (contributionTypeDependencyValidationException.InnerException is
+                    InvalidReferenceContributionTypeException)
             {
                 return FailedDependency(contributionTypeDependencyValidationException.InnerException);
             }
@@ -183,7 +183,7 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(contributionTypeValidationException.InnerException);
             }
             catch (ContributionTypeDependencyValidationException contributionTypeDependencyValidationException)
-                when (contributionTypeDependencyValidationException.InnerException 
+                when (contributionTypeDependencyValidationException.InnerException
                     is InvalidReferenceContributionTypeException)
             {
                 return FailedDependency(contributionTypeDependencyValidationException.InnerException);
