@@ -104,7 +104,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             ConflictObjectResult expectedConflictObjectResult =
                 Conflict(alreadyExistsContributionTypeException);
 
-            var expectedActionResult = 
+            var expectedActionResult =
                 new ActionResult<ContributionType>(expectedConflictObjectResult);
 
             this.contributionTypeServiceMock.Setup(service =>
@@ -145,8 +145,8 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     innerException: invalidReferenceContributionTypeException,
                     data: invalidReferenceContributionTypeException.Data);
 
-            FailedDependencyObjectResult expectedFailedDependencyObjectResult = 
-                    FailedDependency(invalidReferenceContributionTypeException);
+            FailedDependencyObjectResult expectedFailedDependencyObjectResult =
+                FailedDependency(invalidReferenceContributionTypeException);
 
             var expectedActionResult =
                 new ActionResult<ContributionType>(expectedFailedDependencyObjectResult);
@@ -156,7 +156,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
                     .ThrowsAsync(contributionTypeDependencyValidationException);
 
             // when
-            ActionResult<ContributionType> actualActionResult = 
+            ActionResult<ContributionType> actualActionResult =
                 await this.contributionTypesController.PostContributionTypeAsync(someContributionType);
 
             // then

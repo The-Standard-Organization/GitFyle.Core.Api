@@ -11,7 +11,7 @@ namespace GitFyle.Core.Api.Models.Foundations.Contributions.Exceptions
     public class InvalidReferenceContributionException : Xeption
     {
         public InvalidReferenceContributionException(string message, Exception innerException, IDictionary data)
-            : base(message, innerException,data)
+            : base(message, innerException, data)
         { }
     }
 }
