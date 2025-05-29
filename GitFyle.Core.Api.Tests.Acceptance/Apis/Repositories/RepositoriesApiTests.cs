@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using GitFyle.Core.Api.Tests.Acceptance.Brokers;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Repositories;
 using GitFyle.Core.Api.Tests.Acceptance.Models.Sources;
@@ -60,7 +59,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
 
             return randomRepository;
         }
-        
+
         private static Repository CreateRandomRepository(Guid sourceId) =>
             CreateRepositoryFiller(sourceId).Create();
 
