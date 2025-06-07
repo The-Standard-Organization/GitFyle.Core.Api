@@ -178,13 +178,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.ContributionTypes
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
 
-            var invalidReferenceContributionTypeException =
+            var invalidReferenceContributionTypeException = 
                 new InvalidReferenceContributionTypeException(
                     message: someMessage,
                     innerException: someInnerException,
                     data: someInnerException.Data);
 
-            var contributionTypeDependencyValidationException =
+            var contributionTypeDependencyValidationException = 
                 new ContributionTypeDependencyValidationException(
                     message: someMessage,
                     innerException: invalidReferenceContributionTypeException,
