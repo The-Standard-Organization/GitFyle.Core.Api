@@ -187,16 +187,16 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             var foreignKeyConstraintConflictException =
                 new ForeignKeyConstraintConflictException(someMessage);
             
-            var failedStorageRepositoryException =
-                new FailedStorageRepositoryException(
-                    message: "Failed storage repository error occurred, contact support.",
+            var invalidRepositoryReferenceException =
+                new InvalidRepositoryReferenceException(
+                    message: "Invalid repository reference error occurred, ",
                     innerException: foreignKeyConstraintConflictException);
             
             var expectedRepositoryDependencyValidationException =
                 new RepositoryDependencyValidationException(
                     message: "Repository dependency validation error occurred, fix errors and try again.",
-                    innerException: failedStorageRepositoryException,
-                    data: failedStorageRepositoryException.Data);
+                    innerException: invalidRepositoryReferenceException,
+                    data: invalidRepositoryReferenceException.Data);
             
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -204,16 +204,15 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             
             // when
             ValueTask<Repository> addRepositoryTask =
-                this.repositoryService.AddRepositoryAsync(
-                    someRepository);
+                this.repositoryService.AddRepositoryAsync(someRepository);
             
             RepositoryDependencyValidationException actualRepositoryDependencyValidationException =
                 await Assert.ThrowsAsync<RepositoryDependencyValidationException>(
-                    testCode: addRepositoryTask.AsTask);
+                    addRepositoryTask.AsTask);
             
             // then
-            actualRepositoryDependencyValidationException.Should().BeEquivalentTo(
-                expectedRepositoryDependencyValidationException);
+            actualRepositoryDependencyValidationException.Should()
+                .BeEquivalentTo(expectedRepositoryDependencyValidationException);
             
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
