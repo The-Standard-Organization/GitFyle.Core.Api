@@ -55,6 +55,16 @@ namespace GitFyle.Core.Api.Services.Foundations.Repositories
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsRepositoryException);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidRepositoryReferenceException =
+                    new InvalidRepositoryReferenceException(
+                        message: "Invalid repository reference error occurred.",
+                        innerException: foreignKeyConstraintConflictException,
+                        data: foreignKeyConstraintConflictException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(invalidRepositoryReferenceException);
+            }
             catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
                 var concurrencyGemException =

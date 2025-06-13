@@ -189,12 +189,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             
             var invalidRepositoryReferenceException =
                 new InvalidRepositoryReferenceException(
-                    message: "Invalid repository reference error occurred, ",
-                    innerException: foreignKeyConstraintConflictException);
+                    message: "Invalid repository reference error occurred.",
+                    innerException: foreignKeyConstraintConflictException,
+                    data: foreignKeyConstraintConflictException.Data);
             
             var expectedRepositoryDependencyValidationException =
                 new RepositoryDependencyValidationException(
-                    message: "Repository dependency validation error occurred, fix errors and try again.",
+                    message: "Repository validation error occurred, fix errors and try again.",
                     innerException: invalidRepositoryReferenceException,
                     data: invalidRepositoryReferenceException.Data);
             
