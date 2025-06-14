@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using GitFyle.Core.Api.Models.Foundations.Repositories;
 using GitFyle.Core.Api.Models.Foundations.Repositories.Exceptions;
@@ -183,6 +184,63 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Repositories
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectRepositoryByIdAsync(randomRepository.Id),
                     Times.Never());
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnModifyIfForeignKeyErrorOccursAndLogItAsync()
+        {
+            // given
+            Repository someRepository = CreateRandomRepository();
+            string someMessage = GetRandomString();
+            string exceptionMessage = someMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidRepositoryReferenceException =
+                new InvalidRepositoryReferenceException(
+                    message: "Invalid repository reference error occurred.",
+                    innerException: foreignKeyConstraintConflictException,
+                    data: foreignKeyConstraintConflictException.Data);
+
+            var expectedRepositoryDependencyValidationException =
+                new RepositoryDependencyValidationException(
+                    message: "Repository validation error occurred, fix errors and try again.",
+                    innerException: invalidRepositoryReferenceException,
+                    data: invalidRepositoryReferenceException.Data);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Repository> modifyRepositoryTask =
+                this.repositoryService.ModifyRepositoryAsync(someRepository);
+
+            RepositoryDependencyValidationException actualRepositoryDependencyValidationException =
+                await Assert.ThrowsAsync<RepositoryDependencyValidationException>(
+                    modifyRepositoryTask.AsTask);
+
+            // then
+            actualRepositoryDependencyValidationException.Should()
+                .BeEquivalentTo(expectedRepositoryDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedRepositoryDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertRepositoryAsync(It.IsAny<Repository>()),
+                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
