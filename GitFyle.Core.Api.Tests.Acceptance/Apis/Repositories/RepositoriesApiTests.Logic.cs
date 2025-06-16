@@ -2,6 +2,7 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,22 +19,29 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         public async Task ShouldPostRepositoryAsync()
         {
             // given
-            Source randomSource = await PostRandomSourceAsync();
-            Repository randomRepository = await PostRandomRepository(sourceId: randomSource.Id);
+            DateTime postDateTime = DateTime.UtcNow;
+            Source randomSource = CreateRandomSource(postDateTime);
+            Source inputSource = randomSource;
+            Repository randomRepository = CreateRandomRepository(inputSource.Id);
             Repository inputRepository = randomRepository;
             Repository expectedRepository = inputRepository.DeepClone();
 
             // when
+            await this.gitFyleCoreApiBroker.PostSourceAsync(inputSource);
+            inputRepository.SourceId = inputSource.Id;
+            expectedRepository.SourceId = inputSource.Id;
+            await this.gitFyleCoreApiBroker.PostRepositoryAsync(inputRepository);
+
             Repository actualRepository =
                 await this.gitFyleCoreApiBroker.GetRepositoryByIdAsync(inputRepository.Id);
 
             // then
             actualRepository.Should().BeEquivalentTo(expectedRepository);
             await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
-            await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(randomSource.Id);
-        }
+            await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(inputSource.Id);
+         }
 
-        [Fact]
+            [Fact]
         public async Task ShouldGetRepositoryByIdAsync()
         {
             // given
@@ -83,11 +91,12 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         [Fact]
         public async Task ShouldPutRepositoryAsync()
         {
-            // given
+            // given . when
             Source randomSource = await PostRandomSourceAsync();
-            Repository modifiedRepository = await ModifyRandomRepository(sourceId: randomSource.Id);
-
-            // when
+            
+            Repository modifiedRepository =
+                await ModifyRandomRepository(sourceId: randomSource.Id);
+            
             await this.gitFyleCoreApiBroker.PutRepositoryAsync(modifiedRepository);
 
             Repository actualRepository =
