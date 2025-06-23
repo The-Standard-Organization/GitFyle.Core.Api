@@ -185,7 +185,7 @@ namespace GitFyle.Core.Api.Tests.Unit.Controllers.Repositories
                     data: invalidReferenceRepositoryException.Data);
 
             FailedDependencyObjectResult expectedFailedDependencyObjectResult =
-                    FailedDependency(invalidReferenceRepositoryException);
+                FailedDependency(invalidReferenceRepositoryException);
 
             var expectedActionResult =
                 new ActionResult<Repository>(expectedFailedDependencyObjectResult);
