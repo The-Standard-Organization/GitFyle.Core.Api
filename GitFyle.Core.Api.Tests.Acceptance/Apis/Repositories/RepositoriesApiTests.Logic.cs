@@ -2,7 +2,6 @@
 // Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
 // ----------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,8 +18,7 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
         public async Task ShouldPostRepositoryAsync()
         {
             // given
-            DateTime postDateTime = DateTime.UtcNow;
-            Source randomSource = CreateRandomSource(postDateTime);
+            Source randomSource = CreateRandomSource();
             Source inputSource = randomSource;
             Repository randomRepository = CreateRandomRepository(inputSource.Id);
             Repository inputRepository = randomRepository;
@@ -39,64 +37,73 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             actualRepository.Should().BeEquivalentTo(expectedRepository);
             await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
             await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(inputSource.Id);
-         }
+        }
 
-            [Fact]
+        [Fact]
         public async Task ShouldGetRepositoryByIdAsync()
         {
             // given
-            Source randomSource = await PostRandomSourceAsync();
-            Repository randomRepository = await PostRandomRepository(sourceId: randomSource.Id);
+            Source randomSource = CreateRandomSource();
+            Source inputSource = randomSource;
+            Repository randomRepository = CreateRandomRepository(inputSource.Id);
             Repository inputRepository = randomRepository;
             Repository expectedRepository = inputRepository.DeepClone();
 
             // when
+            await this.gitFyleCoreApiBroker.PostSourceAsync(inputSource);
+            randomRepository.SourceId = inputSource.Id;
+            expectedRepository.SourceId = inputSource.Id;
+            await this.gitFyleCoreApiBroker.PostRepositoryAsync(randomRepository);
+
             Repository actualRepository =
-                await this.gitFyleCoreApiBroker.GetRepositoryByIdAsync(inputRepository.Id);
+                await this.gitFyleCoreApiBroker.GetRepositoryByIdAsync(randomRepository.Id);
 
             // then
             actualRepository.Should().BeEquivalentTo(expectedRepository);
             await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
-            await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(randomSource.Id);
+            await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(inputSource.Id);
         }
 
         [Fact]
         public async Task ShouldGetAllRepositoriesAsync()
         {
             // given
-            Source randomSource = await PostRandomSourceAsync();
+            Source randomSource = CreateRandomSource();
 
-            List<Repository> inputRepositories =
-                await PostRandomRepositoriesAsync(sourceId: randomSource.Id);
+            List<Repository> randomRepositories =
+                CreateRandomRepositories(randomSource.Id);
 
-            IEnumerable<Repository> expectedRepositories = inputRepositories;
+            List<Repository> expectedRepositories =
+                randomRepositories;
 
             // when
-            IEnumerable<Repository> actualRepositories =
+            List<Repository> actualRepositories =
                 await this.gitFyleCoreApiBroker.GetAllRepositoriesAsync();
 
             // then
-            foreach (Repository expectedRepository in expectedRepositories)
+            foreach (Repository expectedRepository in actualRepositories)
             {
                 Repository actualRepository =
-                    actualRepositories.Single(repository => repository.Id == expectedRepository.Id);
+                    actualRepositories.Single(
+                        product => product.Id == expectedRepository.Id);
 
                 actualRepository.Should().BeEquivalentTo(expectedRepository);
-                await this.gitFyleCoreApiBroker.DeleteRepositoryByIdAsync(actualRepository.Id);
-            }
 
-            await this.gitFyleCoreApiBroker.DeleteSourceByIdAsync(randomSource.Id);
+                await this.gitFyleCoreApiBroker
+                    .DeleteRepositoryByIdAsync(actualRepository.Id);
+            }
         }
 
         [Fact]
         public async Task ShouldPutRepositoryAsync()
         {
-            // given . when
+            // given
             Source randomSource = await PostRandomSourceAsync();
-            
+
             Repository modifiedRepository =
                 await ModifyRandomRepository(sourceId: randomSource.Id);
-            
+
+            // when
             await this.gitFyleCoreApiBroker.PutRepositoryAsync(modifiedRepository);
 
             Repository actualRepository =
