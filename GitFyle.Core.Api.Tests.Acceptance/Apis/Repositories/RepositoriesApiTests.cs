@@ -33,11 +33,11 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             return repositories;
         }
 
-        private static IQueryable<Repository> CreateRandomRepositories(Guid sourceId)
+        private static List<Repository> CreateRandomRepositories(Guid sourceId)
         {
             return CreateRepositoryFiller(sourceId)
                 .Create(GetRandomNumber())
-                .AsQueryable();
+                .ToList();
         }
 
         private async ValueTask<Repository> ModifyRandomRepository(Guid sourceId)
@@ -49,8 +49,14 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
             return randomRepository;
         }
 
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
+
+        private static string GetRandomString() =>
+           new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
         private async ValueTask<Repository> PostRandomRepository(Guid sourceId)
         {
@@ -65,11 +71,12 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
 
         private static Filler<Repository> CreateRepositoryFiller(Guid sourceId)
         {
+            DateTimeOffset now = DateTimeOffset.UtcNow;
             string someUser = Guid.NewGuid().ToString();
             var filler = new Filler<Repository>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(DateTimeOffset.UtcNow)
+                .OnType<DateTimeOffset>().Use(now)
                 .OnProperty(repository => repository.SourceId).Use(sourceId)
                 .OnProperty(repository => repository.CreatedBy).Use(someUser)
                 .OnProperty(repository => repository.UpdatedBy).Use(someUser)
@@ -81,22 +88,23 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Apis.Repositories
 
         private async ValueTask<Source> PostRandomSourceAsync()
         {
-            Source randomSource = CreateRandomSource(DateTimeOffset.UtcNow);
+            Source randomSource = CreateRandomSource();
             await this.gitFyleCoreApiBroker.PostSourceAsync(randomSource);
 
             return randomSource;
         }
 
-        private static Source CreateRandomSource(DateTimeOffset dateTimeOffset) =>
-            CreateSourceFiller(dateTimeOffset).Create();
+        private static Source CreateRandomSource() =>
+            CreateSourceFiller().Create();
 
-        private static Filler<Source> CreateSourceFiller(DateTimeOffset dateTimeOffset)
+        private static Filler<Source> CreateSourceFiller()
         {
+            DateTimeOffset now = DateTimeOffset.UtcNow;
             string someUser = Guid.NewGuid().ToString();
             var filler = new Filler<Source>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset>().Use(now)
                 .OnProperty(source => source.Url).Use(new RandomUrl().GetValue())
                 .OnProperty(source => source.CreatedBy).Use(someUser)
                 .OnProperty(source => source.UpdatedBy).Use(someUser)

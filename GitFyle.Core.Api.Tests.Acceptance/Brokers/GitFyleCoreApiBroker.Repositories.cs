@@ -19,8 +19,8 @@ namespace GitFyle.Core.Api.Tests.Acceptance.Brokers
         public async ValueTask<Repository> GetRepositoryByIdAsync(Guid repositoryId) =>
             await this.apiFactoryClient.GetContentAsync<Repository>($"{RepositoryRelativeUrl}/{repositoryId}");
 
-        public async ValueTask<IEnumerable<Repository>> GetAllRepositoriesAsync() =>
-            await this.apiFactoryClient.GetContentAsync<IEnumerable<Repository>>(RepositoryRelativeUrl);
+        public async ValueTask<List<Repository>> GetAllRepositoriesAsync() =>
+            await this.apiFactoryClient.GetContentAsync<List<Repository>>(RepositoryRelativeUrl);
 
         public async ValueTask<Repository> PutRepositoryAsync(Repository repository) =>
             await this.apiFactoryClient.PutContentAsync(RepositoryRelativeUrl, repository);
