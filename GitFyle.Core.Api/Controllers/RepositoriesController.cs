@@ -37,6 +37,11 @@ namespace GitFyle.Core.Api.Controllers
                 return BadRequest(repositoryValidationException.InnerException);
             }
             catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
+                when (repositoryDependencyValidationException.InnerException is InvalidRepositoryReferenceException)
+            {
+                return FailedDependency(repositoryDependencyValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
                 when (repositoryDependencyValidationException.InnerException is AlreadyExistsRepositoryException)
             {
                 return Conflict(repositoryDependencyValidationException.InnerException);
@@ -126,6 +131,11 @@ namespace GitFyle.Core.Api.Controllers
             catch (RepositoryValidationException repositoryValidationException)
             {
                 return BadRequest(repositoryValidationException.InnerException);
+            }
+            catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
+                when (repositoryDependencyValidationException.InnerException is InvalidRepositoryReferenceException)
+            {
+                return FailedDependency(repositoryDependencyValidationException.InnerException);
             }
             catch (RepositoryDependencyValidationException repositoryDependencyValidationException)
                 when (repositoryDependencyValidationException.InnerException is AlreadyExistsRepositoryException)
